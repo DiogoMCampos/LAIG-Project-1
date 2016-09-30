@@ -46,17 +46,17 @@ MySceneGraph.prototype.parseDSX = function(rootElement) {
 }
 
 MySceneGraph.prototype.parseScene = function(rootElement) {
-    var scene = rootElement.getElementsByTagName('scene');
+    var elems = rootElement.getElementsByTagName('scene');
 
-    if (!scene) {
+    if (!elems) {
       return "scene element is missing.";
     }
 
-    if (scene.length !== 1) {
+    if (elems.length !== 1) {
       return "either zero or more than one 'scene' element found.";
     }
 
-    var scene = scene[0];
+    var scene = elems[0];
 
     this.root = this.reader.getString(scene, 'root');
     this.axisLength = this.reader.getFloat(scene, 'axis_length');
