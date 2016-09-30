@@ -43,7 +43,7 @@ function getUrlVars() {
     return vars;
 }
 
-serialInclude(['../lib/CGF.js', 'XMLscene.js', 'MySceneGraph.js',
+serialInclude(['../lib/CGF.js', 'XMLscene.js', 'MySceneGraph.js', "DSXParser.js",
 
     main = function() {
         // Standard application, scene and interface setup
