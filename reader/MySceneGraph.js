@@ -43,17 +43,23 @@ MySceneGraph.prototype.parseDSX = function(rootElement) {
     if (sceneError != null) {
         return sceneError;
     }
+
+    var viewsError = this.parseViews(rootElement);
+
+    if (viewsError != null) {
+        return viewsError;
+    }
 }
 
 MySceneGraph.prototype.parseScene = function(rootElement) {
     var elems = rootElement.getElementsByTagName('scene');
 
     if (!elems) {
-      return "scene element is missing.";
+        return "scene element is missing.";
     }
 
     if (elems.length !== 1) {
-      return "either zero or more than one 'scene' element found.";
+        return "either zero or more than one 'scene' element found.";
     }
 
     var scene = elems[0];
@@ -61,50 +67,91 @@ MySceneGraph.prototype.parseScene = function(rootElement) {
     this.root = this.reader.getString(scene, 'root');
     this.axisLength = this.reader.getFloat(scene, 'axis_length');
 
-	  console.log("Scene read from file: {root=" + this.root + ", axisLength=" + this.axisLength + "}");
+    console.log("Scene read from file: {root=" + this.root + ", axisLength=" + this.axisLength + "}");
 }
 
-/*
- * Example of method that parses elements of one block and stores information in a specific data structure
- */
-MySceneGraph.prototype.parseGlobalsExample = function(rootElement) {
+MySceneGraph.prototype.parseViews = function(rootElement) {
+    var elems = rootElement.getElementsByTagName('views');
 
-    var elems = rootElement.getElementsByTagName('globals');
-    if (elems == null) {
-        return "globals element is missing.";
+    if (!elems) {
+        return "views element is missing.";
     }
 
-    if (elems.length != 1) {
-        return "either zero or more than one 'globals' element found.";
+    if (elems.length !== 1) {
+        return "either zero or more than one 'views' element found.";
     }
 
-    // various examples of different types of access
-    var globals = elems[0];
-    this.background = this.reader.getRGBA(globals, 'background');
-    this.drawmode = this.reader.getItem(globals, 'drawmode', ["fill", "line", "point"]);
-    this.cullface = this.reader.getItem(globals, 'cullface', ["back", "front", "none", "frontandback"]);
-    this.cullorder = this.reader.getItem(globals, 'cullorder', ["ccw", "cw"]);
+    var views = elems[0];
 
-    console.log("Globals read from file: {background=" + this.background + ", drawmode=" + this.drawmode + ", cullface=" + this.cullface + ", cullorder=" + this.cullorder + "}");
+    this.defaultView = this.reader.getFloat(views, 'default');
 
-    var tempList = rootElement.getElementsByTagName('list');
+    var perspectives = views.getElementsByTagName('perspective');
 
-    if (tempList == null || tempList.length == 0) {
-        return "list element is missing.";
+    if (perspectives.length < 1) {
+        return "no 'perspective' element found.";
     }
 
-    this.list = [];
-    // iterate over every element
-    var nnodes = tempList[0].children.length;
-    for (var i = 0; i < nnodes; i++) {
-        var e = tempList[0].children[i];
+    this.perspectives = [];
 
-        // process each element and store its information
-        this.list[e.id] = e.attributes.getNamedItem("coords").value;
-        console.log("Read list item id " + e.id + " with value " + this.list[e.id]);
+    for (var i = 0; i < perspectives.length; i++) {
+        var perspectiveError = this.parsePerspective(perspectives[i]);
+
+        if (perspectiveError != null) {
+            return perspectiveError;
+        }
     }
 
-};
+    console.log("Views read from file: {defaultView=" + this.defaultView + "}");
+    console.log(this.perspectives);
+}
+
+MySceneGraph.prototype.parsePerspective = function(perspective) {
+    var p = {};
+
+    var fromElems = perspective.getElementsByTagName('from');
+
+    if (!fromElems) {
+        return "from element is missing.";
+    }
+
+    if (fromElems.length !== 1) {
+        return "either zero or more than one 'from' element found.";
+    }
+
+    var fromCoor = fromElems[0];
+
+    var toElems = perspective.getElementsByTagName('from');
+
+    if (!toElems) {
+        return "to element is missing.";
+    }
+
+    if (toElems.length !== 1) {
+        return "either zero or more than one 'to' element found.";
+    }
+
+    var toCoor = toElems[0];
+
+    p.id = this.reader.getString(perspective, 'id');
+    p.near = this.reader.getFloat(perspective, 'near');
+    p.far = this.reader.getFloat(perspective, 'far');
+    p.angle = this.reader.getFloat(perspective, 'angle');
+
+    console.log(p);
+    console.log(fromCoor);
+
+    p.from = {};
+    p.from.x = this.reader.getFloat(fromCoor, 'x');
+    p.from.y = this.reader.getFloat(fromCoor, 'y');
+    p.from.z = this.reader.getFloat(fromCoor, 'z');
+
+    p.to = {};
+    p.to.x = this.reader.getFloat(toCoor, 'x');
+    p.to.y = this.reader.getFloat(toCoor, 'y');
+    p.to.z = this.reader.getFloat(toCoor, 'z');
+
+    this.perspectives.push(p)
+}
 
 /*
  * Callback to be executed on any read error
