@@ -24,8 +24,7 @@ MySceneGraph.prototype.onXMLReady = function() {
     console.log("XML Loading finished.");
     var rootElement = this.reader.xmlDoc.documentElement;
 
-    // Here should go the calls for different functions to parse the various blocks
-    var error = this.parseGlobalsExample(rootElement);
+    var error = this.parseDSX(rootElement);
 
     if (error != null) {
         this.onXMLError(error);
@@ -38,7 +37,32 @@ MySceneGraph.prototype.onXMLReady = function() {
     this.scene.onGraphLoaded();
 };
 
+MySceneGraph.prototype.parseDSX = function(rootElement) {
+    var sceneError = this.parseScene(rootElement);
 
+    if (sceneError != null) {
+        return sceneError;
+    }
+}
+
+MySceneGraph.prototype.parseScene = function(rootElement) {
+    var elems = rootElement.getElementsByTagName('scene');
+
+    if (!elems) {
+      return "scene element is missing.";
+    }
+
+    if (elems.length !== 1) {
+      return "either zero or more than one 'scene' element found.";
+    }
+
+    var scene = elems[0];
+
+    this.root = this.reader.getString(scene, 'root');
+    this.axisLength = this.reader.getFloat(scene, 'axis_length');
+
+	  console.log("Scene read from file: {root=" + this.root + ", axisLength=" + this.axisLength + "}");
+}
 
 /*
  * Example of method that parses elements of one block and stores information in a specific data structure
