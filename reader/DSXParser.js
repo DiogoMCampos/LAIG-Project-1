@@ -3,7 +3,7 @@ function DSXParser(rootElement, reader) {
 
     this.parseScene(rootElement);
     this.parseViews(rootElement);
-    //this.parseTransformations(rootElement);
+    this.parseTransformations(rootElement);
     this.parsePrimitives(rootElement);
 
     console.log(this);
@@ -76,7 +76,52 @@ DSXParser.prototype.parsePerspective = function(perspective) {
     this.perspectives.push(perspective);
 };
 
-DSXParser.prototype.parseTransformations = function(rootElement) {};
+DSXParser.prototype.parseTransformations = function(rootElement) {
+    var elems = rootElement.getElementsByTagName('transformations');
+
+    if (!elems) {
+        throw "transformations element is missing.";
+    }
+
+    if (elems.length !== 1) {
+        throw "either zero or more than one 'transformations' element found.";
+    }
+
+    var transformations = elems[0];
+
+    this.transformations = [];
+
+    var transformationList = transformations.getElementsByTagName('transformation');
+    if (!elems || elems.length === 0) {
+        console.warn("no transformations found");
+        return;
+    }
+
+    for (var i = 0; i < transformationList.length; i++) {
+        this.parseTransformation(transformationList[i]);
+    }
+};
+
+DSXParser.prototype.parseTransformation = function(transformation) {
+    var elems = transformation.children;
+
+    var id = this.reader.getString(transformation, 'id', false);
+    if (!id) {
+        console.warn("transformation without id (required). Proceeded without that transformation.");
+        return;
+    }
+
+    var object = {};
+    object.id = id;
+    object.elements = [];
+
+    for(var i = 0; i < elems.length; i++) {
+        object.elements.push(elems[i]);
+    }
+
+    this.transformations.push(object);
+};
+
 
 DSXParser.prototype.parsePrimitives = function(rootElement) {
     var elems = rootElement.getElementsByTagName('primitives');
