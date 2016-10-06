@@ -2,28 +2,15 @@
  * MyCylinder
  * @constructor
  */
-function MyCylinder(scene, xmlNode) {
+function MyCylinder(scene, info, reader) {
    CGFobject.call(this, scene);
+   this.scene = scene;
+   this.reader = reader;
+   this.id = info.id;
+   this.parseAttributes(info.element);
 
-    this.parseAttributes(xmlNode);
-
-   this.baseCircle = new MyCircle(this.scene, slices, baseRadius);
-   this.topCircle = new MyCircle(this.scene, slices, topRadius);
-
-   this.initBuffers();
-}
-
-function MyCylinder(scene, base, top, height, slices, stacks) {
-   CGFobject.call(this, scene);
-
-   this.baseRadius = base;
-   this.topRadius = top;
-   this.heightCylinder = height;
-   this.slices = slices;
-   this.stacks = stacks;
-
-   this.baseCircle = new MyCircle(this.scene, slices, this.baseRadius);
-   this.topCircle = new MyCircle(this.scene, slices, this.topRadius);
+   this.baseCircle = new MyCircle(this.scene, this.slices, this.baseRadius);
+   this.topCircle = new MyCircle(this.scene, this.slices, this.topRadius);
 
    this.initBuffers();
 }
@@ -91,9 +78,9 @@ MyCylinder.prototype.display = function() {
 };
 
 MyCylinder.prototype.parseAttributes = function (xmlNode){
-  this.baseRadius = this.scene.reader.getFloat(xmlNode, 'base');
-  this.topRadius = this.scene.reader.getFloat(xmlNode, 'top');
-  this.heightCylinder = this.scene.reader.getFloat(xmlNode, 'height');
-  this.slices = this.scene.reader.getFloat(xmlNode, 'slices');
-  this.stacks = this.scene.reader.getFloat(xmlNode, 'stacks');
+  this.baseRadius = this.reader.getFloat(xmlNode, 'base');
+  this.topRadius = this.reader.getFloat(xmlNode, 'top');
+  this.heightCylinder = this.reader.getFloat(xmlNode, 'height');
+  this.slices = this.reader.getFloat(xmlNode, 'slices');
+  this.stacks = this.reader.getFloat(xmlNode, 'stacks');
 };

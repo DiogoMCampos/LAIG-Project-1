@@ -1,6 +1,12 @@
+
+
 function XMLscene() {
     CGFscene.call(this);
+    this.primitives = [];
 }
+
+
+
 
 XMLscene.prototype = Object.create(CGFscene.prototype);
 XMLscene.prototype.constructor = XMLscene;
@@ -20,6 +26,15 @@ XMLscene.prototype.init = function(application) {
     this.gl.depthFunc(this.gl.LEQUAL);
 
     this.axis = new CGFaxis(this);
+
+    this.PRIMITIVES = {
+        RECTANGLE : "rectangle",
+        TRIANGLE : "triangle",
+        CYLINDER : "cylinder",
+        SPHERE : "sphere",
+        TORUS : "torus"
+    };
+
 };
 
 XMLscene.prototype.initLights = function() {
@@ -43,10 +58,13 @@ XMLscene.prototype.setDefaultAppearance = function() {
 // Handler called when the graph is finally loaded.
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function() {
-    this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
+    //this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
     this.lights[0].setVisible(true);
     this.lights[0].enable();
+
+
 };
+
 
 XMLscene.prototype.display = function() {
     // ---- BEGIN Background, camera and axis setup
@@ -66,6 +84,11 @@ XMLscene.prototype.display = function() {
     this.axis.display();
 
     this.setDefaultAppearance();
+
+
+    for(var i = 0; i < this.primitives.length; i++){
+        this.primitives[i].display();
+    }
 
     // ---- END Background, camera and axis setup
 

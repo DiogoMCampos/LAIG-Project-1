@@ -6,7 +6,7 @@ function DSXParser(rootElement, reader) {
     this.parseTransformations(rootElement);
     this.parsePrimitives(rootElement);
 
-    console.log(this);
+    //console.log(this);
 }
 
 DSXParser.prototype.parseScene = function(rootElement) {

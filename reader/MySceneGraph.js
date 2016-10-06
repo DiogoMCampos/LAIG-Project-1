@@ -31,12 +31,7 @@ MySceneGraph.prototype.onXMLReady = function() {
       this.onXMLError(err);
       return;
     }
-
-    /*if (error != null) {
-        this.onXMLError(error);
-        return;
-    }*/
-
+    this.createElements();
     this.loadedOk = true;
 
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
@@ -44,9 +39,56 @@ MySceneGraph.prototype.onXMLReady = function() {
 };
 
 MySceneGraph.prototype.parseDSX = function(rootElement) {
-    var dsxInfo = new DSXParser(rootElement, this.reader);
-}
+    this.dsxInfo = new DSXParser(rootElement, this.reader);
+};
 
+MySceneGraph.prototype.createElements = function(){
+    for( types in this.dsxInfo.primitives){
+        var elementArray = this.dsxInfo.primitives[types];
+        switch(types){
+              case this.scene.PRIMITIVES.RECTANGLE:
+                    for(var i = 0; i < elementArray.length; i++){
+                        console.log(elementArray[i]);
+                        var r = new MyRectangle(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives.push(r);
+                    }
+                    break;
+
+              case this.scene.PRIMITIVES.TRIANGLE:
+                    for(var i = 0; i < elementArray.length; i++){
+                        console.log(elementArray[i]);
+                        var r = new MyTriangle(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives.push(r);
+                    }
+                    break;
+
+              case this.scene.PRIMITIVES.CYLINDER:
+                    for(var i = 0; i < elementArray.length; i++){
+                        console.log(elementArray[i]);
+                        var r = new MyCylinder(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives.push(r);
+                    }
+                    break;
+
+              case this.scene.PRIMITIVES.SPHERE:
+                    for(var i = 0; i < elementArray.length; i++){
+                        console.log(elementArray[i]);
+                        var r = new MySphere(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives.push(r);
+                    }
+                    break;
+
+              case this.scene.PRIMITIVES.TORUS:
+                    for(var i = 0; i < elementArray.length; i++){
+                        //var r = new MyTorus(this, elementArray[i], this.reader);
+                        //this.scene.PRIMITIVES.push(r);
+                    }
+                    break;
+              default:
+                    break;
+        }
+    }
+};
 /*
  * Callback to be executed on any read error
  */

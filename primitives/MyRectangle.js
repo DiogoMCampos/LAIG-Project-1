@@ -3,28 +3,16 @@
  * @constructor
  */
 
- function MyRectangle(scene, xmlNode){
+ function MyRectangle(scene, info, reader){
    CGFobject.call(this,scene);
-
-   this.parseAttributes(xmlNode);
+   this.scene = scene;
+   this.reader = reader;
+   this.id = info.id;
+   this.parseAttributes(info.element);
    this.initBuffers();
 
- }
-
- function MyRectangle(scene, x1, y1, x2, y2){
-   CGFobject.call(this,scene);
-
-
-     this.x1 = x1;
-     this.y1 = y1;
-     this.x2 = x2;
-     this.y2 = y2;
-
-   this.initBuffers();
 
  }
-
-
 
  MyRectangle.prototype = Object.create(CGFobject.prototype);
  MyRectangle.prototype.constructor = MyRectangle;
@@ -56,8 +44,9 @@
 
 
 MyRectangle.prototype.parseAttributes = function (xmlNode){
-  this.x1 = this.scene.reader.getFloat(xmlNode, 'x1');
-  this.y1 = this.scene.reader.getFloat(xmlNode, 'y1');
-  this.x2 = this.scene.reader.getFloat(xmlNode, 'x2');
-  this.y2 = this.scene.reader.getFloat(xmlNode, 'y2');
+
+    this.x1 = this.reader.getFloat(xmlNode, 'x1');
+    this.y1 = this.reader.getFloat(xmlNode, 'y1');
+    this.x2 = this.reader.getFloat(xmlNode, 'x2');
+    this.y2 = this.reader.getFloat(xmlNode, 'y2');
 };

@@ -2,21 +2,15 @@
  * MySphere
  * @constructor
  */
- function MySphere(scene, xmlNode) {
+ function MySphere(scene, info, reader) {
     CGFobject.call(this, scene);
-
-    this.parseAttributes(xmlNode);
+    this.scene = scene;
+    this.reader = reader;
+    this.id = info.id;
+    this.parseAttributes(info.element);
     this.initBuffers();
  }
 
-function MySphere(scene, radius, slices, stacks) {
-   CGFobject.call(this, scene);
-
-   this.slices = slices;
-   this.stacks = stacks;
-   this.radius = radius;
-   this.initBuffers();
-}
 
 MySphere.prototype = Object.create(CGFobject.prototype);
 MySphere.prototype.constructor = MySphere;
@@ -55,7 +49,7 @@ MySphere.prototype.initBuffers = function() {
 
    //Indices
    for (var j = 0; j < this.stacks; j++) {
-      for (var i = 0; i < (this.slices); i += 1) {
+      for (var i = 0; i < (this.slices); i ++) {
          this.indices.push((i + 1) % (this.slices) + (j + 0) * this.slices,
                            (i + 0) % (this.slices) + (j + 1) * this.slices,
                            (i + 0) % (this.slices) + (j + 0) * this.slices);
@@ -69,4 +63,11 @@ MySphere.prototype.initBuffers = function() {
 
    this.primitiveType = this.scene.gl.TRIANGLES;
    this.initGLBuffers();
+};
+
+MySphere.prototype.parseAttributes = function (xmlNode){
+
+    this.radius = this.reader.getFloat(xmlNode, 'radius');
+    this.slices = this.reader.getFloat(xmlNode, 'slices');
+    this.stacks = this.reader.getFloat(xmlNode, 'stacks');
 };

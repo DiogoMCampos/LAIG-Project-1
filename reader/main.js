@@ -44,6 +44,8 @@ function getUrlVars() {
 }
 
 serialInclude(['../lib/CGF.js', 'XMLscene.js', 'MySceneGraph.js', "DSXParser.js",
+                '../primitives/MyRectangle.js', '../primitives/MyTriangle.js', '../primitives/MySphere.js',
+                '../primitives/MyCircle.js', '../primitives/MyCylinder.js',
 
     main = function() {
         // Standard application, scene and interface setup
