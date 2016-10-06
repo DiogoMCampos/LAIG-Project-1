@@ -49,32 +49,32 @@ MySceneGraph.prototype.createElements = function(){
               case this.scene.PRIMITIVES.RECTANGLE:
                     for(var i = 0; i < elementArray.length; i++){
                         console.log(elementArray[i]);
-                        var r = new MyRectangle(this.scene, elementArray[i], this.reader);
-                        this.scene.primitives.push(r);
+                        var obj = new MyRectangle(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives[obj.id] = obj;
                     }
                     break;
 
               case this.scene.PRIMITIVES.TRIANGLE:
                     for(var i = 0; i < elementArray.length; i++){
                         console.log(elementArray[i]);
-                        var r = new MyTriangle(this.scene, elementArray[i], this.reader);
-                        this.scene.primitives.push(r);
+                        var obj = new MyTriangle(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives[obj.id] = obj;
                     }
                     break;
 
               case this.scene.PRIMITIVES.CYLINDER:
                     for(var i = 0; i < elementArray.length; i++){
                         console.log(elementArray[i]);
-                        var r = new MyCylinder(this.scene, elementArray[i], this.reader);
-                        this.scene.primitives.push(r);
+                        var obj = new MyCylinder(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives[obj.id] = obj;
                     }
                     break;
 
               case this.scene.PRIMITIVES.SPHERE:
                     for(var i = 0; i < elementArray.length; i++){
                         console.log(elementArray[i]);
-                        var r = new MySphere(this.scene, elementArray[i], this.reader);
-                        this.scene.primitives.push(r);
+                        var obj = new MySphere(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives[obj.id] = obj;
                     }
                     break;
 
@@ -89,10 +89,14 @@ MySceneGraph.prototype.createElements = function(){
         }
     }
 };
+
+MySceneGraph.prototype.createTransformations = function(){
+
+}
+
 /*
  * Callback to be executed on any read error
  */
-
 MySceneGraph.prototype.onXMLError = function(message) {
     console.error("XML Loading Error: " + message);
     this.loadedOk = false;

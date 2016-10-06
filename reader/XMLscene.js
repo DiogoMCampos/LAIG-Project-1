@@ -2,7 +2,7 @@
 
 function XMLscene() {
     CGFscene.call(this);
-    this.primitives = [];
+    this.primitives = {};
 }
 
 
@@ -86,8 +86,8 @@ XMLscene.prototype.display = function() {
     this.setDefaultAppearance();
 
 
-    for(var i = 0; i < this.primitives.length; i++){
-        this.primitives[i].display();
+    for(var obj in this.primitives){
+        this.primitives[obj].display();
     }
 
     // ---- END Background, camera and axis setup
