@@ -73,7 +73,20 @@ DSXParser.prototype.parsePerspective = function(perspective) {
         throw "either zero or more than one 'to' element found.";
     }
 
-    this.perspectives.push(perspective);
+    object = {};
+    object.angle = this.reader.getFloat(perspective, "angle");
+    object.near = this.reader.getFloat(perspective, "near");
+    object.far = this.reader.getFloat(perspective, "far");
+    object.from = {};
+    object.from.x = this.reader.getFloat(fromElems[0], "x");
+    object.from.y = this.reader.getFloat(fromElems[0], "y");
+    object.from.z = this.reader.getFloat(fromElems[0], "z");
+    object.to = {};
+    object.to.x = this.reader.getFloat(toElems[0], "x");
+    object.to.y = this.reader.getFloat(toElems[0], "y");
+    object.to.z = this.reader.getFloat(toElems[0], "z");
+
+    this.perspectives.push(object);
 };
 
 DSXParser.prototype.parseTransformations = function(rootElement) {

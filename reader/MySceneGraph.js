@@ -24,13 +24,13 @@ MySceneGraph.prototype.onXMLReady = function() {
     console.log("XML Loading finished.");
     var rootElement = this.reader.xmlDoc.documentElement;
 
-    try{
-      this.parseDSX(rootElement);
+    try {
+        this.parseDSX(rootElement);
+    } catch (err) {
+        this.onXMLError(err);
+        return;
     }
-    catch(err){
-      this.onXMLError(err);
-      return;
-    }
+    this.createCameras(this.dsxInfo.perspectives);
     this.createElements();
     this.createTransformations();
     this.loadedOk = true;
@@ -43,52 +43,65 @@ MySceneGraph.prototype.parseDSX = function(rootElement) {
     this.dsxInfo = new DSXParser(rootElement, this.reader);
 };
 
-MySceneGraph.prototype.createElements = function(){
-    for(var types in this.dsxInfo.primitives){
+MySceneGraph.prototype.createCameras = function(perspectives) {
+    var cameras = [];
+    for (var i = 0; i < perspectives.length; i++) {
+        var p = perspectives[i];
+        fromVector = vec3.fromValues(p.from.x, p.from.y, p.from.z)
+        toVector = vec3.fromValues(p.to.x, p.to.y, p.to.z)
+
+        var camera = new CGFcamera(p.angle, p.near, p.far, fromVector, toVector);
+
+        cameras.push(camera);
+    }
+}
+
+MySceneGraph.prototype.createElements = function() {
+    for (var types in this.dsxInfo.primitives) {
         var elementArray = this.dsxInfo.primitives[types];
-        switch(types){
-              case this.scene.PRIMITIVES.RECTANGLE:
-                    for(var i = 0; i < elementArray.length; i++){
-                        var obj = new MyRectangle(this.scene, elementArray[i], this.reader);
-                        this.scene.primitives[obj.id] = obj;
-                    }
-                    break;
-
-              case this.scene.PRIMITIVES.TRIANGLE:
-                    for(var i = 0; i < elementArray.length; i++){
-                        var obj = new MyTriangle(this.scene, elementArray[i], this.reader);
-                        this.scene.primitives[obj.id] = obj;
-                    }
-                    break;
-
-              case this.scene.PRIMITIVES.CYLINDER:
-                    for(var i = 0; i < elementArray.length; i++){
-                        var obj = new MyCylinder(this.scene, elementArray[i], this.reader);
-                        this.scene.primitives[obj.id] = obj;
-                    }
-                    break;
-
-              case this.scene.PRIMITIVES.SPHERE:
-                    for(var i = 0; i < elementArray.length; i++){
-                        var obj = new MySphere(this.scene, elementArray[i], this.reader);
-                        this.scene.primitives[obj.id] = obj;
-                    }
-                    break;
-
-              case this.scene.PRIMITIVES.TORUS:
-                    for(var i = 0; i < elementArray.length; i++){
-                        //var obj = new MyTorus(this, elementArray[i], this.reader);
-                        //this.scene.primitives[obj.id] = obj;
-                    }
-                    break;
-              default:
-                    break;
+        switch (types) {
+            case this.scene.PRIMITIVES.RECTANGLE:
+                for (var i = 0; i < elementArray.length; i++) {
+                    var obj = new MyRectangle(this.scene, elementArray[i], this.reader);
+                    this.scene.primitives[obj.id] = obj;
                 }
-      }
+                break;
+
+            case this.scene.PRIMITIVES.TRIANGLE:
+                for (var i = 0; i < elementArray.length; i++) {
+                    var obj = new MyTriangle(this.scene, elementArray[i], this.reader);
+                    this.scene.primitives[obj.id] = obj;
+                }
+                break;
+
+            case this.scene.PRIMITIVES.CYLINDER:
+                for (var i = 0; i < elementArray.length; i++) {
+                    var obj = new MyCylinder(this.scene, elementArray[i], this.reader);
+                    this.scene.primitives[obj.id] = obj;
+                }
+                break;
+
+            case this.scene.PRIMITIVES.SPHERE:
+                for (var i = 0; i < elementArray.length; i++) {
+                    var obj = new MySphere(this.scene, elementArray[i], this.reader);
+                    this.scene.primitives[obj.id] = obj;
+                }
+                break;
+
+            case this.scene.PRIMITIVES.TORUS:
+                for (var i = 0; i < elementArray.length; i++) {
+                    //var obj = new MyTorus(this, elementArray[i], this.reader);
+                    //this.scene.primitives[obj.id] = obj;
+                }
+                break;
+            default:
+                break;
+        }
+    }
 };
 
-MySceneGraph.prototype.createTransformations = function(){
-    for(var i = 0; i < this.dsxInfo.transformations.length; i++){
+MySceneGraph.prototype.createTransformations = function() {
+    for (var i = 0; i < this.dsxInfo.transformations.length; i++) {
         var collections = this.dsxInfo.transformations[i];
         this.scene.transformations[collections.id] = [];
 
@@ -97,14 +110,12 @@ MySceneGraph.prototype.createTransformations = function(){
             this.scene.transformations[collections.id].push(t);
         }
     }
-    console.log(this.scene.transformations);
-
 };
 
-MySceneGraph.prototype.getTransformationAttributes = function(trans){
+MySceneGraph.prototype.getTransformationAttributes = function(trans) {
     var result = {};
     result.name = trans.tagName;
-    switch(trans.tagName){
+    switch (trans.tagName) {
         case this.scene.TRANSFORMATIONS.ROTATE:
             result.axis = this.reader.getString(trans, "axis");
             result.angle = this.reader.getFloat(trans, "angle");

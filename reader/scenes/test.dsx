@@ -14,7 +14,7 @@
         <!-- a vista muda para a proxima da lista; da -->
         <!-- ultima vista da lista volta 'a primeira -->
         <perspective id="eagle eye" near="5" far="5" angle="5">
-            <from x="ff" y="5" z="5" />
+            <from x="5" y="5" z="5" />
             <to x="5" y="5" z="5" />
         </perspective>
 
