@@ -3,6 +3,7 @@
 function XMLscene() {
     CGFscene.call(this);
     this.primitives = {};
+    this.transformations = {};
 }
 
 
@@ -35,6 +36,12 @@ XMLscene.prototype.init = function(application) {
         TORUS : "torus"
     };
 
+    this.TRANSFORMATIONS = {
+        ROTATE : "rotate",
+        TRANSLATE : "translate",
+        SCALE : "scale"
+    };
+
 };
 
 XMLscene.prototype.initLights = function() {
@@ -62,7 +69,7 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.lights[0].setVisible(true);
     this.lights[0].enable();
 
-
+    
 };
 
 

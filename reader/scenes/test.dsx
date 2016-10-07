@@ -92,9 +92,14 @@
         <transformation id="ss">
            <!-- instrucoes a usar sem limite nem ordem -->
            <!-- deve existir pelo menos uma transformacao -->
-           <translate x="ff" y="ff" z="ff" />
-           <rotate axis="cc" angle="ff" />
-           <scale x="ff" y="ff" z="ff" />
+           <translate x="5" y="0" z="2" />
+           <rotate axis="x" angle="30" />
+           <scale x="2" y="2" z="2" />
+        </transformation>
+        <transformation id="ass">
+           <translate x="2" y="0" z="2" />
+           <rotate axis="z" angle="60" />
+           <scale x="2" y="1" z="0.5" />
         </transformation>
 
     </transformations>

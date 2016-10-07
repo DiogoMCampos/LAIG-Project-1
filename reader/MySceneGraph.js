@@ -32,6 +32,7 @@ MySceneGraph.prototype.onXMLReady = function() {
       return;
     }
     this.createElements();
+    this.createTransformations();
     this.loadedOk = true;
 
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
@@ -43,12 +44,11 @@ MySceneGraph.prototype.parseDSX = function(rootElement) {
 };
 
 MySceneGraph.prototype.createElements = function(){
-    for( types in this.dsxInfo.primitives){
+    for(var types in this.dsxInfo.primitives){
         var elementArray = this.dsxInfo.primitives[types];
         switch(types){
               case this.scene.PRIMITIVES.RECTANGLE:
                     for(var i = 0; i < elementArray.length; i++){
-                        console.log(elementArray[i]);
                         var obj = new MyRectangle(this.scene, elementArray[i], this.reader);
                         this.scene.primitives[obj.id] = obj;
                     }
@@ -56,7 +56,6 @@ MySceneGraph.prototype.createElements = function(){
 
               case this.scene.PRIMITIVES.TRIANGLE:
                     for(var i = 0; i < elementArray.length; i++){
-                        console.log(elementArray[i]);
                         var obj = new MyTriangle(this.scene, elementArray[i], this.reader);
                         this.scene.primitives[obj.id] = obj;
                     }
@@ -64,7 +63,6 @@ MySceneGraph.prototype.createElements = function(){
 
               case this.scene.PRIMITIVES.CYLINDER:
                     for(var i = 0; i < elementArray.length; i++){
-                        console.log(elementArray[i]);
                         var obj = new MyCylinder(this.scene, elementArray[i], this.reader);
                         this.scene.primitives[obj.id] = obj;
                     }
@@ -72,7 +70,6 @@ MySceneGraph.prototype.createElements = function(){
 
               case this.scene.PRIMITIVES.SPHERE:
                     for(var i = 0; i < elementArray.length; i++){
-                        console.log(elementArray[i]);
                         var obj = new MySphere(this.scene, elementArray[i], this.reader);
                         this.scene.primitives[obj.id] = obj;
                     }
@@ -80,19 +77,48 @@ MySceneGraph.prototype.createElements = function(){
 
               case this.scene.PRIMITIVES.TORUS:
                     for(var i = 0; i < elementArray.length; i++){
-                        //var r = new MyTorus(this, elementArray[i], this.reader);
-                        //this.scene.PRIMITIVES.push(r);
+                        //var obj = new MyTorus(this, elementArray[i], this.reader);
+                        //this.scene.primitives[obj.id] = obj;
                     }
                     break;
               default:
                     break;
-        }
-    }
+                }
+      }
 };
 
 MySceneGraph.prototype.createTransformations = function(){
+    for(var i = 0; i < this.dsxInfo.transformations.length; i++){
+        var collections = this.dsxInfo.transformations[i];
+        this.scene.transformations[collections.id] = [];
 
-}
+        for (var j = 0; j < collections.elements.length; j++) {
+            var t = this.getTransformationAttributes(collections.elements[j]);
+            this.scene.transformations[collections.id].push(t);
+        }
+    }
+    console.log(this.scene.transformations);
+
+};
+
+MySceneGraph.prototype.getTransformationAttributes = function(trans){
+    var result = {};
+    result.name = trans.tagName;
+    switch(trans.tagName){
+        case this.scene.TRANSFORMATIONS.ROTATE:
+            result.axis = this.reader.getString(trans, "axis");
+            result.angle = this.reader.getFloat(trans, "angle");
+            break;
+
+        case this.scene.TRANSFORMATIONS.TRANSLATE:
+        case this.scene.TRANSFORMATIONS.SCALE:
+            result.x = this.reader.getFloat(trans, "x");
+            result.y = this.reader.getFloat(trans, "y");
+            result.z = this.reader.getFloat(trans, "z");
+            break;
+    }
+    return result;
+};
 
 /*
  * Callback to be executed on any read error
