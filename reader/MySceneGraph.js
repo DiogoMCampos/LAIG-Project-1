@@ -25,23 +25,28 @@ MySceneGraph.prototype.onXMLReady = function() {
     var rootElement = this.reader.xmlDoc.documentElement;
 
     try {
-        this.parseDSX(rootElement);
+        var dsxInfo = new DSXParser(rootElement, this.reader);
     } catch (err) {
         this.onXMLError(err);
         return;
     }
-    this.createCameras(this.dsxInfo.perspectives);
-    this.createElements();
-    this.createTransformations();
+    this.createScene(dsxInfo.scene);
+    this.createCameras(dsxInfo.perspectives);
+    this.createElements(dsxInfo.primitives);
+    this.createTransformations(dsxInfo.transformations);
     this.loadedOk = true;
 
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
     this.scene.onGraphLoaded();
 };
 
-MySceneGraph.prototype.parseDSX = function(rootElement) {
-    this.dsxInfo = new DSXParser(rootElement, this.reader);
-};
+
+
+
+MySceneGraph.prototype.createScene = function(sceneNode){
+    this.scene.root = this.reader.getString(sceneNode, "root");
+    this.scene.axisLength = this.reader.getFloat(sceneNode, "axis_length");
+}
 
 MySceneGraph.prototype.createCameras = function(perspectives) {
     var cameras = [];
@@ -56,9 +61,9 @@ MySceneGraph.prototype.createCameras = function(perspectives) {
     }
 }
 
-MySceneGraph.prototype.createElements = function() {
-    for (var types in this.dsxInfo.primitives) {
-        var elementArray = this.dsxInfo.primitives[types];
+MySceneGraph.prototype.createElements = function(primitivesNodes) {
+    for (var types in primitivesNodes) {
+        var elementArray = primitivesNodes[types];
         switch (types) {
             case this.scene.PRIMITIVES.RECTANGLE:
                 for (var i = 0; i < elementArray.length; i++) {
@@ -100,9 +105,9 @@ MySceneGraph.prototype.createElements = function() {
     }
 };
 
-MySceneGraph.prototype.createTransformations = function() {
-    for (var i = 0; i < this.dsxInfo.transformations.length; i++) {
-        var collections = this.dsxInfo.transformations[i];
+MySceneGraph.prototype.createTransformations = function(transformationNodes) {
+    for (var i = 0; i < transformationNodes.length; i++) {
+        var collections = transformationNodes[i];
         this.scene.transformations[collections.id] = [];
 
         for (var j = 0; j < collections.elements.length; j++) {
@@ -112,20 +117,20 @@ MySceneGraph.prototype.createTransformations = function() {
     }
 };
 
-MySceneGraph.prototype.getTransformationAttributes = function(trans) {
+MySceneGraph.prototype.getTransformationAttributes = function(node) {
     var result = {};
-    result.name = trans.tagName;
-    switch (trans.tagName) {
+    result.name = node.tagName;
+    switch (node.tagName) {
         case this.scene.TRANSFORMATIONS.ROTATE:
-            result.axis = this.reader.getString(trans, "axis");
-            result.angle = this.reader.getFloat(trans, "angle");
+            result.axis = this.reader.getString(node, "axis");
+            result.angle = this.reader.getFloat(node, "angle");
             break;
 
         case this.scene.TRANSFORMATIONS.TRANSLATE:
         case this.scene.TRANSFORMATIONS.SCALE:
-            result.x = this.reader.getFloat(trans, "x");
-            result.y = this.reader.getFloat(trans, "y");
-            result.z = this.reader.getFloat(trans, "z");
+            result.x = this.reader.getFloat(node, "x");
+            result.y = this.reader.getFloat(node, "y");
+            result.z = this.reader.getFloat(node, "z");
             break;
     }
     return result;

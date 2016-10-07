@@ -115,7 +115,7 @@ DSXParser.prototype.parseTransformations = function(rootElement) {
     }
 };
 
-DSXParser.prototype.parseTransformation = function(transformation) {
+DSXParser.prototype.getTransformationData = function(transformation) {
     var elems = transformation.children;
 
     var id = this.reader.getString(transformation, 'id', false);
@@ -147,8 +147,6 @@ DSXParser.prototype.parsePrimitives = function(rootElement) {
         throw "either zero or more than one 'primitives' element found.";
     }
 
-    var primitives = elems[0];
-
     this.primitives = {
         "rectangle": [],
         "triangle": [],
@@ -157,19 +155,20 @@ DSXParser.prototype.parsePrimitives = function(rootElement) {
         "torus": []
     };
 
-    var primitiveList = primitives.getElementsByTagName('primitive');
-    if (!elems || elems.length === 0) {
+    var nodes = elems[0].getElementsByTagName('primitive');
+
+    if (!nodes || nodes.length === 0) {
         console.warn("no primitives found");
         return;
     }
 
-    for (var i = 0; i < primitiveList.length; i++) {
-        this.parsePrimitive(primitiveList[i]);
+    for (var i = 0; i < nodes.length; i++) {
+        this.parsePrimitive(nodes[i], this.primitives);
     }
 };
 
-DSXParser.prototype.parsePrimitive = function(primitive) {
-    var children = primitive.children;
+DSXParser.prototype.getPrimitiveData = function(nodes, primitives) {
+    var children = nodes.children;
 
     if (children.length !== 1) {
         throw "either zero or more than one tag for a specific primitive.";
@@ -178,12 +177,12 @@ DSXParser.prototype.parsePrimitive = function(primitive) {
     var element = children[0];
 
     var type = element.tagName;
-    if (!this.primitives[type]) {
+    if (!primitives[type]) {
         console.warn(type + " is not a valid primitive tag. Proceeded without that primitive.");
         return;
     }
 
-    var id = this.reader.getString(primitive, 'id', false);
+    var id = this.reader.getString(nodes, 'id', false);
     if (!id) {
         console.warn("primitive without id (required). Proceeded without that primitive.");
         return;
@@ -193,5 +192,5 @@ DSXParser.prototype.parsePrimitive = function(primitive) {
     object.id = id;
     object.element = element;
 
-    this.primitives[type].push(object);
+    primitives[type].push(object);
 };
