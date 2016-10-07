@@ -1,13 +1,8 @@
-
-
 function XMLscene() {
     CGFscene.call(this);
     this.primitives = {};
     this.transformations = {};
 }
-
-
-
 
 XMLscene.prototype = Object.create(CGFscene.prototype);
 XMLscene.prototype.constructor = XMLscene;
@@ -68,10 +63,7 @@ XMLscene.prototype.onGraphLoaded = function() {
     //this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
     this.lights[0].setVisible(true);
     this.lights[0].enable();
-
-    
 };
-
 
 XMLscene.prototype.display = function() {
     // ---- BEGIN Background, camera and axis setup
