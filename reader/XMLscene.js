@@ -126,7 +126,13 @@ XMLscene.prototype.applyTransformations = function(transformationsArray){
                 this.scale(t.x, t.y, t.z);
                 break;
             case this.TRANSFORMATIONS.ROTATE:
-                this.rotate(t.angle * 2*Math.PI / 360, t.axis == 'x'? 1 : 0, t.axis == 'y'? 1 : 0, t.axis == 'z'? 1 : 0 );
+                this.rotate(t.angle * 2*Math.PI / 360,
+                            t.axis == 'x'? 1 : 0,
+                            t.axis == 'y'? 1 : 0,
+                            t.axis == 'z'? 1 : 0 );
+                break;
+            case this.TRANSFORMATIONS.REFERENCE:
+                this.applyTransformations(this.transformations[t.id]);
                 break;
             default :
                 break;
