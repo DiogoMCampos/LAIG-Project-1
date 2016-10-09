@@ -14,7 +14,7 @@ function MySceneGraph(filename, scene) {
      * If any error occurs, the reader calls onXMLError on this object, with an error message
      */
 
-    this.reader.open('scenes/' + filename, this);
+    this.reader.open("scenes/" + filename, this);
 }
 
 /*
@@ -117,7 +117,6 @@ MySceneGraph.prototype.createTransformations = function(transformationNodes) {
             this.scene.transformations[collections.id].push(t);
         }
     }
-    console.log(20 == 20 ? "yyy" : "nnn");
 };
 
 MySceneGraph.prototype.getTransformationAttributes = function(node) {
@@ -155,8 +154,8 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
         component.transformations = [];
         for (var j = 0; j < transformationNodes.length; j++) {
             var t = {};
-            if(transformationNodes[j].tagName == this.scene.TRANSFORMATIONS.REFERENCE) {
-                t.id = this.reader.getString(transformationNodes[j], 'id');
+            if(transformationNodes[j].tagName === this.scene.TRANSFORMATIONS.REFERENCE) {
+                t.id = this.reader.getString(transformationNodes[j], "id");
                 t.name = this.scene.TRANSFORMATIONS.REFERENCE;
             }
             else {
@@ -167,22 +166,22 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
 
         component.material = [];
         for (var j = 0; j < material.length; j++) {
-            var materialID = this.reader.getString(material[j], 'id');
+            var materialID = this.reader.getString(material[j], "id");
             component.material.push(materialID);
         }
 
-        var textID = this.reader.getString(texture[0], 'id');
+        var textID = this.reader.getString(texture[0], "id");
         component.textureID = textID;
 
         var child = children[0].children;
         component.children = {
-            'componentref' : [],
-            'primitiveref' : []
+            "componentref" : [],
+            "primitiveref" : []
         };
 
         for (var j = 0; j < child.length; j++) {
             var tag = child[j].tagName;
-            var id = this.reader.getString(child[j], 'id');
+            var id = this.reader.getString(child[j], "id");
             component.children[tag].push(id);
         }
 

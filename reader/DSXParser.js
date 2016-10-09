@@ -11,7 +11,7 @@ function DSXParser(rootElement, reader) {
 }
 
 DSXParser.prototype.parseScene = function(rootElement) {
-    var elems = rootElement.getElementsByTagName('scene');
+    var elems = rootElement.getElementsByTagName("scene");
 
     if (!elems) {
         throw "scene element is missing.";
@@ -25,7 +25,7 @@ DSXParser.prototype.parseScene = function(rootElement) {
 };
 
 DSXParser.prototype.parseViews = function(rootElement) {
-    var elems = rootElement.getElementsByTagName('views');
+    var elems = rootElement.getElementsByTagName("views");
 
     if (!elems) {
         throw "views element is missing.";
@@ -37,9 +37,9 @@ DSXParser.prototype.parseViews = function(rootElement) {
 
     var views = elems[0];
 
-    this.defaultView = this.reader.getFloat(views, 'default');
+    this.defaultView = this.reader.getFloat(views, "default");
 
-    var perspectives = views.getElementsByTagName('perspective');
+    var perspectives = views.getElementsByTagName("perspective");
 
     if (perspectives.length < 1) {
         throw "no 'perspective' element found.";
@@ -54,7 +54,7 @@ DSXParser.prototype.parseViews = function(rootElement) {
 
 
 DSXParser.prototype.parsePerspective = function(perspective) {
-    var fromElems = perspective.getElementsByTagName('from');
+    var fromElems = perspective.getElementsByTagName("from");
 
     if (!fromElems) {
         throw "from element is missing.";
@@ -64,7 +64,7 @@ DSXParser.prototype.parsePerspective = function(perspective) {
         throw "either zero or more than one 'from' element found.";
     }
 
-    var toElems = perspective.getElementsByTagName('to');
+    var toElems = perspective.getElementsByTagName("to");
 
     if (!toElems) {
         throw "to element is missing.";
@@ -91,7 +91,7 @@ DSXParser.prototype.parsePerspective = function(perspective) {
 };
 
 DSXParser.prototype.parseTransformations = function(rootElement) {
-    var elems = rootElement.getElementsByTagName('transformations');
+    var elems = rootElement.getElementsByTagName("transformations");
 
     if (!elems) {
         throw "transformations element is missing.";
@@ -105,7 +105,7 @@ DSXParser.prototype.parseTransformations = function(rootElement) {
 
     this.transformations = [];
 
-    var transformationList = transformations.getElementsByTagName('transformation');
+    var transformationList = transformations.getElementsByTagName("transformation");
     if (!elems || elems.length === 0) {
         console.warn("no transformations found");
         return;
@@ -119,7 +119,7 @@ DSXParser.prototype.parseTransformations = function(rootElement) {
 DSXParser.prototype.getTransformationData = function(transformation) {
     var elems = transformation.children;
 
-    var id = this.reader.getString(transformation, 'id', false);
+    var id = this.reader.getString(transformation, "id", false);
     if (!id) {
         console.warn("transformation without id (required). Proceeded without that transformation.");
         return;
@@ -138,7 +138,7 @@ DSXParser.prototype.getTransformationData = function(transformation) {
 
 
 DSXParser.prototype.parsePrimitives = function(rootElement) {
-    var elems = rootElement.getElementsByTagName('primitives');
+    var elems = rootElement.getElementsByTagName("primitives");
 
     if (!elems) {
         throw "primitives element is missing.";
@@ -156,7 +156,7 @@ DSXParser.prototype.parsePrimitives = function(rootElement) {
         "torus": []
     };
 
-    var nodes = elems[0].getElementsByTagName('primitive');
+    var nodes = elems[0].getElementsByTagName("primitive");
 
     if (!nodes || nodes.length === 0) {
         console.warn("no primitives found");
@@ -183,7 +183,7 @@ DSXParser.prototype.getPrimitiveData = function(nodes, primitives) {
         return;
     }
 
-    var id = this.reader.getString(nodes, 'id', false);
+    var id = this.reader.getString(nodes, "id", false);
     if (!id) {
         console.warn("primitive without id (required). Proceeded without that primitive.");
         return;
@@ -197,7 +197,7 @@ DSXParser.prototype.getPrimitiveData = function(nodes, primitives) {
 };
 
 DSXParser.prototype.parseComponents = function(rootElement) {
-    var comp = rootElement.getElementsByTagName('components');
+    var comp = rootElement.getElementsByTagName("components");
     if (comp.length !== 1) {
         throw "either zero or more than one 'components' element found.";
     }
@@ -207,7 +207,7 @@ DSXParser.prototype.parseComponents = function(rootElement) {
 
     for (var i = 0; i < components.length; i++) {
         var object = {};
-        object.id = this.reader.getString(components[i], 'id');
+        object.id = this.reader.getString(components[i], "id");
         object.element = components[i];
         this.components.push(object);
     }

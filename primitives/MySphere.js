@@ -2,14 +2,14 @@
  * MySphere
  * @constructor
  */
- function MySphere(scene, info, reader) {
+function MySphere(scene, info, reader) {
     CGFobject.call(this, scene);
     this.scene = scene;
     this.reader = reader;
     this.id = info.id;
     this.parseAttributes(info.element);
     this.initBuffers();
- }
+}
 
 
 MySphere.prototype = Object.create(CGFobject.prototype);
@@ -17,57 +17,58 @@ MySphere.prototype.constructor = MySphere;
 
 MySphere.prototype.initBuffers = function() {
 
-  this.vertices = [];
-  this.indices = [];
-  this.normals = [];
-  this.texCoords = [];
-  this.textS = 1.0 / this.slices;
-  this.textT = 1.0 / this.stacks;
+    this.vertices = [];
+    this.indices = [];
+    this.normals = [];
+    this.texCoords = [];
+    this.textS = 1.0 / this.slices;
+    this.textT = 1.0 / this.stacks;
 
-  var angLat = 2 * Math.PI / this.slices;
-  var angVert =  Math.PI/ this.stacks;
-  var s=0;
-  var t=1;
-   //Vertices & Normals
-   for (var ind = this.stacks; ind >=0; ind--) {
+    var angLat = 2 * Math.PI / this.slices;
+    var angVert = Math.PI / this.stacks;
+    var s = 0;
+    var t = 1;
 
-     s=0;
+    //Vertices & Normals
+    for (var ind = this.stacks; ind >= 0; ind--) {
 
-      for (var m = 0; m < this.slices; m++) {
-         this.vertices.push(Math.cos(angLat * m) *Math.sin(angVert * ind) * this.radius ,
-                              Math.sin(angLat * m) *Math.sin(angVert * ind) * this.radius,
-                              Math.cos(angVert * ind) * this.radius);
-         this.normals.push (Math.cos(angLat * m) *Math.sin(Math.PI-angVert * ind) ,
-                              Math.sin(angLat * m) *Math.sin(Math.PI-angVert * ind) ,
-                              Math.sin(angVert * ind));
-         s +=this.textS;
-         this.texCoords.push(s,t);
+        s = 0;
 
-      }
-      t -=this.textT;
-   }
+        for (var m = 0; m < this.slices; m++) {
+            this.vertices.push(Math.cos(angLat * m) * Math.sin(angVert * ind) * this.radius,
+                Math.sin(angLat * m) * Math.sin(angVert * ind) * this.radius,
+                Math.cos(angVert * ind) * this.radius);
+            this.normals.push(Math.cos(angLat * m) * Math.sin(Math.PI - angVert * ind),
+                Math.sin(angLat * m) * Math.sin(Math.PI - angVert * ind),
+                Math.sin(angVert * ind));
+            s += this.textS;
+            this.texCoords.push(s, t);
 
-   //Indices
-   for (var j = 0; j < this.stacks; j++) {
-      for (var i = 0; i < (this.slices); i ++) {
-         this.indices.push((i + 1) % (this.slices) + (j + 0) * this.slices,
-                           (i + 0) % (this.slices) + (j + 1) * this.slices,
-                           (i + 0) % (this.slices) + (j + 0) * this.slices);
+        }
+        t -= this.textT;
+    }
 
-         this.indices.push((i + 0) % (this.slices) + (j + 1) * this.slices,
-                           (i + 1) % (this.slices) + (j + 0) * this.slices,
-                           (i + 1) % (this.slices) + (j + 1) * this.slices);
-      }
+    //Indices
+    for (var j = 0; j < this.stacks; j++) {
+        for (var i = 0; i < (this.slices); i++) {
+            this.indices.push((i + 1) % (this.slices) + (j + 0) * this.slices,
+                (i + 0) % (this.slices) + (j + 1) * this.slices,
+                (i + 0) % (this.slices) + (j + 0) * this.slices);
 
-   }
+            this.indices.push((i + 0) % (this.slices) + (j + 1) * this.slices,
+                (i + 1) % (this.slices) + (j + 0) * this.slices,
+                (i + 1) % (this.slices) + (j + 1) * this.slices);
+        }
 
-   this.primitiveType = this.scene.gl.TRIANGLES;
-   this.initGLBuffers();
+    }
+
+    this.primitiveType = this.scene.gl.TRIANGLES;
+    this.initGLBuffers();
 };
 
-MySphere.prototype.parseAttributes = function (xmlNode){
+MySphere.prototype.parseAttributes = function(xmlNode) {
 
-    this.radius = this.reader.getFloat(xmlNode, 'radius');
-    this.slices = this.reader.getFloat(xmlNode, 'slices');
-    this.stacks = this.reader.getFloat(xmlNode, 'stacks');
+    this.radius = this.reader.getFloat(xmlNode, "radius");
+    this.slices = this.reader.getFloat(xmlNode, "slices");
+    this.stacks = this.reader.getFloat(xmlNode, "stacks");
 };
