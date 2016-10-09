@@ -26,14 +26,16 @@ MySceneGraph.prototype.onXMLReady = function() {
 
     try {
         var dsxInfo = new DSXParser(rootElement, this.reader);
+        this.createScene(dsxInfo.scene);
+        this.createCameras(dsxInfo.perspectives);
+        this.createElements(dsxInfo.primitives);
+        this.createTransformations(dsxInfo.transformations);
+        this.createComponents(dsxInfo.components);
     } catch (err) {
         this.onXMLError(err);
         return;
     }
-    this.createScene(dsxInfo.scene);
-    this.createCameras(dsxInfo.perspectives);
-    this.createElements(dsxInfo.primitives);
-    this.createTransformations(dsxInfo.transformations);
+
     this.loadedOk = true;
 
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
@@ -43,23 +45,23 @@ MySceneGraph.prototype.onXMLReady = function() {
 
 
 
-MySceneGraph.prototype.createScene = function(sceneNode){
+MySceneGraph.prototype.createScene = function(sceneNode) {
     this.scene.root = this.reader.getString(sceneNode, "root");
     this.scene.axisLength = this.reader.getFloat(sceneNode, "axis_length");
-}
+};
 
 MySceneGraph.prototype.createCameras = function(perspectives) {
     var cameras = [];
     for (var i = 0; i < perspectives.length; i++) {
         var p = perspectives[i];
-        fromVector = vec3.fromValues(p.from.x, p.from.y, p.from.z)
-        toVector = vec3.fromValues(p.to.x, p.to.y, p.to.z)
+        fromVector = vec3.fromValues(p.from.x, p.from.y, p.from.z);
+        toVector = vec3.fromValues(p.to.x, p.to.y, p.to.z);
 
         var camera = new CGFcamera(p.angle, p.near, p.far, fromVector, toVector);
 
         cameras.push(camera);
     }
-}
+};
 
 MySceneGraph.prototype.createElements = function(primitivesNodes) {
     for (var types in primitivesNodes) {
@@ -115,6 +117,7 @@ MySceneGraph.prototype.createTransformations = function(transformationNodes) {
             this.scene.transformations[collections.id].push(t);
         }
     }
+    console.log(20 == 20 ? "yyy" : "nnn");
 };
 
 MySceneGraph.prototype.getTransformationAttributes = function(node) {
@@ -134,6 +137,57 @@ MySceneGraph.prototype.getTransformationAttributes = function(node) {
             break;
     }
     return result;
+};
+
+MySceneGraph.prototype.createComponents = function(componentNodes) {
+
+    for (var i = 0; i < componentNodes.length; i++) {
+        var component = {};
+        var id = componentNodes[i].id;
+        var data = componentNodes[i].element;
+
+        var transformation = data.getElementsByTagName("transformation");
+        var texture = data.getElementsByTagName("texture");
+        var material = data.getElementsByTagName("material");
+        var children = data.getElementsByTagName("children");
+
+        var transformationNodes = transformation[0].children;
+        component.transformations = [];
+        for (var j = 0; j < transformationNodes.length; j++) {
+            var t = {};
+            if(transformationNodes[j].tagName == this.scene.TRANSFORMATIONS.REFERENCE) {
+                t.id = this.reader.getString(transformationNodes[j], 'id');
+                t.name = this.scene.TRANSFORMATIONS.REFERENCE;
+            }
+            else {
+                t = this.getTransformationAttributes(transformationNodes[j]);
+            }
+            component.transformations.push(t);
+        }
+
+        component.material = [];
+        for (var j = 0; j < material.length; j++) {
+            var materialID = this.reader.getString(material[j], 'id');
+            component.material.push(materialID);
+        }
+
+        var textID = this.reader.getString(texture[0], 'id');
+        component.textureID = textID;
+
+        var child = children[0].children;
+        component.children = {
+            'componentref' : [],
+            'primitiveref' : []
+        };
+
+        for (var j = 0; j < child.length; j++) {
+            var tag = child[j].tagName;
+            var id = this.reader.getString(child[j], 'id');
+            component.children[tag].push(id);
+        }
+
+        this.scene.components[id] = component;
+      }
 };
 
 /*

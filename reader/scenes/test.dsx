@@ -149,9 +149,9 @@
                 <!-- usando zero ou mais das instrucoes seguintes, sem -->
                 <!-- limite nem ordem -->
                 <!-- ex: bloco transformation pode ficar sem conteudo -->
-                <translate x="ff" y="ff" z="ff" />
-                <rotate axis="cc" angle="ff" />
-                <scale x="ff" y="ff" z="ff" />
+                <translate x="1" y="1" z="2" />
+                <rotate axis="y" angle="10" />
+                <scale x=".5" y="3.1" z="-0.9" />
             </transformation>
 
             <!-- declaracao obrigatoria de pelo menos um material; -->
@@ -162,6 +162,8 @@
             <!-- ultimo material da lista volta ao primeiro -->
             <materials>
                 <material id="ss" />
+                <material id="sdfadg" />
+                <material id="123" />
             </materials>
 
             <!-- declaracao obrigatoria de texture -->
@@ -177,6 +179,29 @@
                 <!-- deve existir uma ou mais tags "componentref" e/ou -->
                 <!-- "primitiveref", identificando outros -->
                 <!-- componentes ou primitivas -->
+                <componentref id="ss" />
+                <primitiveref id="ss" />
+
+            </children>
+
+        </component>
+
+
+        <component id="ses">
+            <transformation>
+                <translate x="1" y="1" z="-2" />
+                <scale x=".5" y=".1" z="1" />
+                <rotate axis="y" angle="30" />
+            </transformation>
+
+            <materials>
+                <material id="ss" />
+            </materials>
+
+            <texture id="ss" />
+
+            <children>
+                <componentref id="sasdads" />
                 <componentref id="ss" />
                 <primitiveref id="ss" />
 

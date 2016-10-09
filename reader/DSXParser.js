@@ -5,6 +5,7 @@ function DSXParser(rootElement, reader) {
     this.parseViews(rootElement);
     this.parseTransformations(rootElement);
     this.parsePrimitives(rootElement);
+    this.parseComponents(rootElement);
 
     //console.log(this);
 }
@@ -111,7 +112,7 @@ DSXParser.prototype.parseTransformations = function(rootElement) {
     }
 
     for (var i = 0; i < transformationList.length; i++) {
-        this.parseTransformation(transformationList[i]);
+        this.getTransformationData(transformationList[i]);
     }
 };
 
@@ -163,7 +164,7 @@ DSXParser.prototype.parsePrimitives = function(rootElement) {
     }
 
     for (var i = 0; i < nodes.length; i++) {
-        this.parsePrimitive(nodes[i], this.primitives);
+        this.getPrimitiveData(nodes[i], this.primitives);
     }
 };
 
@@ -193,4 +194,21 @@ DSXParser.prototype.getPrimitiveData = function(nodes, primitives) {
     object.element = element;
 
     primitives[type].push(object);
+};
+
+DSXParser.prototype.parseComponents = function(rootElement) {
+    var comp = rootElement.getElementsByTagName('components');
+    if (comp.length !== 1) {
+        throw "either zero or more than one 'components' element found.";
+    }
+
+    var components = comp[0].getElementsByTagName("component");
+    this.components = [];
+
+    for (var i = 0; i < components.length; i++) {
+        var object = {};
+        object.id = this.reader.getString(components[i], 'id');
+        object.element = components[i];
+        this.components.push(object);
+    }
 };

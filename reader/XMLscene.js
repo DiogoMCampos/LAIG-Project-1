@@ -2,6 +2,7 @@ function XMLscene() {
     CGFscene.call(this);
     this.primitives = {};
     this.transformations = {};
+    this.components = {};
 
     this.PRIMITIVES = {
         RECTANGLE : "rectangle",
@@ -14,7 +15,8 @@ function XMLscene() {
     this.TRANSFORMATIONS = {
         ROTATE : "rotate",
         TRANSLATE : "translate",
-        SCALE : "scale"
+        SCALE : "scale",
+        REFERENCE : "transformationref"
     };
 }
 
@@ -63,6 +65,7 @@ XMLscene.prototype.onGraphLoaded = function() {
     //this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
     // this.lights[0].setVisible(true);
     // this.lights[0].enable();
+    //console.log(this.components);
 };
 
 XMLscene.prototype.display = function() {
@@ -85,9 +88,20 @@ XMLscene.prototype.display = function() {
     this.setDefaultAppearance();
 
 
-    for(var obj in this.primitives){
-        this.primitives[obj].display();
+    for(var comp in this.components){
+        var value = this.components[comp];
+        //console.log(value.transformations);
+        for (var i = 0; i < value.children.primitiveref.length; i++) {
+            var idArray = value.children.primitiveref;
+
+            this.pushMatrix();
+                this.applyTransformations(value.transformations);
+                this.primitives[idArray[i]].display();
+            this.popMatrix();
+        }
     }
+
+
 
     // ---- END Background, camera and axis setup
 
@@ -96,5 +110,26 @@ XMLscene.prototype.display = function() {
     // This is one possible way to do it
     if (this.graph.loadedOk) {
         this.lights[0].update();
+    }
+};
+
+XMLscene.prototype.applyTransformations = function(transformationsArray){
+
+    for (var i = 0; i < transformationsArray.length; i++) {
+        var t = transformationsArray[i];
+        //console.log(t);
+        switch(t.name){
+            case this.TRANSFORMATIONS.TRANSLATE:
+                this.translate(t.x, t.y, t.z);
+                break;
+            case this.TRANSFORMATIONS.SCALE:
+                this.scale(t.x, t.y, t.z);
+                break;
+            case this.TRANSFORMATIONS.ROTATE:
+                this.rotate(t.angle * 2*Math.PI / 360, t.axis == 'x'? 1 : 0, t.axis == 'y'? 1 : 0, t.axis == 'z'? 1 : 0 );
+                break;
+            default :
+                break;
+        }
     }
 };
