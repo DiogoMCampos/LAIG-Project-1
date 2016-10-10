@@ -3,7 +3,9 @@ function DSXParser(rootElement, reader) {
 
     this.parseScene(rootElement);
     this.parseViews(rootElement);
+    this.parseIllumination(rootElement);
     this.parseLights(rootElement);
+    this.parseTextures(rootElement);
     this.parseTransformations(rootElement);
     this.parsePrimitives(rootElement);
     this.parseComponents(rootElement);
@@ -89,6 +91,16 @@ DSXParser.prototype.getPerspectiveData = function(perspective) {
     this.perspectives.push(object);
 };
 
+DSXParser.prototype.parseIllumination = function(rootElement) {
+    var elems = rootElement.getElementsByTagName("illumination");
+
+    if(elems.length !== 1){
+
+    }
+
+    this.illumination = elems[0];
+};
+
 DSXParser.prototype.parseLights = function (rootElement){
     var lights = rootElement.getElementsByTagName("lights");
 
@@ -112,7 +124,7 @@ DSXParser.prototype.getLightData = function (lightArray){
     for (var i = 0; i < omni.length; i++) {
         var object = {};
         object.id = this.reader.getString(omni[i], "id");
-        object.enabled = (this.reader.getFloat(omni[i], "enabled") === 1 ? true:false);
+        object.enabled = this.reader.getBoolean(omni[i], "enabled");
         object.data = omni[i];
         this.lights.omni[object.id] = object;
     }
@@ -128,6 +140,16 @@ DSXParser.prototype.getLightData = function (lightArray){
     }
 };
 
+DSXParser.prototype.parseTextures = function(rootElement){
+    var elems = rootElement.getElementsByTagName("textures");
+
+    if (elems.length !== 1) {
+        throw "either zero or more than one 'transformations' element found.";
+    }
+
+    var texturesArray = elems[0].getElementsByTagName("texture");
+    this.textures = texturesArray;
+};
 
 DSXParser.prototype.parseTransformations = function(rootElement) {
     var elems = rootElement.getElementsByTagName("transformations");

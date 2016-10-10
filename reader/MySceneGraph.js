@@ -28,7 +28,9 @@ MySceneGraph.prototype.onXMLReady = function() {
         var dsxInfo = new DSXParser(rootElement, this.reader);
         this.createScene(dsxInfo.scene);
         this.createCameras(dsxInfo.perspectives);
+        this.createIllumination(dsxInfo.illumination);
         this.createLights(dsxInfo.lights);
+        this.createTextures(dsxInfo.textures);
         this.createElements(dsxInfo.primitives);
         this.createTransformations(dsxInfo.transformations);
         this.createComponents(dsxInfo.components);
@@ -46,6 +48,18 @@ MySceneGraph.prototype.onXMLReady = function() {
 MySceneGraph.prototype.createScene = function(sceneNode) {
     this.scene.root = this.reader.getString(sceneNode, "root");
     this.scene.axisLength = this.reader.getFloat(sceneNode, "axis_length");
+};
+
+MySceneGraph.prototype.createIllumination = function(illuminationNode){
+    this.illumination = {};
+    this.illumination.doublesided = this.reader.getBoolean(illuminationNode, "doublesided");
+    this.illumination.local = this.reader.getBoolean(illuminationNode, "local");
+
+    var ambient = illuminationNode.getElementsByTagName("ambient");
+    this.illumination.ambient = this.getRGBA(ambient[0]);
+
+    var background = illuminationNode.getElementsByTagName("background");
+    this.illumination.background = this.getRGBA(background[0]);
 };
 
 MySceneGraph.prototype.createCameras = function(perspectives) {
@@ -82,7 +96,7 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
                     definitions.target = this.getXYZ(tarArray[0]);
                     definitions.angle = lights[id].angle;
                     definitions.exponent = lights[id].exponent;
-                    this.lights["spot"][definitions.id] = definitions;
+                    this.lights.spot[definitions.id] = definitions;
                 }
                 break;
             case "omni":
@@ -92,8 +106,7 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
                     var locArray = lights[id].data.getElementsByTagName("location");
                     definitions.location = this.getXYZ(locArray[0]);
                     definitions.location.w = this.reader.getFloat(locArray[0], "w");
-
-                    //this.scene.initLights(definitions, "omni");
+                    this.lights.omni[definitions.id] = definitions;
                 }
                 break;
         }
@@ -112,7 +125,20 @@ MySceneGraph.prototype.getLightAttributes = function(node, definitions){
 
     var specArray = node.data.getElementsByTagName("specular");
     definitions.specular = this.getRGBA(specArray[0]);
-}
+};
+
+MySceneGraph.prototype.createTextures = function(texturesArray){
+    this.textures = {};
+    for (var i = 0; i < texturesArray.length; i++) {
+        var texture = texturesArray[i];
+        var t = {};
+        t.id = this.reader.getString(texture, "id");
+        t.file = this.reader.getString(texture, "fle");
+        t.lengthS = this.reader.getFloat(texture, "length_s");
+        t.lengthT = this.reader.getFloat(texture, "length_t");
+        this.textures[t.id] = t;
+    }
+};
 
 MySceneGraph.prototype.createElements = function(primitivesNodes) {
     for (var types in primitivesNodes) {

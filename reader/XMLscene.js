@@ -39,7 +39,7 @@ XMLscene.prototype.init = function(application) {
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
 
-    this.axis = new CGFaxis(this);
+    this.axis = new CGFaxis(this, this.axisLength);
 
 };
 
@@ -56,7 +56,7 @@ XMLscene.prototype.initLights = function() {
             if (type === "omni") {
                 this.lights[lightsIndex].setPosition(def.location.x, def.location.y, def.location.z, def.location.w);
             } else {
-                this.lights[lightsIndex].setPosition(def.location.x, def.location.y, def.location.z, def.location.w);
+                this.lights[lightsIndex].setPosition(def.location.x, def.location.y, def.location.z, 0);
             }
 
             if (def.enabled) {
@@ -68,9 +68,6 @@ XMLscene.prototype.initLights = function() {
             lightsIndex++;
         }
     }
-    console.log(this.lights);
-
-    //this.lights[0].update();
 };
 
 XMLscene.prototype.initCameras = function() {
@@ -127,7 +124,7 @@ XMLscene.prototype.display = function() {
         }
     }
     //this.primitives["sas"].display();
-    this.primitives["sasphe"].display();
+    //this.primitives["sasphe"].display();
 
 
 
