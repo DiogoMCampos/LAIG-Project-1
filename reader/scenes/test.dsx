@@ -13,18 +13,24 @@
         <!-- primeira vista; de cada vez que se pressione a tecla v/V, -->
         <!-- a vista muda para a proxima da lista; da -->
         <!-- ultima vista da lista volta 'a primeira -->
+        <perspective id="sss" near="0.1" far="500" angle="0.4">
+            <from x="15" y="15" z="15" />
+            <to x="0" y="0" z="0" />
+        </perspective>
         <perspective id="eagle eye" near="5" far="5" angle="5">
             <from x="5" y="5" z="5" />
-            <to x="5" y="5" z="5" />
+            <to x="0" y="5" z="5" />
         </perspective>
+
+
 
     </views>
 
 
-    <illumination doublesided="tt" local="tt" >
+    <illumination doublesided="tt" local="1" >
 
-        <ambient r="ff" g="ff" b="ff" a="ff" />
-        <background r="ff" g="ff" b="ff" a="ff" />
+        <ambient r="3" g="3" b="1" a="7" />
+        <background r="3" g="1" b="6" a="1" />
 
     </illumination>
 
@@ -33,18 +39,18 @@
 
         <!-- Deve existir um ou mais blocos "omni" ou "spot" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
-        <omni id="ss" enabled="tt" >
-            <location x="ff" y="ff" z="ff" w="ff" />
-            <ambient r="ff" g="ff" b="ff" a="ff" />
-            <diffuse r="ff" g="ff" b="ff" a="ff" />
-            <specular r="ff" g="ff" b="ff" a="ff" />
+        <omni id="ss" enabled="1" >
+            <location x="3" y="3" z="3" w="3" />
+            <ambient r="3" g="3" b="3" a="3" />
+            <diffuse r="3" g="3" b="3" a="3" />
+            <specular r="3" g="3" b="3" a="3" />
         </omni>
 
         <spot id="ss" enabled="tt" angle="ff" exponent="ff">
             <!-- atencao, "target" e' diferente de "direction" -->
             <target x="ff" y="ff" z="ff" />
             <location x="ff" y="ff" z="ff" />
-            <ambient r="ff" g="ff" b="ff" a="ff" />
+            <ambient r="2" g="1" b="5" a="3" />
             <diffuse r="ff" g="ff" b="ff" a="ff" />
             <specular r="ff" g="ff" b="ff" a="ff" />
         </spot>

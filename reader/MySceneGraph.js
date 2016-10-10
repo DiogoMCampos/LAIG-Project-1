@@ -28,6 +28,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         var dsxInfo = new DSXParser(rootElement, this.reader);
         this.createScene(dsxInfo.scene);
         this.createCameras(dsxInfo.perspectives);
+        this.createLights(dsxInfo.lights);
         this.createElements(dsxInfo.primitives);
         this.createTransformations(dsxInfo.transformations);
         this.createComponents(dsxInfo.components);
@@ -41,9 +42,6 @@ MySceneGraph.prototype.onXMLReady = function() {
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
     this.scene.onGraphLoaded();
 };
-
-
-
 
 MySceneGraph.prototype.createScene = function(sceneNode) {
     this.scene.root = this.reader.getString(sceneNode, "root");
@@ -61,7 +59,60 @@ MySceneGraph.prototype.createCameras = function(perspectives) {
 
         cameras.push(camera);
     }
+    this.scene.cameras = cameras;
+    this.scene.camera = cameras[0];
 };
+
+MySceneGraph.prototype.createLights = function(lightNodes) {
+    this.lights = {
+        "omni" : {},
+        "spot" : {}
+    };
+
+    for (var type in lightNodes) {
+        var lights = lightNodes[type];
+        switch (type) {
+            case "spot":
+                for (var id in lights) {
+                    var definitions = {};
+                    this.getLightAttributes(lights[id], definitions);
+                    var locArray = lights[id].data.getElementsByTagName("location");
+                    definitions.location = this.getXYZ(locArray[0]);
+                    var tarArray = lights[id].data.getElementsByTagName("target");
+                    definitions.target = this.getXYZ(tarArray[0]);
+                    definitions.angle = lights[id].angle;
+                    definitions.exponent = lights[id].exponent;
+                    this.lights["spot"][definitions.id] = definitions;
+                }
+                break;
+            case "omni":
+                for (var id in lights) {
+                    var definitions = {};
+                    this.getLightAttributes(lights[id], definitions);
+                    var locArray = lights[id].data.getElementsByTagName("location");
+                    definitions.location = this.getXYZ(locArray[0]);
+                    definitions.location.w = this.reader.getFloat(locArray[0], "w");
+
+                    //this.scene.initLights(definitions, "omni");
+                }
+                break;
+        }
+    }
+};
+
+MySceneGraph.prototype.getLightAttributes = function(node, definitions){
+    definitions.enabled = node.enabled;
+    definitions.id = node.id;
+
+    var ambArray = node.data.getElementsByTagName("ambient");
+    definitions.ambient = this.getRGBA(ambArray[0]);
+
+    var diffArray = node.data.getElementsByTagName("diffuse");
+    definitions.diffuse = this.getRGBA(diffArray[0]);
+
+    var specArray = node.data.getElementsByTagName("specular");
+    definitions.specular = this.getRGBA(specArray[0]);
+}
 
 MySceneGraph.prototype.createElements = function(primitivesNodes) {
     for (var types in primitivesNodes) {
@@ -130,9 +181,7 @@ MySceneGraph.prototype.getTransformationAttributes = function(node) {
 
         case this.scene.TRANSFORMATIONS.TRANSLATE:
         case this.scene.TRANSFORMATIONS.SCALE:
-            result.x = this.reader.getFloat(node, "x");
-            result.y = this.reader.getFloat(node, "y");
-            result.z = this.reader.getFloat(node, "z");
+            result = this.getXYZ(node);
             break;
     }
     return result;
@@ -154,11 +203,10 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
         component.transformations = [];
         for (var j = 0; j < transformationNodes.length; j++) {
             var t = {};
-            if(transformationNodes[j].tagName === this.scene.TRANSFORMATIONS.REFERENCE) {
+            if (transformationNodes[j].tagName === this.scene.TRANSFORMATIONS.REFERENCE) {
                 t.id = this.reader.getString(transformationNodes[j], "id");
                 t.name = this.scene.TRANSFORMATIONS.REFERENCE;
-            }
-            else {
+            } else {
                 t = this.getTransformationAttributes(transformationNodes[j]);
             }
             component.transformations.push(t);
@@ -175,18 +223,35 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
 
         var child = children[0].children;
         component.children = {
-            "componentref" : [],
-            "primitiveref" : []
+            "componentref": [],
+            "primitiveref": []
         };
 
         for (var j = 0; j < child.length; j++) {
             var tag = child[j].tagName;
-            var id = this.reader.getString(child[j], "id");
-            component.children[tag].push(id);
+            var primitiveID = this.reader.getString(child[j], "id");
+            component.children[tag].push(primitiveID);
         }
 
         this.scene.components[id] = component;
-      }
+    }
+};
+
+MySceneGraph.prototype.getXYZ = function(node) {
+    var dest = {};
+    dest.x = this.reader.getFloat(node, "x");
+    dest.y = this.reader.getFloat(node, "y");
+    dest.z = this.reader.getFloat(node, "z");
+    return dest;
+};
+
+MySceneGraph.prototype.getRGBA = function(node) {
+    var dest = {};
+    dest.r = this.reader.getFloat(node, "r");
+    dest.g = this.reader.getFloat(node, "g");
+    dest.b = this.reader.getFloat(node, "b");
+    dest.a = this.reader.getFloat(node, "a");
+    return dest;
 };
 
 /*

@@ -3,6 +3,7 @@ function DSXParser(rootElement, reader) {
 
     this.parseScene(rootElement);
     this.parseViews(rootElement);
+    this.parseLights(rootElement);
     this.parseTransformations(rootElement);
     this.parsePrimitives(rootElement);
     this.parseComponents(rootElement);
@@ -48,14 +49,12 @@ DSXParser.prototype.parseViews = function(rootElement) {
     this.perspectives = [];
 
     for (var i = 0; i < perspectives.length; i++) {
-        this.parsePerspective(perspectives[i]);
+        this.getPerspectiveData(perspectives[i]);
     }
 };
 
-
-DSXParser.prototype.parsePerspective = function(perspective) {
+DSXParser.prototype.getPerspectiveData = function(perspective) {
     var fromElems = perspective.getElementsByTagName("from");
-
     if (!fromElems) {
         throw "from element is missing.";
     }
@@ -89,6 +88,46 @@ DSXParser.prototype.parsePerspective = function(perspective) {
 
     this.perspectives.push(object);
 };
+
+DSXParser.prototype.parseLights = function (rootElement){
+    var lights = rootElement.getElementsByTagName("lights");
+
+    if (lights.length !== 1) {
+        throw "either zero or more than one 'lights' element found.";
+    }
+
+    var l = lights[0];
+    this.lights = {};
+    this.lights.omni = {};
+    this.lights.spot = {};
+
+    this.getLightData(l);
+
+};
+
+DSXParser.prototype.getLightData = function (lightArray){
+    var omni = lightArray.getElementsByTagName("omni");
+    var spot = lightArray.getElementsByTagName("spot");
+
+    for (var i = 0; i < omni.length; i++) {
+        var object = {};
+        object.id = this.reader.getString(omni[i], "id");
+        object.enabled = (this.reader.getFloat(omni[i], "enabled") === 1 ? true:false);
+        object.data = omni[i];
+        this.lights.omni[object.id] = object;
+    }
+
+    for (var i = 0; i < spot.length; i++) {
+        var object = {};
+        object.id = this.reader.getString(spot[i], "id");
+        object.enabled = (this.reader.getFloat(spot[i], "enabled") === 1 ? true:false);
+        object.data = spot[i];
+        object.angle = this.reader.getFloat(spot[i], "angle");
+        object.exponent = this.reader.getFloat(spot[i], "exponent");
+        this.lights.spot[object.id] = object;
+    }
+};
+
 
 DSXParser.prototype.parseTransformations = function(rootElement) {
     var elems = rootElement.getElementsByTagName("transformations");
@@ -135,7 +174,6 @@ DSXParser.prototype.getTransformationData = function(transformation) {
 
     this.transformations.push(object);
 };
-
 
 DSXParser.prototype.parsePrimitives = function(rootElement) {
     var elems = rootElement.getElementsByTagName("primitives");

@@ -3,20 +3,22 @@ function XMLscene() {
     this.primitives = {};
     this.transformations = {};
     this.components = {};
+    this.cameras = [];
+    this.cameraIndex = 0;
 
     this.PRIMITIVES = {
-        RECTANGLE : "rectangle",
-        TRIANGLE : "triangle",
-        CYLINDER : "cylinder",
-        SPHERE : "sphere",
-        TORUS : "torus"
+        RECTANGLE: "rectangle",
+        TRIANGLE: "triangle",
+        CYLINDER: "cylinder",
+        SPHERE: "sphere",
+        TORUS: "torus"
     };
 
     this.TRANSFORMATIONS = {
-        ROTATE : "rotate",
-        TRANSLATE : "translate",
-        SCALE : "scale",
-        REFERENCE : "transformationref"
+        ROTATE: "rotate",
+        TRANSLATE: "translate",
+        SCALE: "scale",
+        REFERENCE: "transformationref"
     };
 }
 
@@ -26,7 +28,7 @@ XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.init = function(application) {
     CGFscene.prototype.init.call(this, application);
 
-    this.initCameras();
+    //this.initCameras();
 
     this.initLights();
 
@@ -42,14 +44,38 @@ XMLscene.prototype.init = function(application) {
 };
 
 XMLscene.prototype.initLights = function() {
+    var lightsIndex = 0;
+    for (var type in this.graph.lights) {
+        var lightArray = this.graph.lights[type];
+        for (var light in lightArray) {
+            var def = lightArray[light];
+            this.lights[lightsIndex].setAmbient(def.ambient.r, def.ambient.g, def.ambient.b, def.ambient.a);
+            this.lights[lightsIndex].setDiffuse(def.diffuse.r, def.diffuse.g, def.diffuse.b, def.diffuse.a);
+            this.lights[lightsIndex].setSpecular(def.specular.r, def.specular.g, def.specular.b, def.specular.a);
 
-    this.lights[0].setPosition(2, 3, 3, 1);
-    this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
-    this.lights[0].update();
+            if (type === "omni") {
+                this.lights[lightsIndex].setPosition(def.location.x, def.location.y, def.location.z, def.location.w);
+            } else {
+                this.lights[lightsIndex].setPosition(def.location.x, def.location.y, def.location.z, def.location.w);
+            }
+
+            if (def.enabled) {
+                this.lights[lightsIndex].enable();
+            }
+
+            this.lights[lightsIndex].setVisible(true);
+            this.lights[lightsIndex].update();
+            lightsIndex++;
+        }
+    }
+    console.log(this.lights);
+
+    //this.lights[0].update();
 };
 
 XMLscene.prototype.initCameras = function() {
-    this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
+    //this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
+    //this.camera = this.cameras[0];
 };
 
 XMLscene.prototype.setDefaultAppearance = function() {
@@ -88,15 +114,15 @@ XMLscene.prototype.display = function() {
     this.setDefaultAppearance();
 
 
-    for(var comp in this.components){
+    for (var comp in this.components) {
         var value = this.components[comp];
         //console.log(value.transformations);
         for (var i = 0; i < value.children.primitiveref.length; i++) {
             var idArray = value.children.primitiveref;
 
             this.pushMatrix();
-                this.applyTransformations(value.transformations);
-                this.primitives[idArray[i]].display();
+            this.applyTransformations(value.transformations);
+            this.primitives[idArray[i]].display();
             this.popMatrix();
         }
     }
@@ -115,12 +141,12 @@ XMLscene.prototype.display = function() {
     }
 };
 
-XMLscene.prototype.applyTransformations = function(transformationsArray){
+XMLscene.prototype.applyTransformations = function(transformationsArray) {
 
     for (var i = 0; i < transformationsArray.length; i++) {
         var t = transformationsArray[i];
         //console.log(t);
-        switch(t.name){
+        switch (t.name) {
             case this.TRANSFORMATIONS.TRANSLATE:
                 this.translate(t.x, t.y, t.z);
                 break;
@@ -128,16 +154,24 @@ XMLscene.prototype.applyTransformations = function(transformationsArray){
                 this.scale(t.x, t.y, t.z);
                 break;
             case this.TRANSFORMATIONS.ROTATE:
-                this.rotate(t.angle * 2*Math.PI / 360,
-                            t.axis === 'x'? 1 : 0,
-                            t.axis === 'y'? 1 : 0,
-                            t.axis === "z"? 1 : 0 );
+                this.rotate(t.angle * 2 * Math.PI / 360,
+                    t.axis === 'x' ? 1 : 0,
+                    t.axis === 'y' ? 1 : 0,
+                    t.axis === "z" ? 1 : 0);
                 break;
             case this.TRANSFORMATIONS.REFERENCE:
                 this.applyTransformations(this.transformations[t.id]);
                 break;
-            default :
+            default:
                 break;
         }
     }
+};
+
+XMLscene.prototype.switchPerspective = function() {
+    this.cameraIndex++;
+    if (this.cameraIndex === this.cameras.length) {
+        this.cameraIndex = 0;
+    }
+    this.camera = this.cameras[this.cameraIndex];
 };

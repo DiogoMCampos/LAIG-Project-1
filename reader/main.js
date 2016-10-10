@@ -43,7 +43,7 @@ function getUrlVars() {
     return vars;
 }
 
-serialInclude(["../lib/CGF.js", "XMLscene.js", "MySceneGraph.js", "DSXParser.js",
+serialInclude(["../lib/CGF.js", "XMLscene.js", "MySceneGraph.js", "DSXParser.js", "MyInterface.js",
                 "../primitives/MyRectangle.js", "../primitives/MyTriangle.js", "../primitives/MySphere.js",
                 "../primitives/MyCircle.js", "../primitives/MyCylinder.js",
 
@@ -51,7 +51,7 @@ serialInclude(["../lib/CGF.js", "XMLscene.js", "MySceneGraph.js", "DSXParser.js"
         // Standard application, scene and interface setup
         var app = new CGFapplication(document.body);
         var myScene = new XMLscene();
-        var myInterface = new CGFinterface();
+        var myInterface = new MyInterface(myScene);
 
 
 
@@ -69,7 +69,7 @@ serialInclude(["../lib/CGF.js", "XMLscene.js", "MySceneGraph.js", "DSXParser.js"
         app.setScene(myScene);
         app.setInterface(myInterface);
 
-        myInterface.setActiveCamera(myScene.camera);
+        myInterface.setActiveCamera(myScene.cameras[0]);
 
         // start
         app.run();
