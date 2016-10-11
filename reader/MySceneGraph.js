@@ -31,8 +31,9 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.createIllumination(dsxInfo.illumination);
         this.createLights(dsxInfo.lights);
         this.createTextures(dsxInfo.textures);
-        this.createElements(dsxInfo.primitives);
+        this.createMaterials(dsxInfo.materials);
         this.createTransformations(dsxInfo.transformations);
+        this.createElements(dsxInfo.primitives);
         this.createComponents(dsxInfo.components);
     } catch (err) {
         this.onXMLError(err);
@@ -45,36 +46,45 @@ MySceneGraph.prototype.onXMLReady = function() {
     this.scene.onGraphLoaded();
 };
 
-MySceneGraph.prototype.createScene = function(sceneNode) {
-    this.scene.root = this.reader.getString(sceneNode, "root");
-    this.scene.axisLength = this.reader.getFloat(sceneNode, "axis_length");
+MySceneGraph.prototype.createScene = function(scene) {
+    this.scene.root = scene.root;
+    this.scene.axisLength = scene.axisLength;
 };
 
 MySceneGraph.prototype.createIllumination = function(illuminationNode){
-    this.illumination = {};
-    this.illumination.doublesided = this.reader.getBoolean(illuminationNode, "doublesided");
-    this.illumination.local = this.reader.getBoolean(illuminationNode, "local");
+    var illumination = {};
 
-    var ambient = illuminationNode.getElementsByTagName("ambient");
-    this.illumination.ambient = this.getRGBA(ambient[0]);
+    illumination.doublesided = illuminationNode.doublesided;
+    illumination.local = illuminationNode.local;
 
-    var background = illuminationNode.getElementsByTagName("background");
-    this.illumination.background = this.getRGBA(background[0]);
+    var ambient = illuminationNode.data.getElementsByTagName("ambient");
+    illumination.ambient = this.getRGBA(ambient[0]);
+
+    var background = illuminationNode.data.getElementsByTagName("background");
+    illumination.background = this.getRGBA(background[0]);
+
+    return illumination;
 };
 
 MySceneGraph.prototype.createCameras = function(perspectives) {
+
     var cameras = [];
     for (var i = 0; i < perspectives.length; i++) {
         var p = perspectives[i];
-        fromVector = vec3.fromValues(p.from.x, p.from.y, p.from.z);
-        toVector = vec3.fromValues(p.to.x, p.to.y, p.to.z);
+
+        var f = this.getXYZ(p.from);
+        var to = this.getXYZ(p.to);
+
+        var fromVector = vec3.fromValues(f.x, f.y, f.z);
+        var toVector = vec3.fromValues(to.x, to.y, to.z);
 
         var camera = new CGFcamera(p.angle, p.near, p.far, fromVector, toVector);
-
         cameras.push(camera);
     }
+    //return cameras;
+
     this.scene.cameras = cameras;
-    this.scene.camera = cameras[0];
+    this.scene.camera = this.scene.cameras[0];
 };
 
 MySceneGraph.prototype.createLights = function(lightNodes) {
@@ -128,16 +138,38 @@ MySceneGraph.prototype.getLightAttributes = function(node, definitions){
 };
 
 MySceneGraph.prototype.createTextures = function(texturesArray){
-    this.textures = {};
+    var textures = [];
     for (var i = 0; i < texturesArray.length; i++) {
         var texture = texturesArray[i];
         var t = {};
         t.id = this.reader.getString(texture, "id");
-        t.file = this.reader.getString(texture, "fle");
+        t.file = this.reader.getString(texture, "file");
         t.lengthS = this.reader.getFloat(texture, "length_s");
         t.lengthT = this.reader.getFloat(texture, "length_t");
-        this.textures[t.id] = t;
+        textures.push(t);
     }
+};
+
+MySceneGraph.prototype.createMaterials = function(materialsArray) {
+    var materials = {};
+    for (var i = 0; i < materialsArray.length; i++) {
+        var m = materialsArray[i];
+        var mat = {};
+        mat.id = m.id;
+        var ambient = m.data.getElementsByTagName("ambient");
+        var diffuse = m.data.getElementsByTagName("diffuse");
+        var specular = m.data.getElementsByTagName("specular");
+        var emission = m.data.getElementsByTagName("emission");
+        var shininess = m.data.getElementsByTagName("shininess");
+
+        mat.ambient = this.getRGBA(ambient[0]);
+        mat.diffuse = this.getRGBA(diffuse[0]);
+        mat.specular = this.getRGBA(specular[0]);
+        mat.emission = this.getRGBA(emission[0]);
+        mat.shininess = this.reader.getFloat(shininess[0], "value");
+        materials[mat.id] = mat;
+    }
+    return materials;
 };
 
 MySceneGraph.prototype.createElements = function(primitivesNodes) {

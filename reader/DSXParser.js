@@ -1,44 +1,30 @@
 function DSXParser(rootElement, reader) {
     this.reader = reader;
-
-    this.parseScene(rootElement);
-    this.parseViews(rootElement);
-    this.parseIllumination(rootElement);
-    this.parseLights(rootElement);
-    this.parseTextures(rootElement);
-    this.parseTransformations(rootElement);
-    this.parsePrimitives(rootElement);
-    this.parseComponents(rootElement);
+    var root = rootElement.children;
+    this.parseScene(root[0]);
+    this.parseViews(root[1]);
+    this.parseIllumination(root[2]);
+    this.parseLights(root[3]);
+    this.parseTextures(root[4]);
+    this.parseMaterials(root[5]);
+    this.parseTransformations(root[6]);
+    this.parsePrimitives(root[7]);
+    this.parseComponents(root[8]);
 
     //console.log(this);
 }
 
-DSXParser.prototype.parseScene = function(rootElement) {
-    var elems = rootElement.getElementsByTagName("scene");
+DSXParser.prototype.parseScene = function(scene) {
+    this.scene = {};
 
-    if (!elems) {
-        throw "scene element is missing.";
+    if (scene.tagName !== "scene") {
+        throw "the main block order is wrong";
     }
-
-    if (elems.length !== 1) {
-        throw "either zero or more than one 'scene' element found.";
-    }
-
-    this.scene = elems[0];
+    this.scene.root = this.reader.getString(scene, "root");
+    this.scene.axisLength = this.reader.getFloat(scene, "axis_length");
 };
 
-DSXParser.prototype.parseViews = function(rootElement) {
-    var elems = rootElement.getElementsByTagName("views");
-
-    if (!elems) {
-        throw "views element is missing.";
-    }
-
-    if (elems.length !== 1) {
-        throw "either zero or more than one 'views' element found.";
-    }
-
-    var views = elems[0];
+DSXParser.prototype.parseViews = function(views) {
 
     this.defaultView = this.reader.getFloat(views, "default");
 
@@ -57,58 +43,42 @@ DSXParser.prototype.parseViews = function(rootElement) {
 
 DSXParser.prototype.getPerspectiveData = function(perspective) {
     var fromElems = perspective.getElementsByTagName("from");
-    if (!fromElems) {
-        throw "from element is missing.";
-    }
-
     if (fromElems.length !== 1) {
         throw "either zero or more than one 'from' element found.";
     }
 
     var toElems = perspective.getElementsByTagName("to");
-
-    if (!toElems) {
-        throw "to element is missing.";
-    }
-
     if (toElems.length !== 1) {
         throw "either zero or more than one 'to' element found.";
     }
 
     object = {};
+    object.id = this.reader.getString(perspective, "id");
     object.angle = this.reader.getFloat(perspective, "angle");
     object.near = this.reader.getFloat(perspective, "near");
     object.far = this.reader.getFloat(perspective, "far");
-    object.from = {};
-    object.from.x = this.reader.getFloat(fromElems[0], "x");
-    object.from.y = this.reader.getFloat(fromElems[0], "y");
-    object.from.z = this.reader.getFloat(fromElems[0], "z");
-    object.to = {};
-    object.to.x = this.reader.getFloat(toElems[0], "x");
-    object.to.y = this.reader.getFloat(toElems[0], "y");
-    object.to.z = this.reader.getFloat(toElems[0], "z");
+    object.from = fromElems[0];
+    object.to = toElems[0];
 
     this.perspectives.push(object);
 };
 
-DSXParser.prototype.parseIllumination = function(rootElement) {
-    var elems = rootElement.getElementsByTagName("illumination");
-
-    if(elems.length !== 1){
-
-    }
-
-    this.illumination = elems[0];
+DSXParser.prototype.parseIllumination = function(illumination) {
+    this.illumination = {};
+    this.illumination.doublesided = this.reader.getBoolean(illumination, "doublesided");
+    this.illumination.local = this.reader.getBoolean(illumination, "local");
+    this.illumination.data = illumination;
 };
 
-DSXParser.prototype.parseLights = function (rootElement){
-    var lights = rootElement.getElementsByTagName("lights");
+DSXParser.prototype.parseLights = function (lights){
+
+    /*var lights = rootElement.getElementsByTagName("lights");
 
     if (lights.length !== 1) {
         throw "either zero or more than one 'lights' element found.";
-    }
+    }*/
 
-    var l = lights[0];
+    var l = lights;
     this.lights = {};
     this.lights.omni = {};
     this.lights.spot = {};
@@ -132,7 +102,7 @@ DSXParser.prototype.getLightData = function (lightArray){
     for (var i = 0; i < spot.length; i++) {
         var object = {};
         object.id = this.reader.getString(spot[i], "id");
-        object.enabled = (this.reader.getFloat(spot[i], "enabled") === 1 ? true:false);
+        object.enabled = this.reader.getBoolean(spot[i], "enabled");
         object.data = spot[i];
         object.angle = this.reader.getFloat(spot[i], "angle");
         object.exponent = this.reader.getFloat(spot[i], "exponent");
@@ -140,19 +110,32 @@ DSXParser.prototype.getLightData = function (lightArray){
     }
 };
 
-DSXParser.prototype.parseTextures = function(rootElement){
-    var elems = rootElement.getElementsByTagName("textures");
+DSXParser.prototype.parseTextures = function(textures){
+    /*var elems = rootElement.getElementsByTagName("textures");
 
     if (elems.length !== 1) {
         throw "either zero or more than one 'transformations' element found.";
     }
-
-    var texturesArray = elems[0].getElementsByTagName("texture");
+    */
+    var texturesArray = textures.getElementsByTagName("texture");
     this.textures = texturesArray;
 };
 
-DSXParser.prototype.parseTransformations = function(rootElement) {
-    var elems = rootElement.getElementsByTagName("transformations");
+DSXParser.prototype.parseMaterials = function(materials) {
+    this.materials = [];
+    var materialArray = materials.getElementsByTagName("material");
+
+    for (var i = 0; i < materialArray.length; i++) {
+        var m = {};
+        m.id = this.reader.getString(materialArray[i], "id");
+        m.data = materialArray[i];
+        this.materials.push(m);
+    }
+
+};
+
+DSXParser.prototype.parseTransformations = function(transformations) {
+    /*var elems = rootElement.getElementsByTagName("transformations");
 
     if (!elems) {
         throw "transformations element is missing.";
@@ -163,14 +146,10 @@ DSXParser.prototype.parseTransformations = function(rootElement) {
     }
 
     var transformations = elems[0];
-
+    */
     this.transformations = [];
 
     var transformationList = transformations.getElementsByTagName("transformation");
-    if (!elems || elems.length === 0) {
-        console.warn("no transformations found");
-        return;
-    }
 
     for (var i = 0; i < transformationList.length; i++) {
         this.getTransformationData(transformationList[i]);
@@ -197,8 +176,8 @@ DSXParser.prototype.getTransformationData = function(transformation) {
     this.transformations.push(object);
 };
 
-DSXParser.prototype.parsePrimitives = function(rootElement) {
-    var elems = rootElement.getElementsByTagName("primitives");
+DSXParser.prototype.parsePrimitives = function(primitives) {
+    /*var elems = rootElement.getElementsByTagName("primitives");
 
     if (!elems) {
         throw "primitives element is missing.";
@@ -206,7 +185,7 @@ DSXParser.prototype.parsePrimitives = function(rootElement) {
 
     if (elems.length !== 1) {
         throw "either zero or more than one 'primitives' element found.";
-    }
+    }*/
 
     this.primitives = {
         "rectangle": [],
@@ -216,7 +195,7 @@ DSXParser.prototype.parsePrimitives = function(rootElement) {
         "torus": []
     };
 
-    var nodes = elems[0].getElementsByTagName("primitive");
+    var nodes = primitives.getElementsByTagName("primitive");
 
     if (!nodes || nodes.length === 0) {
         console.warn("no primitives found");
@@ -256,19 +235,18 @@ DSXParser.prototype.getPrimitiveData = function(nodes, primitives) {
     primitives[type].push(object);
 };
 
-DSXParser.prototype.parseComponents = function(rootElement) {
-    var comp = rootElement.getElementsByTagName("components");
+DSXParser.prototype.parseComponents = function(components) {
+    /*var comp = rootElement.getElementsByTagName("components");
     if (comp.length !== 1) {
         throw "either zero or more than one 'components' element found.";
     }
-
-    var components = comp[0].getElementsByTagName("component");
+    */
+    var componentArray = components.getElementsByTagName("component");
     this.components = [];
-
-    for (var i = 0; i < components.length; i++) {
+    for (var i = 0; i < componentArray.length; i++) {
         var object = {};
-        object.id = this.reader.getString(components[i], "id");
-        object.element = components[i];
+        object.id = this.reader.getString(componentArray[i], "id");
+        object.element = componentArray[i];
         this.components.push(object);
     }
 };

@@ -75,6 +75,20 @@ XMLscene.prototype.initCameras = function() {
     //this.camera = this.cameras[0];
 };
 
+XMLscene.prototype.createTextures = function(textures) {
+    this.textures = {};
+    for (var i = 0; i < textures.length; i++) {
+        var t = textures[i];
+        this.textures[t.id] = new CGFappearance(this);
+        this.textures[t.id].loadTexture(t.file);
+        //falta t.lengthS e t.lengthT
+    }
+};
+
+XMLscene.prototype.createMaterials = function(materials){
+
+};
+
 XMLscene.prototype.setDefaultAppearance = function() {
     this.setAmbient(0.2, 0.4, 0.8, 1.0);
     this.setDiffuse(0.2, 0.4, 0.8, 1.0);
