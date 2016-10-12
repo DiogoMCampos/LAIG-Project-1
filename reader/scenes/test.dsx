@@ -3,7 +3,7 @@
 
     <!-- deve definir-se um objeto para raiz do grafo , assim -->
     <!-- como o comprimento dos tres eixos (cilindros) -->
-    <scene root="oui" axis_length="5" />
+    <scene root="oui" axis_length="6" />
 
 
     <views default="ss" >
@@ -30,7 +30,7 @@
     <illumination doublesided="1" local="1" >
 
         <ambient r="1" g="0" b="1" a="1" />
-        <background r="1" g="1" b="1" a="1" />
+        <background r="0.7" g="0.34" b="1" a="0.5" />
 
     </illumination>
 
@@ -46,7 +46,7 @@
             <specular r="0" g=".5" b="1" a="1" />
         </omni>
 
-        <spot id="ss" enabled="1" angle="45" exponent="45">
+        <spot id="sss" enabled="1" angle="45" exponent="45">
             <!-- atencao, "target" e' diferente de "direction" -->
             <target x="1" y="1" z="1" />
             <location x="1" y="1" z="1" />

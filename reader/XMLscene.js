@@ -28,12 +28,7 @@ XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.init = function(application) {
     CGFscene.prototype.init.call(this, application);
 
-    //this.initCameras();
-    //this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
-    /*this.lights[0].setPosition(5,5,5);
-    this.lights[0].enable();
-    this.lights[0].setVisible(true);*/
-
+    this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
 
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -45,11 +40,20 @@ XMLscene.prototype.init = function(application) {
     this.axis = new CGFaxis(this);
 };
 
-XMLscene.prototype.initLights = function() {
+// Handler called when the graph is finally loaded.
+// As loading is asynchronous, this may be called already after the application has started the run loop
+XMLscene.prototype.onGraphLoaded = function(details) {
+    //this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
+
+    this.axis = new CGFaxis(this, details.scene.axisLength);
+    this.initCameras(details.cameras);
+    this.initLights(details.lights);
+};
+
+XMLscene.prototype.initLights = function(info) {
     var lightsIndex = 0;
-    console.log(this.graph.lights);
-    for (var type in this.graph.lights) {
-        var lightArray = this.graph.lights[type];
+    for (var type in info) {
+        var lightArray = info[type];
         for (var light in lightArray) {
             var def = lightArray[light];
             this.lights[lightsIndex].setAmbient(def.ambient.r, def.ambient.g, def.ambient.b, def.ambient.a);
@@ -74,7 +78,6 @@ XMLscene.prototype.initLights = function() {
 };
 
 XMLscene.prototype.initCameras = function(cameras) {
-
     //this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
     this.cameras = [];
     for (var i = 0; i < cameras.length; i++) {
@@ -113,16 +116,6 @@ XMLscene.prototype.setDefaultAppearance = function() {
     this.setDiffuse(0.2, 0.4, 0.8, 1.0);
     this.setSpecular(0.2, 0.4, 0.8, 1.0);
     this.setShininess(10.0);
-};
-
-// Handler called when the graph is finally loaded.
-// As loading is asynchronous, this may be called already after the application has started the run loop
-XMLscene.prototype.onGraphLoaded = function() {
-    //this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
-    // this.lights[0].setVisible(true);
-    // this.lights[0].enable();
-    //console.log(this.components);
-    this.initLights();
 };
 
 XMLscene.prototype.display = function() {

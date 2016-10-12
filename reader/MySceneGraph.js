@@ -15,7 +15,7 @@ function MySceneGraph(filename, scene) {
      */
 
     this.reader.open("scenes/" + filename, this);
-    
+
 }
 
 /*
@@ -24,46 +24,43 @@ function MySceneGraph(filename, scene) {
 MySceneGraph.prototype.onXMLReady = function() {
     console.log("XML Loading finished.");
     var rootElement = this.reader.xmlDoc.documentElement;
-
+    var details = {};
     try {
         var dsxInfo = new DSXParser(rootElement, this.reader);
-        this.createScene(dsxInfo.scene);
-        this.createCameras(dsxInfo.perspectives);
-        this.createIllumination(dsxInfo.illumination);
-        this.createLights(dsxInfo.lights);
-        this.createTextures(dsxInfo.textures);
-        this.createMaterials(dsxInfo.materials);
-        this.createTransformations(dsxInfo.transformations);
-        this.createElements(dsxInfo.primitives);
-        this.createComponents(dsxInfo.components);
+        details.scene = this.createScene(dsxInfo.scene);
+        details.cameras = this.createCameras(dsxInfo.perspectives);
+        details.illumination = this.createIllumination(dsxInfo.illumination);
+        details.lights = this.createLights(dsxInfo.lights);
+        details.textures = this.createTextures(dsxInfo.textures);
+        details.materials = this.createMaterials(dsxInfo.materials);
+        details.materials = this.createTransformations(dsxInfo.transformations);
+        details.primitives = this.createElements(dsxInfo.primitives);
+        details.components = this.createComponents(dsxInfo.components);
     } catch (err) {
         this.onXMLError(err);
         return;
     }
 
     this.loadedOk = true;
-
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
-    this.scene.onGraphLoaded();
+    this.scene.onGraphLoaded(details);
 };
 
 MySceneGraph.prototype.createScene = function(scene) {
-    this.scene.root = scene.root;
-    this.scene.axisLength = scene.axisLength;
+    var s = {};
+    s.root = scene.root;
+    s.axisLength = scene.axisLength;
+    return s;
 };
 
-MySceneGraph.prototype.createIllumination = function(illuminationNode){
+MySceneGraph.prototype.createIllumination = function(illuminationNode) {
     var illumination = {};
-
     illumination.doublesided = illuminationNode.doublesided;
     illumination.local = illuminationNode.local;
 
-    var ambient = illuminationNode.data.getElementsByTagName("ambient");
-    illumination.ambient = this.getRGBA(ambient[0]);
-
-    var background = illuminationNode.data.getElementsByTagName("background");
-    illumination.background = this.getRGBA(background[0]);
-
+    illumination.ambient = this.getRGBA(illuminationNode.data, "ambient");
+    illumination.background = this.getRGBA(illuminationNode.data, "background");
+    this.background = illumination.background;
     return illumination;
 };
 
@@ -88,65 +85,62 @@ MySceneGraph.prototype.createCameras = function(perspectives) {
         //var camera = new CGFcamera(p.angle, p.near, p.far, fromVector, toVector);
         cameras.push(obj);
     }
-    //return cameras;
-    console.log("antes initCameras");
-    this.scene.initCameras(cameras);
-
-    //this.scene.cameras = cameras;
-    //this.scene.camera = this.scene.cameras[0];
+    return cameras;
 };
 
 MySceneGraph.prototype.createLights = function(lightNodes) {
-    this.lights = {
-        "omni" : {},
-        "spot" : {}
+    var l = {
+        "omni": {},
+        "spot": {}
     };
 
     for (var type in lightNodes) {
-        var lights = lightNodes[type];
-        switch (type) {
-            case "spot":
-                for (var id in lights) {
-                    var definitions = {};
-                    this.getLightAttributes(lights[id], definitions);
-                    var locArray = lights[id].data.getElementsByTagName("location");
-                    definitions.location = this.getXYZ(locArray[0]);
-                    var tarArray = lights[id].data.getElementsByTagName("target");
-                    definitions.target = this.getXYZ(tarArray[0]);
-                    definitions.angle = lights[id].angle;
-                    definitions.exponent = lights[id].exponent;
-                    this.lights.spot[definitions.id] = definitions;
-                }
-                break;
-            case "omni":
-                for (var id in lights) {
-                    var definitions = {};
-                    this.getLightAttributes(lights[id], definitions);
-                    var locArray = lights[id].data.getElementsByTagName("location");
-                    definitions.location = this.getXYZ(locArray[0]);
-                    definitions.location.w = this.reader.getFloat(locArray[0], "w");
-                    this.lights.omni[definitions.id] = definitions;
-                }
-                break;
+        if (lightNodes.hasOwnProperty(type)) {
+            var lights = lightNodes[type];
+            switch (type) {
+                case "spot":
+                    for (var id in lights) {
+                        if (lights.hasOwnProperty(id)) {
+                            var definitions = {};
+                            this.getLightAttributes(lights[id], definitions);
+                            var locArray = lights[id].data.getElementsByTagName("location");
+                            definitions.location = this.getXYZ(locArray[0]);
+                            var tarArray = lights[id].data.getElementsByTagName("target");
+                            definitions.target = this.getXYZ(tarArray[0]);
+                            definitions.angle = lights[id].angle;
+                            definitions.exponent = lights[id].exponent;
+                            l.spot[definitions.id] = definitions;
+                        }
+                    }
+                    break;
+                case "omni":
+                    for (var id in lights) {
+                        if (lights.hasOwnProperty(id)) {
+                            var definitions = {};
+                            this.getLightAttributes(lights[id], definitions);
+                            var locArray = lights[id].data.getElementsByTagName("location");
+                            definitions.location = this.getXYZ(locArray[0]);
+                            definitions.location.w = this.reader.getFloat(locArray[0], "w");
+                            l.omni[definitions.id] = definitions;
+                        }
+                    }
+                    break;
+            }
         }
     }
+    return l;
 };
 
-MySceneGraph.prototype.getLightAttributes = function(node, definitions){
+MySceneGraph.prototype.getLightAttributes = function(node, definitions) {
     definitions.enabled = node.enabled;
     definitions.id = node.id;
 
-    var ambArray = node.data.getElementsByTagName("ambient");
-    definitions.ambient = this.getRGBA(ambArray[0]);
-
-    var diffArray = node.data.getElementsByTagName("diffuse");
-    definitions.diffuse = this.getRGBA(diffArray[0]);
-
-    var specArray = node.data.getElementsByTagName("specular");
-    definitions.specular = this.getRGBA(specArray[0]);
+    definitions.ambient = this.getRGBA(node.data, "ambient");
+    definitions.diffuse = this.getRGBA(node.data, "diffuse");
+    definitions.specular = this.getRGBA(node.data, "specular");
 };
 
-MySceneGraph.prototype.createTextures = function(texturesArray){
+MySceneGraph.prototype.createTextures = function(texturesArray) {
     var textures = [];
     for (var i = 0; i < texturesArray.length; i++) {
         var texture = texturesArray[i];
@@ -157,6 +151,7 @@ MySceneGraph.prototype.createTextures = function(texturesArray){
         t.lengthT = this.reader.getFloat(texture, "length_t");
         textures.push(t);
     }
+    return textures;
 };
 
 MySceneGraph.prototype.createMaterials = function(materialsArray) {
@@ -165,16 +160,12 @@ MySceneGraph.prototype.createMaterials = function(materialsArray) {
         var m = materialsArray[i];
         var mat = {};
         mat.id = m.id;
-        var ambient = m.data.getElementsByTagName("ambient");
-        var diffuse = m.data.getElementsByTagName("diffuse");
-        var specular = m.data.getElementsByTagName("specular");
-        var emission = m.data.getElementsByTagName("emission");
         var shininess = m.data.getElementsByTagName("shininess");
 
-        mat.ambient = this.getRGBA(ambient[0]);
-        mat.diffuse = this.getRGBA(diffuse[0]);
-        mat.specular = this.getRGBA(specular[0]);
-        mat.emission = this.getRGBA(emission[0]);
+        mat.ambient = this.getRGBA(m.data, "ambient");
+        mat.diffuse = this.getRGBA(m.data, "diffuse");
+        mat.specular = this.getRGBA(m.data, "specular");
+        mat.emission = this.getRGBA(m.data, "emission");
         mat.shininess = this.reader.getFloat(shininess[0], "value");
         materials[mat.id] = mat;
     }
@@ -183,44 +174,46 @@ MySceneGraph.prototype.createMaterials = function(materialsArray) {
 
 MySceneGraph.prototype.createElements = function(primitivesNodes) {
     for (var types in primitivesNodes) {
-        var elementArray = primitivesNodes[types];
-        switch (types) {
-            case this.scene.PRIMITIVES.RECTANGLE:
-                for (var i = 0; i < elementArray.length; i++) {
-                    var obj = new MyRectangle(this.scene, elementArray[i], this.reader);
-                    this.scene.primitives[obj.id] = obj;
-                }
-                break;
+        if (primitivesNodes.hasOwnProperty(types)) {
+            var elementArray = primitivesNodes[types];
+            switch (types) {
+                case this.scene.PRIMITIVES.RECTANGLE:
+                    for (var i = 0; i < elementArray.length; i++) {
+                        var obj = new MyRectangle(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives[obj.id] = obj;
+                    }
+                    break;
 
-            case this.scene.PRIMITIVES.TRIANGLE:
-                for (var i = 0; i < elementArray.length; i++) {
-                    var obj = new MyTriangle(this.scene, elementArray[i], this.reader);
-                    this.scene.primitives[obj.id] = obj;
-                }
-                break;
+                case this.scene.PRIMITIVES.TRIANGLE:
+                    for (var i = 0; i < elementArray.length; i++) {
+                        var obj = new MyTriangle(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives[obj.id] = obj;
+                    }
+                    break;
 
-            case this.scene.PRIMITIVES.CYLINDER:
-                for (var i = 0; i < elementArray.length; i++) {
-                    var obj = new MyCylinder(this.scene, elementArray[i], this.reader);
-                    this.scene.primitives[obj.id] = obj;
-                }
-                break;
+                case this.scene.PRIMITIVES.CYLINDER:
+                    for (var i = 0; i < elementArray.length; i++) {
+                        var obj = new MyCylinder(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives[obj.id] = obj;
+                    }
+                    break;
 
-            case this.scene.PRIMITIVES.SPHERE:
-                for (var i = 0; i < elementArray.length; i++) {
-                    var obj = new MySphere(this.scene, elementArray[i], this.reader);
-                    this.scene.primitives[obj.id] = obj;
-                }
-                break;
+                case this.scene.PRIMITIVES.SPHERE:
+                    for (var i = 0; i < elementArray.length; i++) {
+                        var obj = new MySphere(this.scene, elementArray[i], this.reader);
+                        this.scene.primitives[obj.id] = obj;
+                    }
+                    break;
 
-            case this.scene.PRIMITIVES.TORUS:
-                for (var i = 0; i < elementArray.length; i++) {
-                    //var obj = new MyTorus(this, elementArray[i], this.reader);
-                    //this.scene.primitives[obj.id] = obj;
-                }
-                break;
-            default:
-                break;
+                case this.scene.PRIMITIVES.TORUS:
+                    for (var i = 0; i < elementArray.length; i++) {
+                        //var obj = new MyTorus(this, elementArray[i], this.reader);
+                        //this.scene.primitives[obj.id] = obj;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 };
@@ -312,12 +305,13 @@ MySceneGraph.prototype.getXYZ = function(node) {
     return dest;
 };
 
-MySceneGraph.prototype.getRGBA = function(node) {
+MySceneGraph.prototype.getRGBA = function(node, tag) {
     var dest = {};
-    dest.r = this.reader.getFloat(node, "r");
-    dest.g = this.reader.getFloat(node, "g");
-    dest.b = this.reader.getFloat(node, "b");
-    dest.a = this.reader.getFloat(node, "a");
+    var array = node.getElementsByTagName(tag);
+    dest.r = this.reader.getFloat(array[0], "r");
+    dest.g = this.reader.getFloat(array[0], "g");
+    dest.b = this.reader.getFloat(array[0], "b");
+    dest.a = this.reader.getFloat(array[0], "a");
     return dest;
 };
 
