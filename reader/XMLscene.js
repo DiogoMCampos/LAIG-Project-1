@@ -29,8 +29,11 @@ XMLscene.prototype.init = function(application) {
     CGFscene.prototype.init.call(this, application);
 
     //this.initCameras();
+    //this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
+    /*this.lights[0].setPosition(5,5,5);
+    this.lights[0].enable();
+    this.lights[0].setVisible(true);*/
 
-    this.initLights();
 
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -39,12 +42,12 @@ XMLscene.prototype.init = function(application) {
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
 
-    this.axis = new CGFaxis(this, this.axisLength);
-
+    this.axis = new CGFaxis(this);
 };
 
 XMLscene.prototype.initLights = function() {
     var lightsIndex = 0;
+    console.log(this.graph.lights);
     for (var type in this.graph.lights) {
         var lightArray = this.graph.lights[type];
         for (var light in lightArray) {
@@ -70,9 +73,25 @@ XMLscene.prototype.initLights = function() {
     }
 };
 
-XMLscene.prototype.initCameras = function() {
+XMLscene.prototype.initCameras = function(cameras) {
+
     //this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
-    //this.camera = this.cameras[0];
+    this.cameras = [];
+    for (var i = 0; i < cameras.length; i++) {
+        var p = cameras[i];
+        /*if (i === 0) {
+
+            this.camera = new CGFcamera(p.angle, p.near, p.far, vec3.fromValues(p.from.x, p.from.y, p.from.z), vec3.fromValues(p.to.x, p.to.y, p.to.z));
+            this.cameras.push(this.camera);
+        }
+        else {*/
+            var c = new CGFcamera(p.angle, p.near, p.far, vec3.fromValues(p.from.x, p.from.y, p.from.z), vec3.fromValues(p.to.x, p.to.y, p.to.z));
+            this.cameras.push(c);
+        //}
+    }
+    //var camera = new CGFcamera(p.angle, p.near, p.far, fromVector, toVector);
+    //this.cameras = cameras;
+    this.camera = this.cameras[0];
 };
 
 XMLscene.prototype.createTextures = function(textures) {
@@ -85,7 +104,7 @@ XMLscene.prototype.createTextures = function(textures) {
     }
 };
 
-XMLscene.prototype.createMaterials = function(materials){
+XMLscene.prototype.createMaterials = function(materials) {
 
 };
 
@@ -103,6 +122,7 @@ XMLscene.prototype.onGraphLoaded = function() {
     // this.lights[0].setVisible(true);
     // this.lights[0].enable();
     //console.log(this.components);
+    this.initLights();
 };
 
 XMLscene.prototype.display = function() {

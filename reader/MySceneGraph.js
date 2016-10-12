@@ -15,6 +15,7 @@ function MySceneGraph(filename, scene) {
      */
 
     this.reader.open("scenes/" + filename, this);
+    
 }
 
 /*
@@ -70,21 +71,29 @@ MySceneGraph.prototype.createCameras = function(perspectives) {
 
     var cameras = [];
     for (var i = 0; i < perspectives.length; i++) {
+        var obj = {};
         var p = perspectives[i];
 
-        var f = this.getXYZ(p.from);
-        var to = this.getXYZ(p.to);
+        obj.angle = p.angle;
+        obj.near = p.near;
+        obj.far = p.far;
 
-        var fromVector = vec3.fromValues(f.x, f.y, f.z);
-        var toVector = vec3.fromValues(to.x, to.y, to.z);
+        ;
+        obj.from = this.getXYZ(p.from);
+        obj.to = this.getXYZ(p.to);
 
-        var camera = new CGFcamera(p.angle, p.near, p.far, fromVector, toVector);
-        cameras.push(camera);
+        //obj.fromVector = vec3.fromValues(f.x, f.y, f.z);
+        //obj.toVector = vec3.fromValues(to.x, to.y, to.z);
+
+        //var camera = new CGFcamera(p.angle, p.near, p.far, fromVector, toVector);
+        cameras.push(obj);
     }
     //return cameras;
+    console.log("antes initCameras");
+    this.scene.initCameras(cameras);
 
-    this.scene.cameras = cameras;
-    this.scene.camera = this.scene.cameras[0];
+    //this.scene.cameras = cameras;
+    //this.scene.camera = this.scene.cameras[0];
 };
 
 MySceneGraph.prototype.createLights = function(lightNodes) {

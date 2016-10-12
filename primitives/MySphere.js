@@ -69,6 +69,6 @@ MySphere.prototype.initBuffers = function() {
 MySphere.prototype.parseAttributes = function(xmlNode) {
 
     this.radius = this.reader.getFloat(xmlNode, "radius");
-    this.slices = this.reader.getFloat(xmlNode, "slices");
-    this.stacks = this.reader.getFloat(xmlNode, "stacks");
+    this.slices = this.reader.getInteger(xmlNode, "slices");
+    this.stacks = this.reader.getInteger(xmlNode, "stacks");
 };

@@ -81,6 +81,6 @@ MyCylinder.prototype.parseAttributes = function(xmlNode) {
     this.baseRadius = this.reader.getFloat(xmlNode, "base");
     this.topRadius = this.reader.getFloat(xmlNode, "top");
     this.heightCylinder = this.reader.getFloat(xmlNode, "height");
-    this.slices = this.reader.getFloat(xmlNode, "slices");
-    this.stacks = this.reader.getFloat(xmlNode, "stacks");
+    this.slices = this.reader.getInteger(xmlNode, "slices");
+    this.stacks = this.reader.getInteger(xmlNode, "stacks");
 };
