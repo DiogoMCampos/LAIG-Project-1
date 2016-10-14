@@ -4,6 +4,8 @@ function XMLscene() {
     this.transformations = {};
     this.components = {};
     this.cameras = [];
+    this.textures = {};
+    this.materials = {};
     this.cameraIndex = 0;
 
     this.PRIMITIVES = {
@@ -36,18 +38,17 @@ XMLscene.prototype.init = function(application) {
     this.gl.enable(this.gl.DEPTH_TEST);
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
-
-    this.axis = new CGFaxis(this);
 };
 
 // Handler called when the graph is finally loaded.
 // As loading is asynchronous, this may be called already after the application has started the run loop
-XMLscene.prototype.onGraphLoaded = function(details) {
+XMLscene.prototype.onGraphLoaded = function(lights) {
     //this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
 
-    this.axis = new CGFaxis(this, details.scene.axisLength);
-    this.initCameras(details.cameras);
-    this.initLights(details.lights);
+    this.axis = new CGFaxis(this, this.axisLength);
+    //this.initCameras(details.cameras);
+    this.initLights(lights);
+    //console.log(this.primitives);
 };
 
 XMLscene.prototype.initLights = function(info) {
@@ -78,36 +79,6 @@ XMLscene.prototype.initLights = function(info) {
 };
 
 XMLscene.prototype.initCameras = function(cameras) {
-    //this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
-    this.cameras = [];
-    for (var i = 0; i < cameras.length; i++) {
-        var p = cameras[i];
-        /*if (i === 0) {
-
-            this.camera = new CGFcamera(p.angle, p.near, p.far, vec3.fromValues(p.from.x, p.from.y, p.from.z), vec3.fromValues(p.to.x, p.to.y, p.to.z));
-            this.cameras.push(this.camera);
-        }
-        else {*/
-            var c = new CGFcamera(p.angle, p.near, p.far, vec3.fromValues(p.from.x, p.from.y, p.from.z), vec3.fromValues(p.to.x, p.to.y, p.to.z));
-            this.cameras.push(c);
-        //}
-    }
-    //var camera = new CGFcamera(p.angle, p.near, p.far, fromVector, toVector);
-    //this.cameras = cameras;
-    this.camera = this.cameras[0];
-};
-
-XMLscene.prototype.createTextures = function(textures) {
-    this.textures = {};
-    for (var i = 0; i < textures.length; i++) {
-        var t = textures[i];
-        this.textures[t.id] = new CGFappearance(this);
-        this.textures[t.id].loadTexture(t.file);
-        //falta t.lengthS e t.lengthT
-    }
-};
-
-XMLscene.prototype.createMaterials = function(materials) {
 
 };
 
@@ -133,7 +104,7 @@ XMLscene.prototype.display = function() {
     this.applyViewMatrix();
 
     // Draw axis
-    this.axis.display();
+
 
     this.setDefaultAppearance();
 
@@ -161,7 +132,7 @@ XMLscene.prototype.display = function() {
     // only get executed after the graph has loaded correctly.
     // This is one possible way to do it
     if (this.graph.loadedOk) {
-        this.lights[0].update();
+        this.axis.display();
     }
 };
 

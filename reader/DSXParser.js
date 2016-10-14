@@ -72,12 +72,6 @@ DSXParser.prototype.parseIllumination = function(illumination) {
 
 DSXParser.prototype.parseLights = function (lights){
 
-    /*var lights = rootElement.getElementsByTagName("lights");
-
-    if (lights.length !== 1) {
-        throw "either zero or more than one 'lights' element found.";
-    }*/
-
     var l = lights;
     this.lights = {};
     this.lights.omni = {};

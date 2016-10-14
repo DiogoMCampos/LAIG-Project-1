@@ -43,7 +43,9 @@ MyTorus.prototype.initBuffers = function() {
                 (dist + tubeRadius * Math.cos(m * innerAngle)) * Math.sin(ind*outerAngle),
                 tubeRadius * Math.sin(m * innerAngle));
             this.texCoords.push(sCoord, tCoord);
-            this.normals.push(Math.cos(innerAngle * m), Math.sin(innerAngle * m), Math.sin(m * innerAngle));
+            this.normals.push(Math.cos(innerAngle * m) * Math.cos(ind*outerAngle),
+                Math.cos(innerAngle * m) * Math.sin(ind*outerAngle),
+                Math.sin(m * innerAngle));
             sCoord += sPatch;
         }
         tCoord -= tPatch;

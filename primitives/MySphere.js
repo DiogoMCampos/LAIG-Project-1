@@ -40,7 +40,7 @@ MySphere.prototype.initBuffers = function() {
                 Math.cos(angVert * ind) * this.radius);
             this.normals.push(Math.cos(angLat * m) * Math.sin(angVert * ind),
                 Math.sin(angLat * m) * Math.sin(angVert * ind),
-                Math.sin(angVert * ind));
+                Math.cos(angVert * ind));
             s += this.textS;
             this.texCoords.push(s, t);
 
