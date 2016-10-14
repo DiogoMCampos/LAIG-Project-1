@@ -12,16 +12,6 @@ function MyTorus(scene, info, reader) {
     this.initBuffers();
 }
 
-function MyTorus(scene, inner, out, slices, stacks) {
-    CGFobject.call(this, scene);
-    this.scene = scene;
-
-    this.innerRadius = inner;
-    this.outerRadius = out;
-    this.slices = slices;
-    this.stacks = stacks;
-    this.initBuffers();
-}
 
 MyTorus.prototype = Object.create(CGFobject.prototype);
 MyTorus.prototype.constructor = MyTorus;
@@ -37,14 +27,14 @@ MyTorus.prototype.initBuffers = function() {
     var tubeRadius = (this.outerRadius - this.innerRadius) /2;
 
     var innerAngle = 2 * Math.PI / this.slices;
-    var outerAngle = 2 * Math.PI / this.stacks;
+    var outerAngle = 2 * Math.PI / this.loops;
     var n = 0;
     var tCoord = 1;
     var sPatch = 1 / this.slices;
-    var tPatch = 1 / this.stacks;
+    var tPatch = 1 / this.loops;
 
     //Vertices & Normals
-    for (var ind = 0; ind < this.stacks; ind++) {
+    for (var ind = 0; ind < this.loops; ind++) {
 
         var sCoord = 0;
 
@@ -60,15 +50,15 @@ MyTorus.prototype.initBuffers = function() {
     }
 
     //Indices
-    for (var j = 0; j < this.stacks; j++) {
+    for (var j = 0; j < this.loops; j++) {
         for (var i = 0; i < (this.slices); i++) {
-            this.indices.push(((i + 1) % (this.slices) + (j + 0) * this.slices) % (this.slices * this.stacks),
-                ((i + 0) % (this.slices) + (j + 1) * this.slices) % (this.slices * this.stacks),
-                ((i + 0) % (this.slices) + (j + 0) * this.slices) % (this.slices * this.stacks));
+            this.indices.push(((i + 1) % (this.slices) + (j + 0) * this.slices) % (this.slices * this.loops),
+                ((i + 0) % (this.slices) + (j + 1) * this.slices) % (this.slices * this.loops),
+                ((i + 0) % (this.slices) + (j + 0) * this.slices) % (this.slices * this.loops));
 
-            this.indices.push(((i + 0) % (this.slices) + (j + 1) * this.slices) % (this.slices * this.stacks),
-                ((i + 1) % (this.slices) + (j + 0) * this.slices) % (this.slices * this.stacks),
-                ((i + 1) % (this.slices) + (j + 1) * this.slices) % (this.slices * this.stacks));
+            this.indices.push(((i + 0) % (this.slices) + (j + 1) * this.slices) % (this.slices * this.loops),
+                ((i + 1) % (this.slices) + (j + 0) * this.slices) % (this.slices * this.loops),
+                ((i + 1) % (this.slices) + (j + 1) * this.slices) % (this.slices * this.loops));
         }
 
     }

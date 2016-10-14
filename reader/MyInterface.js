@@ -7,7 +7,7 @@
 function MyInterface(scene) {
     //call CGFinterface constructor
     CGFinterface.call(this);
-    this.scene = this;
+    this.scene = scene;
 }
 
 MyInterface.prototype = Object.create(CGFinterface.prototype);

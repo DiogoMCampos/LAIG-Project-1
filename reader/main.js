@@ -45,20 +45,19 @@ function getUrlVars() {
 
 serialInclude(["../lib/CGF.js", "XMLscene.js", "MySceneGraph.js", "DSXParser.js", "MyInterface.js",
     "../primitives/MyRectangle.js", "../primitives/MyTriangle.js", "../primitives/MySphere.js",
-    "../primitives/MyCircle.js", "../primitives/MyCylinder.js",
+    "../primitives/MyCircle.js", "../primitives/MyCylinder.js", "../primitives/MyTorus.js",
 
     main = function() {
         // Standard application, scene and interface setup
         var myScene = new XMLscene();
-        var myInterface = new MyInterface();
+        var myInterface = new MyInterface(myScene);
         var app = new CGFapplication(document.body);
-        
+
         app.init();
 
         app.setScene(myScene);
         app.setInterface(myInterface);
 
-        myInterface.setActiveCamera(myScene.camera);
         // get file name provided in URL, e.g. http://localhost/myproj/?file=myfile.xml
         // or use "demo.xml" as default (assumes files in subfolder "scenes", check MySceneGraph constructor)
         var filename = getUrlVars()["file"] || "test.dsx";
@@ -67,7 +66,7 @@ serialInclude(["../lib/CGF.js", "XMLscene.js", "MySceneGraph.js", "DSXParser.js"
         // Check console for loading errors
         var myGraph = new MySceneGraph(filename, myScene);
 
-
+        myInterface.setActiveCamera(myScene.camera);
 
         // start
         app.run();
