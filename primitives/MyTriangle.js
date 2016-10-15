@@ -7,7 +7,7 @@ function MyTriangle(scene, info, reader) {
     this.scene = scene;
     this.reader = reader;
     this.id = info.id;
-    this.parseAttributes(info.element);
+    this.parseAttributes(info.data);
     this.initBuffers();
 }
 
@@ -42,7 +42,7 @@ MyTriangle.prototype.initBuffers = function() {
         vecf.x, vecf.y, vecf.z,
         vecf.x, vecf.y, vecf.z
     ];
-    
+
     this.primitiveType = this.scene.gl.TRIANGLES;
     this.initGLBuffers();
 };

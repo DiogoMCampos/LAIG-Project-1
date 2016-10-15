@@ -91,7 +91,6 @@ XMLscene.prototype.display = function() {
         //console.log(value.transformations);
         for (var i = 0; i < value.children.primitiveref.length; i++) {
             var idArray = value.children.primitiveref;
-
             this.pushMatrix();
             this.applyTransformations(value.transformations);
             this.primitives[idArray[i]].display();
@@ -110,8 +109,8 @@ XMLscene.prototype.display = function() {
     // This is one possible way to do it
     if (this.graph.loadedOk) {
         this.axis.display();
-        for (var i = 0; i < this.lights.length; i++) {
-            this.lights[i].update();
+        for (var j = 0; j < this.lights.length; j++) {
+            this.lights[j].update();
         }
     }
 };
@@ -130,8 +129,8 @@ XMLscene.prototype.applyTransformations = function(transformationsArray) {
                 break;
             case this.TRANSFORMATIONS.ROTATE:
                 this.rotate(t.angle * 2 * Math.PI / 360,
-                    t.axis === 'x' ? 1 : 0,
-                    t.axis === 'y' ? 1 : 0,
+                    t.axis === "x" ? 1 : 0,
+                    t.axis === "y" ? 1 : 0,
                     t.axis === "z" ? 1 : 0);
                 break;
             case this.TRANSFORMATIONS.REFERENCE:

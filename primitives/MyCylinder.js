@@ -7,7 +7,7 @@ function MyCylinder(scene, info, reader) {
     this.scene = scene;
     this.reader = reader;
     this.id = info.id;
-    this.parseAttributes(info.element);
+    this.parseAttributes(info.data);
 
     this.baseCircle = new MyCircle(this.scene, this.slices, this.baseRadius);
     this.topCircle = new MyCircle(this.scene, this.slices, this.topRadius);

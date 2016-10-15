@@ -1,6 +1,10 @@
 function DSXParser(rootElement, reader) {
     this.reader = reader;
     var root = rootElement.children;
+
+    if (root.length !== 9) {
+        throw "dsx file has incorrect number of main categories";
+    }
     this.parseScene(root[0]);
     this.parseViews(root[1]);
     this.parseIllumination(root[2]);
@@ -11,7 +15,6 @@ function DSXParser(rootElement, reader) {
     this.parsePrimitives(root[7]);
     this.parseComponents(root[8]);
 
-    //console.log(this);
 }
 
 DSXParser.prototype.parseScene = function(scene) {
@@ -34,7 +37,7 @@ DSXParser.prototype.parseViews = function(views) {
         throw "no 'perspective' element found.";
     }
 
-    this.perspectives = [];
+    this.perspectives = {};
 
     for (var i = 0; i < perspectives.length; i++) {
         this.getPerspectiveData(perspectives[i]);
@@ -52,15 +55,20 @@ DSXParser.prototype.getPerspectiveData = function(perspective) {
         throw "either zero or more than one 'to' element found.";
     }
 
-    object = {};
+    var object = {};
     object.id = this.reader.getString(perspective, "id");
+
+    if (this.perspectives.hasOwnProperty(object.id)) {
+        console.warn("Repeated perspective id: " + object.id);
+        return;
+    }
     object.angle = this.reader.getFloat(perspective, "angle");
     object.near = this.reader.getFloat(perspective, "near");
     object.far = this.reader.getFloat(perspective, "far");
     object.from = fromElems[0];
     object.to = toElems[0];
 
-    this.perspectives.push(object);
+    this.perspectives[object.id] = object;
 };
 
 DSXParser.prototype.parseIllumination = function(illumination) {
@@ -70,78 +78,79 @@ DSXParser.prototype.parseIllumination = function(illumination) {
     this.illumination.data = illumination;
 };
 
-DSXParser.prototype.parseLights = function (lights){
+DSXParser.prototype.parseLights = function(lightNode) {
 
-    var l = lights;
     this.lights = {};
-    this.lights.omni = {};
-    this.lights.spot = {};
 
-    this.getLightData(l);
+    var all = lightNode.children;
 
-};
-
-DSXParser.prototype.getLightData = function (lightArray){
-    var omni = lightArray.getElementsByTagName("omni");
-    var spot = lightArray.getElementsByTagName("spot");
-
-    for (var i = 0; i < omni.length; i++) {
+    for (var i = 0; i < all.length; i++) {
         var object = {};
-        object.id = this.reader.getString(omni[i], "id");
-        object.enabled = this.reader.getBoolean(omni[i], "enabled");
-        object.data = omni[i];
-        this.lights.omni[object.id] = object;
-    }
+        object.id = this.reader.getString(all[i], "id");
 
-    for (var i = 0; i < spot.length; i++) {
-        var object = {};
-        object.id = this.reader.getString(spot[i], "id");
-        object.enabled = this.reader.getBoolean(spot[i], "enabled");
-        object.data = spot[i];
-        object.angle = this.reader.getFloat(spot[i], "angle");
-        object.exponent = this.reader.getFloat(spot[i], "exponent");
-        this.lights.spot[object.id] = object;
+        if (this.lights.hasOwnProperty(object.id)) {
+            console.warn("Repeated light id: " + object.id);
+            continue;
+        }
+        object.enabled = this.reader.getBoolean(all[i], "enabled");
+        object.type = all[i].tagName;
+        object.data = all[i];
+
+        switch (object.type) {
+            case "spot":
+                object.angle = this.reader.getFloat(all[i], "angle");
+                object.exponent = this.reader.getFloat(all[i], "exponent");
+                break;
+            case "omni":
+                break;
+        }
+        this.lights[object.id] = object;
     }
 };
 
-DSXParser.prototype.parseTextures = function(textures){
-    /*var elems = rootElement.getElementsByTagName("textures");
+DSXParser.prototype.parseTextures = function(textures) {
 
-    if (elems.length !== 1) {
-        throw "either zero or more than one 'transformations' element found.";
-    }
-    */
+    this.textures = {};
     var texturesArray = textures.getElementsByTagName("texture");
-    this.textures = texturesArray;
+
+    for (var i = 0; i < texturesArray.length; i++) {
+        var texture = texturesArray[i];
+
+        var t = {};
+        t.id = this.reader.getString(texture, "id");
+
+        if(this.textures.hasOwnProperty(t.id)){
+            console.warn("Repeated texture id: " + t.id);
+            continue;
+        }
+        t.file = this.reader.getString(texture, "file");
+        t.lengthS = this.reader.getFloat(texture, "length_s");
+        t.lengthT = this.reader.getFloat(texture, "length_t");
+
+        this.textures[t.id] = t;
+    }
 };
 
 DSXParser.prototype.parseMaterials = function(materials) {
-    this.materials = [];
+    this.materials = {};
     var materialArray = materials.getElementsByTagName("material");
 
     for (var i = 0; i < materialArray.length; i++) {
         var m = {};
-        m.id = this.reader.getString(materialArray[i], "id");
-        m.data = materialArray[i];
-        this.materials.push(m);
-    }
 
+        m.id = this.reader.getString(materialArray[i], "id");
+        if(this.materials.hasOwnProperty(m.id)){
+            console.warn("Repeated material id: " + m.id);
+            continue;
+        }
+        m.data = materialArray[i];
+        this.materials[m.id] = m;
+    }
 };
 
 DSXParser.prototype.parseTransformations = function(transformations) {
-    /*var elems = rootElement.getElementsByTagName("transformations");
 
-    if (!elems) {
-        throw "transformations element is missing.";
-    }
-
-    if (elems.length !== 1) {
-        throw "either zero or more than one 'transformations' element found.";
-    }
-
-    var transformations = elems[0];
-    */
-    this.transformations = [];
+    this.transformations = {};
 
     var transformationList = transformations.getElementsByTagName("transformation");
 
@@ -158,36 +167,25 @@ DSXParser.prototype.getTransformationData = function(transformation) {
         console.warn("transformation without id (required). Proceeded without that transformation.");
         return;
     }
+    if (id) {
+        console.warn("Repeated transformation id: " + id);
+        return;
+    }
 
     var object = {};
     object.id = id;
-    object.elements = [];
+    object.data = [];
 
-    for(var i = 0; i < elems.length; i++) {
-        object.elements.push(elems[i]);
+    for (var i = 0; i < elems.length; i++) {
+        object.data.push(elems[i]);
     }
 
-    this.transformations.push(object);
+    this.transformations[id] = object;
 };
 
 DSXParser.prototype.parsePrimitives = function(primitives) {
-    /*var elems = rootElement.getElementsByTagName("primitives");
 
-    if (!elems) {
-        throw "primitives element is missing.";
-    }
-
-    if (elems.length !== 1) {
-        throw "either zero or more than one 'primitives' element found.";
-    }*/
-
-    this.primitives = {
-        "rectangle": [],
-        "triangle": [],
-        "cylinder": [],
-        "sphere": [],
-        "torus": []
-    };
+    this.primitives = {};
 
     var nodes = primitives.getElementsByTagName("primitive");
 
@@ -197,7 +195,7 @@ DSXParser.prototype.parsePrimitives = function(primitives) {
     }
 
     for (var i = 0; i < nodes.length; i++) {
-        this.getPrimitiveData(nodes[i], this.primitives);
+        this.getPrimitiveData(nodes[i]);
     }
 };
 
@@ -208,39 +206,37 @@ DSXParser.prototype.getPrimitiveData = function(nodes, primitives) {
         throw "either zero or more than one tag for a specific primitive.";
     }
 
-    var element = children[0];
-
-    var type = element.tagName;
-    if (!primitives[type]) {
-        console.warn(type + " is not a valid primitive tag. Proceeded without that primitive.");
-        return;
-    }
-
+    var data = children[0];
     var id = this.reader.getString(nodes, "id", false);
     if (!id) {
         console.warn("primitive without id (required). Proceeded without that primitive.");
         return;
     }
+    if (this.primitives.hasOwnProperty(id)) {
+        console.warn("repeated primitive id: " + id);
+        return;
+    }
 
     var object = {};
     object.id = id;
-    object.element = element;
+    object.type = data.tagName;
+    object.data = data;
 
-    primitives[type].push(object);
+    this.primitives[id] = object;
 };
 
 DSXParser.prototype.parseComponents = function(components) {
-    /*var comp = rootElement.getElementsByTagName("components");
-    if (comp.length !== 1) {
-        throw "either zero or more than one 'components' element found.";
-    }
-    */
+
     var componentArray = components.getElementsByTagName("component");
-    this.components = [];
+    this.components = {};
     for (var i = 0; i < componentArray.length; i++) {
         var object = {};
         object.id = this.reader.getString(componentArray[i], "id");
-        object.element = componentArray[i];
-        this.components.push(object);
+        if (this.components.hasOwnProperty(object.id)) {
+            console.warn("Repeated component id: " + object.id);
+            continue;
+        }
+        object.data = componentArray[i];
+        this.components[object.id] = object;
     }
 };

@@ -7,7 +7,7 @@ function MyTorus(scene, info, reader) {
     this.scene = scene;
     this.reader = reader;
     this.id = info.id;
-    this.parseAttributes(info.element);
+    this.parseAttributes(info.data);
 
     this.initBuffers();
 }
