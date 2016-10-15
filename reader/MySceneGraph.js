@@ -241,7 +241,10 @@ MySceneGraph.prototype.getTransformationAttributes = function(node) {
             result.axis = this.reader.getString(node, "axis");
             result.angle = this.reader.getFloat(node, "angle");
             break;
-        default:
+        case this.scene.TRANSFORMATIONS.TRANSLATE:
+            result = this.getXYZ(node);
+            break;
+        case this.scene.TRANSFORMATIONS.SCALE:
             result = this.getXYZ(node);
             break;
     }
