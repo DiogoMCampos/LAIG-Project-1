@@ -1,64 +1,42 @@
 <dsx>
+    <scene root="root" axis_length="6"/>
 
-
-    <!-- deve definir-se um objeto para raiz do grafo , assim -->
-    <!-- como o comprimento dos tres eixos (cilindros) -->
-    <scene root="oui" axis_length="6" />
-
-
-    <views default="ss" >
-
-        <!-- declaracao obrigatoria de pelo menos uma vista; -->
-        <!-- se varias vistas declaradas, o default e' a -->
-        <!-- primeira vista; de cada vez que se pressione a tecla v/V, -->
-        <!-- a vista muda para a proxima da lista; da -->
-        <!-- ultima vista da lista volta 'a primeira -->
-        <perspective id="sss" near="0.1" far="500" angle="0.4">
-            <from x="15" y="15" z="15" />
-            <to x="0" y="0" z="0" />
+    <views default="front">
+        <perspective id="front" near="0.1" far="500" angle="0.4">
+            <from x="15" y="15" z="15"/>
+            <to x="0" y="0" z="0"/>
         </perspective>
+
         <perspective id="eagle eye" near="5" far="50" angle="5">
-            <from x="5" y="5" z="5" />
-            <to x="0" y="0" z="1" />
+            <from x="5" y="5" z="5"/>
+            <to x="0" y="0" z="1"/>
         </perspective>
-
-
-
     </views>
 
-
-    <illumination doublesided="1" local="1" >
-
-        <ambient r="1" g="0" b="1" a="1" />
-        <background r="0.7" g="0.34" b="1" a="0.5" />
-
+    <illumination doublesided="1" local="1">
+        <ambient r="0" g="0" b="0" a="1"/>
+        <background r="0" g="0" b="0" a="1"/>
     </illumination>
 
-
     <lights>
-
-        <!-- Deve existir um ou mais blocos "omni" ou "spot" -->
-        <!-- Os identificadores "id" nao podem ser repetidos -->
-        <omni id="ss" enabled="1" >
-            <location x="3" y="3" z="3" w="1" />
-            <ambient r=".5" g="1" b="1" a="1" />
-            <diffuse r=".5" g="1" b="1" a="1" />
-            <specular r="0" g=".5" b="1" a="1" />
+        <omni id="ss" enabled="1">
+            <location x="3" y="0" z="3" w="1"/>
+            <ambient r=".5" g="1" b="0" a="1"/>
+            <diffuse r=".5" g="1" b="0" a="1"/>
+            <specular r="0" g=".5" b="0" a="1"/>
         </omni>
 
         <spot id="sss" enabled="1" angle="45" exponent="45">
             <!-- atencao, "target" e' diferente de "direction" -->
-            <target x="1" y="1" z="1" />
-            <location x="1" y="1" z="1" />
-            <ambient r=".5" g="1" b="1" a="1" />
-            <diffuse r="0" g="1" b="0" a="1" />
-            <specular r=".5" g="1" b="1" a="1" />
+            <target x="1" y="1" z="1"/>
+            <location x="1" y="1" z="1"/>
+            <ambient r=".5" g="1" b="1" a="1"/>
+            <diffuse r="0" g="1" b="0" a="1"/>
+            <specular r=".5" g="1" b="1" a="1"/>
         </spot>
     </lights>
 
-
     <textures>
-
         <!-- Deve existir um ou mais blocos "texture" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
         <!-- length_s e length_t sao fatores de escala de textura:-->
@@ -71,150 +49,336 @@
         <!-- objetos respetivos podem a violar esta regra.         -->
         <!-- Nao necessario aplicar fatores de escala em  -->
         <!-- quadricas (esfera, ciclindro...) -->
-        <texture id="ss" file="ss" length_s="1" length_t="1" />
-
+        <texture id="ss" file="ola.jpg" length_s="1" length_t="1"/>
     </textures>
 
-
     <materials>
-
         <!-- Deve existir um ou mais blocos "material" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
-        <material id="ss" >
-            <emission r="1" g="1" b="1" a="1" />
-            <ambient r="1" g="1" b="1" a="1" />
-            <diffuse r="1" g="1" b="1" a="1" />
-            <specular r="1" g="1" b="1" a="1" />
-            <shininess value="1" />
+        <material id="ss">
+            <emission r="1" g="1" b="1" a="1"/>
+            <ambient r="1" g="1" b="1" a="1"/>
+            <diffuse r="1" g="1" b="1" a="1"/>
+            <specular r="1" g="1" b="1" a="1"/>
+            <shininess value="1"/>
         </material>
-
     </materials>
 
-
     <transformations>
-
         <!-- Deve existir um ou mais blocos "transformation" -->
         <!-- Os identificadores "id" nao podem ser repetidos -->
         <transformation id="ss">
-           <!-- instrucoes a usar sem limite nem ordem -->
-           <!-- deve existir pelo menos uma transformacao -->
-           <translate x="5" y="0" z="2" />
-           <rotate axis="x" angle="30" />
-           <scale x="2" y="2" z="2" />
+            <!-- instrucoes a usar sem limite nem ordem -->
+            <!-- deve existir pelo menos uma transformacao -->
+            <translate x="5" y="0" z="2"/>
+            <rotate axis="x" angle="30"/>
+            <scale x="2" y="2" z="2"/>
         </transformation>
         <transformation id="ass">
-           <translate x="2" y="0" z="2" />
-           <rotate axis="z" angle="60" />
-           <scale x="2" y="1" z="0.5" />
+            <translate x="2" y="0" z="2"/>
+            <rotate axis="z" angle="60"/>
+            <scale x="2" y="1" z="0.5"/>
         </transformation>
-
     </transformations>
 
-
     <primitives>
-
-        <!-- Deve existir um ou mais blocos "primitive" -->
-        <!-- Os identificadores "id" nao podem ser repetidos -->
-        <primitive id="ss">
-
-            <!-- apenas pode existir UMA das seguintes tags: -->
-            <!--     rectangle, triangle, cylinder, sphere, torus -->
-            <!-- os parametros devem ser interpretados, genericamente como-->
-            <!-- em OpenGL/GLUT; o cilindro deve adicionalmente ter tampas -->
-            <rectangle x1="0" y1="0" x2="5" y2="5" />
-
+        <primitive id="drive">
+            <cylinder base="0.1" top="0.1" height="3.6" slices="20" stacks="20"/>
         </primitive>
 
-        <primitive id="sos">
-            <triangle x1="0" y1="0" z1="7" x2="5" y2="2" z2="3" x3="8" y3="3" z3="5"/>
+        <primitive id="tire">
+            <torus inner="0.4" outer="1" slices="50" loops="50"/>
         </primitive>
-        <primitive id="sas">
+
+        <primitive id="rim">
+            <cylinder base="0.4" top="0.4" height="0.2" slices="50" stacks="50"/>
+        </primitive>
+
+        <primitive id="side-body">
+            <rectangle x1="0" y1="0" x2="9" y2="1.5"/>
+        </primitive>
+
+        <primitive id="front-body">
+            <rectangle x1="0" y1="0" x2="3.5" y2="1.5"/>
+        </primitive>
+
+        <primitive id="top-body">
+            <rectangle x1="0" y1="0" x2="9" y2="3.5"/>
+        </primitive>
+
+        <primitive id="r1">
+            <rectangle x1="0" y1="0" x2="1" y2="1"/>
+        </primitive>
+        <primitive id="t1">
+            <triangle x1="0" y1="0" z1="0" x2="5" y2="0" z2="0" x3="0" y3="3" z3="0"/>
+        </primitive>
+        <primitive id="c1">
             <cylinder base="1.5" top="1" height="2" slices="20" stacks="5"/>
         </primitive>
-        <primitive id="sasphe">
-            <sphere radius="1" slices="8" stacks="8"/>
+        <primitive id="s1">
+            <sphere radius="1" slices="80" stacks="80"/>
         </primitive>
-
-
-
+        <primitive id="to1">
+            <torus inner="0.4" outer="1" slices="50" loops="50"/>
+        </primitive>
     </primitives>
 
-
     <components>
-
-        <component id="ss">
-
-            <!-- bloco "transformation" obrigatorio -->
+        <component id="front-drive">
             <transformation>
-
-                <!-- deve conter uma referencia a uma das "transformation" -->
-                <!-- declaradas anteriormente -->
-                <transformationref id="ss" />
-
-                <!-- ou, ALTERNATIVAMENTE, transformacoes explicitas, -->
-                <!-- usando zero ou mais das instrucoes seguintes, sem -->
-                <!-- limite nem ordem -->
-                <!-- ex: bloco transformation pode ficar sem conteudo -->
-                <translate x="1" y="1" z="2" />
-                <rotate axis="y" angle="10" />
-                <scale x=".5" y="3.1" z="-0.9" />
-            </transformation>
-
-            <!-- declaracao obrigatoria de pelo menos um material; -->
-            <!-- o material id="inherit", mantem (herda) material do "pai" -->
-            <!-- se varios materiais declarados, o default e' o -->
-            <!-- primeiro material; de cada vez que se pressione a tecla m/M, -->
-            <!-- o material muda para o proximo material da lista; do -->
-            <!-- ultimo material da lista volta ao primeiro -->
-            <materials>
-                <material id="ss" />
-                <material id="sdfadg" />
-                <material id="123" />
-            </materials>
-
-            <!-- declaracao obrigatoria de texture -->
-            <!-- id="inherit" mantem (herda) a textura do objecto "pai" -->
-            <!-- id="none" remove a textura recebida do pai -->
-            <!-- a textura declarada sobrepoe a textura recebida do -->
-            <!-- objecto "pai" -->
-            <texture id="ss" />
-
-            <!-- bloco "children" obrigatorio num "component" -->
-            <children>
-
-                <!-- deve existir uma ou mais tags "componentref" e/ou -->
-                <!-- "primitiveref", identificando outros -->
-                <!-- componentes ou primitivas -->
-                <componentref id="ss" />
-                <primitiveref id="ss" />
-
-            </children>
-
-        </component>
-
-
-        <component id="ses">
-            <transformation>
-                <transformationref id="ss" />
-                <translate x="1" y="1" z="-2" />
-                <scale x=".5" y=".1" z="1" />
-                <rotate axis="y" angle="30" />
+                <translate x="6" y="0" z="0.2"/>
             </transformation>
 
             <materials>
-                <material id="ss" />
+                <material id="ss"/>
             </materials>
 
-            <texture id="ss" />
+            <texture id="none"/>
 
             <children>
-                <componentref id="sasdads" />
-                <componentref id="ss" />
-                <primitiveref id="ss" />
-
+                <primitiveref id="drive"/>
             </children>
-
         </component>
 
+        <component id="back-drive">
+            <transformation>
+                <translate x="0" y="0" z="0.2"/>
+            </transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="drive"/>
+            </children>
+        </component>
+
+        <component id="rim">
+            <transformation></transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="rim"/>
+            </children>
+        </component>
+
+        <component id="right-front-wheel">
+            <transformation>
+                <translate x="6" y="0" z="4"/>
+            </transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="tire"/>
+                <componentref id="rim"/>
+            </children>
+        </component>
+
+        <component id="left-front-wheel">
+            <transformation>
+                <translate x="6" y="0" z="0"/>
+            </transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="tire"/>
+                <componentref id="rim"/>
+            </children>
+        </component>
+
+        <component id="right-back-wheel">
+            <transformation>
+                <translate x="0" y="0" z="4"/>
+            </transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="tire"/>
+                <componentref id="rim"/>
+            </children>
+        </component>
+
+        <component id="left-back-wheel">
+            <transformation></transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="tire"/>
+                <componentref id="rim"/>
+            </children>
+        </component>
+
+        <component id="right-side-body">
+            <transformation>
+                <translate x="0" y="1.5" z="0"/>
+                <rotate axis="x" angle="180"/>
+            </transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="side-body"/>
+            </children>
+        </component>
+
+        <component id="left-side-body">
+            <transformation>
+                <translate x="0" y="0" z="3.5"/>
+            </transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="side-body"/>
+            </children>
+        </component>
+
+        <component id="front-body">
+            <transformation>
+                <translate x="9" y="0" z="3.5"/>
+                <rotate axis="y" angle="90"/>
+            </transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="front-body"/>
+            </children>
+        </component>
+
+        <component id="back-body">
+            <transformation>
+                <translate x="0" y="0" z="0"/>
+                <rotate axis="y" angle="270"/>
+            </transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="front-body"/>
+            </children>
+        </component>
+
+        <component id="top-body">
+            <transformation>
+                <translate x="0" y="1.5" z="3.5"/>
+                <rotate axis="x" angle="270"/>
+            </transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="top-body"/>
+            </children>
+        </component>
+
+        <component id="bottom-body">
+            <transformation>
+                <translate x="0" y="0" z="0"/>
+                <rotate axis="x" angle="90"/>
+            </transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="top-body"/>
+            </children>
+        </component>
+
+        <component id="body">
+            <transformation>
+                <translate x="-1.5" y="0" z="0.25"/>
+            </transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="right-side-body"/>
+                <componentref id="left-side-body"/>
+                <componentref id="front-body"/>
+                <componentref id="back-body"/>
+                <componentref id="top-body"/>
+                <componentref id="bottom-body"/>
+            </children>
+        </component>
+
+        <component id="car">
+            <transformation></transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="back-drive"/>
+                <componentref id="front-drive"/>
+
+                <componentref id="right-back-wheel"/>
+                <componentref id="left-back-wheel"/>
+
+                <componentref id="right-front-wheel"/>
+                <componentref id="left-front-wheel"/>
+
+                <componentref id="body"/>
+            </children>
+        </component>
     </components>
 </dsx>
