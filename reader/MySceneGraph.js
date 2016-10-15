@@ -31,7 +31,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.createCameras(dsxInfo.perspectives);
         console.log("nixon");
         this.createIllumination(dsxInfo.illumination);
-        var lights = this.createLights(dsxInfo.lights);
+        this.createLights(dsxInfo.lights);
         console.log("all of the lights");
         this.createTextures(dsxInfo.textures);
         this.createMaterials(dsxInfo.materials);
@@ -47,7 +47,7 @@ MySceneGraph.prototype.onXMLReady = function() {
 
     this.loadedOk = true;
     // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
-    this.scene.onGraphLoaded(lights);
+    this.scene.onGraphLoaded();
 };
 
 MySceneGraph.prototype.createScene = function(scene) {
@@ -88,47 +88,49 @@ MySceneGraph.prototype.createCameras = function(perspectives) {
 };
 
 MySceneGraph.prototype.createLights = function(lightNodes) {
-    var l = {
-        "omni": {},
-        "spot": {}
-    };
+    var lightsIndex = 0;
 
     for (var type in lightNodes) {
         if (lightNodes.hasOwnProperty(type)) {
             var lights = lightNodes[type];
-            switch (type) {
-                case "spot":
-                    for (var id in lights) {
-                        if (lights.hasOwnProperty(id)) {
-                            var definitions = this.getLightAttributes(lights[id]);
-                            var locArray = lights[id].data.getElementsByTagName("location");
-                            definitions.location = this.getXYZ(locArray[0]);
+            for (var id in lights) {
+                if (lights.hasOwnProperty(id)) {
+                    var l = this.scene.lights[lightsIndex];
+                    var def = this.getLightAttributes(lights[id]);
+                    l.setAmbient(def.ambient.r, def.ambient.g, def.ambient.b, def.ambient.a);
+                    l.setDiffuse(def.diffuse.r, def.diffuse.g, def.diffuse.b, def.diffuse.a);
+                    l.setSpecular(def.specular.r, def.specular.g, def.specular.b, def.specular.a);
+
+                    if (def.enabled) {
+                        l.enable();
+                    }
+                    l.setVisible(true);
+
+                    switch (type) {
+                        case "spot":
                             var tarArray = lights[id].data.getElementsByTagName("target");
-                            definitions.direction = this.getXYZ(tarArray[0]);
-                            definitions.direction.x -= definitions.location.x;
-                            definitions.direction.y -= definitions.location.y;
-                            definitions.direction.z -= definitions.location.z;
-                            definitions.angle = lights[id].angle;
-                            definitions.exponent = lights[id].exponent;
-                            l.spot[definitions.id] = definitions;
-                        }
-                    }
-                    break;
-                case "omni":
-                    for (var id in lights) {
-                        if (lights.hasOwnProperty(id)) {
-                            var definitions = this.getLightAttributes(lights[id]);
+                            var direction = this.getXYZ(tarArray[0]);
+                            direction.x -= def.location.x;
+                            direction.y -= def.location.y;
+                            direction.z -= def.location.z;
+
+                            l.setPosition(def.location.x, def.location.y, def.location.z);
+                            l.setSpotDirection(direction.x, direction.y, direction.z);
+                            l.setSpotCutOff(lights[id].angle);
+                            l.setSpotExponent(lights[id].exponent);
+                            break;
+                        case "omni":
                             var locArray = lights[id].data.getElementsByTagName("location");
-                            definitions.location = this.getXYZ(locArray[0]);
-                            definitions.location.w = this.reader.getFloat(locArray[0], "w");
-                            l.omni[definitions.id] = definitions;
-                        }
+                            def.location.w = this.reader.getFloat(locArray[0], "w");
+                            l.setPosition(def.location.x, def.location.y, def.location.z, def.location.w);
+                            break;
                     }
-                    break;
+                }
+                lightsIndex++;
             }
+
         }
     }
-    return l;
 };
 
 MySceneGraph.prototype.getLightAttributes = function(node) {
@@ -136,6 +138,9 @@ MySceneGraph.prototype.getLightAttributes = function(node) {
     result.enabled = node.enabled;
     result.id = node.id;
 
+    var locArray = node.data.getElementsByTagName("location");
+    result.location = this.getXYZ(locArray[0]);
+    console.log(result.location);
     result.ambient = this.getRGBA(node.data, "ambient");
     result.diffuse = this.getRGBA(node.data, "diffuse");
     result.specular = this.getRGBA(node.data, "specular");
