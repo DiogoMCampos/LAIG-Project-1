@@ -236,18 +236,16 @@ MySceneGraph.prototype.createTransformations = function(transformationNodes) {
 
 MySceneGraph.prototype.getTransformationAttributes = function(node) {
     var result = {};
-    result.name = node.tagName;
     switch (node.tagName) {
         case this.scene.TRANSFORMATIONS.ROTATE:
             result.axis = this.reader.getString(node, "axis");
             result.angle = this.reader.getFloat(node, "angle");
             break;
-
-        case this.scene.TRANSFORMATIONS.TRANSLATE:
-        case this.scene.TRANSFORMATIONS.SCALE:
+        default:
             result = this.getXYZ(node);
             break;
     }
+    result.name = node.tagName;
     return result;
 };
 
