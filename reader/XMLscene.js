@@ -43,7 +43,7 @@ XMLscene.prototype.init = function(application) {
 // Handler called when the graph is finally loaded.
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function(lights) {
-    //this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
+    this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
 
     this.axis = new CGFaxis(this, this.axisLength);
     //this.initCameras(details.cameras);
@@ -63,16 +63,18 @@ XMLscene.prototype.initLights = function(info) {
 
             if (type === "omni") {
                 this.lights[lightsIndex].setPosition(def.location.x, def.location.y, def.location.z, def.location.w);
-            } else {
-                this.lights[lightsIndex].setPosition(def.location.x, def.location.y, def.location.z, 0);
+            } else { //type === "spot"
+                this.lights[lightsIndex].setPosition(def.location.x, def.location.y, def.location.z);
+                this.lights[lightsIndex].setSpotDirection(def.direction.x, def.direction.y, def.direction.z);
+                this.lights[lightsIndex].setSpotCutOff(def.angle);
+                this.lights[lightsIndex].setSpotExponent(def.exponent);
+
             }
 
             if (def.enabled) {
                 this.lights[lightsIndex].enable();
             }
-
             this.lights[lightsIndex].setVisible(true);
-            this.lights[lightsIndex].update();
             lightsIndex++;
         }
     }
@@ -133,6 +135,9 @@ XMLscene.prototype.display = function() {
     // This is one possible way to do it
     if (this.graph.loadedOk) {
         this.axis.display();
+        for (var i = 0; i < this.lights.length; i++) {
+            this.lights[i].update();
+        }
     }
 };
 

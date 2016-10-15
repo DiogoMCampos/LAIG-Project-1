@@ -100,12 +100,14 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
                 case "spot":
                     for (var id in lights) {
                         if (lights.hasOwnProperty(id)) {
-                            var definitions = {};
-                            this.getLightAttributes(lights[id], definitions);
+                            var definitions = this.getLightAttributes(lights[id]);
                             var locArray = lights[id].data.getElementsByTagName("location");
                             definitions.location = this.getXYZ(locArray[0]);
                             var tarArray = lights[id].data.getElementsByTagName("target");
-                            definitions.target = this.getXYZ(tarArray[0]);
+                            definitions.direction = this.getXYZ(tarArray[0]);
+                            definitions.direction.x -= definitions.location.x;
+                            definitions.direction.y -= definitions.location.y;
+                            definitions.direction.z -= definitions.location.z;
                             definitions.angle = lights[id].angle;
                             definitions.exponent = lights[id].exponent;
                             l.spot[definitions.id] = definitions;
@@ -115,8 +117,7 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
                 case "omni":
                     for (var id in lights) {
                         if (lights.hasOwnProperty(id)) {
-                            var definitions = {};
-                            this.getLightAttributes(lights[id], definitions);
+                            var definitions = this.getLightAttributes(lights[id]);
                             var locArray = lights[id].data.getElementsByTagName("location");
                             definitions.location = this.getXYZ(locArray[0]);
                             definitions.location.w = this.reader.getFloat(locArray[0], "w");
@@ -130,13 +131,15 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
     return l;
 };
 
-MySceneGraph.prototype.getLightAttributes = function(node, definitions) {
-    definitions.enabled = node.enabled;
-    definitions.id = node.id;
+MySceneGraph.prototype.getLightAttributes = function(node) {
+    var result = {};
+    result.enabled = node.enabled;
+    result.id = node.id;
 
-    definitions.ambient = this.getRGBA(node.data, "ambient");
-    definitions.diffuse = this.getRGBA(node.data, "diffuse");
-    definitions.specular = this.getRGBA(node.data, "specular");
+    result.ambient = this.getRGBA(node.data, "ambient");
+    result.diffuse = this.getRGBA(node.data, "diffuse");
+    result.specular = this.getRGBA(node.data, "specular");
+    return result;
 };
 
 MySceneGraph.prototype.createTextures = function(texturesArray) {
