@@ -47,37 +47,12 @@ XMLscene.prototype.onGraphLoaded = function(lights) {
 
     this.axis = new CGFaxis(this, this.axisLength);
     //this.initCameras(details.cameras);
-    this.initLights(lights);
+    //this.initLights(lights);
     //console.log(this.primitives);
 };
 
 XMLscene.prototype.initLights = function(info) {
-    var lightsIndex = 0;
-    for (var type in info) {
-        var lightArray = info[type];
-        for (var light in lightArray) {
-            var def = lightArray[light];
-            this.lights[lightsIndex].setAmbient(def.ambient.r, def.ambient.g, def.ambient.b, def.ambient.a);
-            this.lights[lightsIndex].setDiffuse(def.diffuse.r, def.diffuse.g, def.diffuse.b, def.diffuse.a);
-            this.lights[lightsIndex].setSpecular(def.specular.r, def.specular.g, def.specular.b, def.specular.a);
 
-            if (type === "omni") {
-                this.lights[lightsIndex].setPosition(def.location.x, def.location.y, def.location.z, def.location.w);
-            } else { //type === "spot"
-                this.lights[lightsIndex].setPosition(def.location.x, def.location.y, def.location.z);
-                this.lights[lightsIndex].setSpotDirection(def.direction.x, def.direction.y, def.direction.z);
-                this.lights[lightsIndex].setSpotCutOff(def.angle);
-                this.lights[lightsIndex].setSpotExponent(def.exponent);
-
-            }
-
-            if (def.enabled) {
-                this.lights[lightsIndex].enable();
-            }
-            this.lights[lightsIndex].setVisible(true);
-            lightsIndex++;
-        }
-    }
 };
 
 XMLscene.prototype.initCameras = function(cameras) {
