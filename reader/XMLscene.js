@@ -82,25 +82,10 @@ XMLscene.prototype.display = function() {
 
     // Draw axis
 
-
     this.setDefaultAppearance();
 
-
-    for (var comp in this.components) {
-        var value = this.components[comp];
-        //console.log(value.transformations);
-        for (var i = 0; i < value.children.primitiveref.length; i++) {
-            var idArray = value.children.primitiveref;
-            this.pushMatrix();
-            this.applyTransformations(value.transformations);
-            this.primitives[idArray[i]].display();
-            this.popMatrix();
-        }
-    }
     //this.primitives["sas"].display();
     //this.primitives["sasphe"].display();
-
-
 
     // ---- END Background, camera and axis setup
 
@@ -108,6 +93,7 @@ XMLscene.prototype.display = function() {
     // only get executed after the graph has loaded correctly.
     // This is one possible way to do it
     if (this.graph.loadedOk) {
+        this.recursiveDisplay(this.root);
         this.axis.display();
         for (var j = 0; j < this.lights.length; j++) {
             this.lights[j].update();
@@ -115,11 +101,29 @@ XMLscene.prototype.display = function() {
     }
 };
 
+XMLscene.prototype.recursiveDisplay = function(componentId) {
+    var comp = this.components[componentId];
+
+    this.pushMatrix();
+    this.applyTransformations(comp.transformations);
+
+    var primitiveArray = comp.children.primitiveref;
+    for (var i = 0; i < primitiveArray.length; i++) {
+        this.primitives[primitiveArray[i]].display();
+    }
+
+    var componentArray = comp.children.componentref;
+    for (var j = 0; j < componentArray.length; j++) {
+        this.recursiveDisplay(componentArray[j]);
+    }
+
+    this.popMatrix();
+};
+
 XMLscene.prototype.applyTransformations = function(transformationsArray) {
 
     for (var i = 0; i < transformationsArray.length; i++) {
         var t = transformationsArray[i];
-        //console.log(t);
         switch (t.name) {
             case this.TRANSFORMATIONS.TRANSLATE:
                 this.translate(t.x, t.y, t.z);

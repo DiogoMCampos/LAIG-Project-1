@@ -51,8 +51,7 @@ MySceneGraph.prototype.onXMLReady = function() {
 };
 
 MySceneGraph.prototype.createScene = function(scene) {
-
-    //scene.root;
+    this.scene.root = scene.root;
     this.scene.axisLength = scene.axisLength;
 };
 
@@ -242,7 +241,6 @@ MySceneGraph.prototype.createElements = function(primitivesNodes) {
 };
 
 MySceneGraph.prototype.createComponents = function(componentNodes) {
-
     for (var id in componentNodes) {
         if (componentNodes.hasOwnProperty(id)) {
             var component = {};

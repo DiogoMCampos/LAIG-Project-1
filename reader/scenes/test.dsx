@@ -1,5 +1,5 @@
 <dsx>
-    <scene root="root" axis_length="6"/>
+    <scene root="car" axis_length="6"/>
 
     <views default="front">
         <perspective id="front" near="0.1" far="500" angle="0.4">
