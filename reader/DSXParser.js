@@ -167,7 +167,7 @@ DSXParser.prototype.getTransformationData = function(transformation) {
         console.warn("transformation without id (required). Proceeded without that transformation.");
         return;
     }
-    if (id) {
+    if (this.transformations.hasOwnProperty(id)) {
         console.warn("Repeated transformation id: " + id);
         return;
     }

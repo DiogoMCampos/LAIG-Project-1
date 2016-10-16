@@ -78,7 +78,7 @@ MySceneGraph.prototype.createCameras = function(perspectives) {
             var fromVector = vec3.fromValues(f.x, f.y, f.z);
             var toVector = vec3.fromValues(to.x, to.y, to.z);
 
-            var camera = new CGFcamera(p.angle, p.near, p.far, fromVector, toVector);
+            var camera = new CGFcamera(p.angle * 2 * Math.PI / 360, p.near, p.far, fromVector, toVector);
             this.scene.cameras.push(camera);
         }
     }
@@ -115,7 +115,7 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
 
                     l.setPosition(def.location.x, def.location.y, def.location.z);
                     l.setSpotDirection(direction.x, direction.y, direction.z);
-                    l.setSpotCutOff(light.angle);
+                    l.setSpotCutOff(light.angle * 2 * Math.PI / 360);
                     l.setSpotExponent(light.exponent);
                     break;
                 case "omni":
@@ -254,6 +254,7 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
             var transformationNodes = transformation[0].children;
             component.transformations = [];
             for (var j = 0; j < transformationNodes.length; j++) {
+
                 var t = {};
 
                 if (transformationNodes[j].tagName === this.scene.TRANSFORMATIONS.REFERENCE) {

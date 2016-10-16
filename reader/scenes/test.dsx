@@ -2,13 +2,13 @@
     <scene root="root" axis_length="6"/>
 
     <views default="front">
-        <perspective id="front" near="0.1" far="500" angle="0.4">
+        <perspective id="front" near="0.1" far="500" angle="90">
             <from x="15" y="15" z="15"/>
             <to x="0" y="0" z="0"/>
         </perspective>
 
-        <perspective id="eagle eye" near="5" far="50" angle="5">
-            <from x="5" y="5" z="5"/>
+        <perspective id="eagle eye" near="5" far="50" angle="50">
+            <from x="15" y="5" z="3"/>
             <to x="0" y="0" z="1"/>
         </perspective>
     </views>
@@ -50,6 +50,8 @@
         <!-- Nao necessario aplicar fatores de escala em  -->
         <!-- quadricas (esfera, ciclindro...) -->
         <texture id="ss" file="ola.jpg" length_s="1" length_t="1"/>
+        <texture id="road" file="road.jpg" length_s="1" length_t="1"/>
+
     </textures>
 
     <materials>

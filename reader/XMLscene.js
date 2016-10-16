@@ -110,7 +110,7 @@ XMLscene.prototype.display = function() {
 XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, predecessorTextID) {
     var comp = this.components[componentId];
     var matId, texId;
-    
+
     if(comp.textureID === "inherit"){
         texId = predecessorTextID;
     } else {
@@ -160,6 +160,7 @@ XMLscene.prototype.applyTransformations = function(transformationsArray) {
                 this.applyTransformations(this.transformations[t.id]);
                 break;
             default:
+                console.warn("not recognized transformation tagName: " + t.name);
                 break;
         }
     }
