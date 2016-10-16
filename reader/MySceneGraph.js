@@ -179,7 +179,6 @@ MySceneGraph.prototype.createTransformations = function(transformationNodes) {
         if (transformationNodes.hasOwnProperty(id)) {
             var collections = transformationNodes[id];
             this.scene.transformations[collections.id] = [];
-
             for (var j = 0; j < collections.data.length; j++) {
                 var t = this.getTransformationAttributes(collections.data[j]);
                 this.scene.transformations[collections.id].push(t);

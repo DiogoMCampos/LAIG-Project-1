@@ -50,11 +50,7 @@
         <!-- Nao necessario aplicar fatores de escala em  -->
         <!-- quadricas (esfera, ciclindro...) -->
         <texture id="ss" file="../resources/ola.jpg" length_s="1" length_t="1"/>
-        <texture id="road" file="../resources/road.jpg" length_s="1" length_t="1"/>
-        <texture id="frontBumper" file="../resources/frontBumper.png" length_s="1" length_t="1"/>
-        <texture id="carbon" file="../resources/carbon.jpg" length_s="1" length_t="1"/>
         <texture id="windows" file="../resources/windows.jpg" length_s="1" length_t="1"/>
-        <texture id="backWindow" file="../resources/backWindow.jpg" length_s="1" length_t="1"/>
 
     </textures>
 
@@ -70,10 +66,10 @@
         </material>
 
         <material id="gray">
-            <emission r="1" g="1" b="1" a="1"/>
-            <ambient r="0" g="1" b="0" a="1"/>
-            <diffuse r="0" g="1" b="0" a="1"/>
-            <specular r="1" g="1" b="1" a="1"/>
+            <emission r="0.1" g="0.1" b="0.1" a="1"/>
+            <ambient r="0.1" g="0.1" b="0.1" a="1"/>
+            <diffuse r="0.1" g="0.1" b="0.1" a="1"/>
+            <specular r="0.1" g="0.1" b="0.1" a="1"/>
             <shininess value="1"/>
         </material>
 
@@ -112,9 +108,6 @@
     </transformations>
 
     <primitives>
-        <primitive id="drive">
-            <cylinder base="0.1" top="0.1" height="3.6" slices="20" stacks="20"/>
-        </primitive>
 
         <primitive id="tire">
             <torus inner="0.4" outer="1" slices="50" loops="50"/>
@@ -122,18 +115,6 @@
 
         <primitive id="rim">
             <cylinder base="0.4" top="0.4" height="0.2" slices="50" stacks="50"/>
-        </primitive>
-
-        <primitive id="side-body">
-            <rectangle x1="0" y1="0" x2="9" y2="1.5"/>
-        </primitive>
-
-        <primitive id="front-body">
-            <rectangle x1="0" y1="0" x2="3.5" y2="1.5"/>
-        </primitive>
-
-        <primitive id="top-body">
-            <rectangle x1="0" y1="0" x2="9" y2="3.5"/>
         </primitive>
 
         <primitive id="triangle1">
@@ -151,56 +132,9 @@
         <primitive id="cylinder">
             <cylinder base="1" top="1" height="1" slices="50" stacks="50"/>
         </primitive>
-
-        <primitive id="r1">
-            <rectangle x1="0" y1="0" x2="1" y2="1"/>
-        </primitive>
-        <primitive id="t1">
-            <triangle x1="0" y1="0" z1="0" x2="5" y2="0" z2="0" x3="0" y3="3" z3="0"/>
-        </primitive>
-        <primitive id="c1">
-            <cylinder base="1.5" top="1" height="2" slices="20" stacks="5"/>
-        </primitive>
-        <primitive id="s1">
-            <sphere radius="1" slices="80" stacks="80"/>
-        </primitive>
-        <primitive id="to1">
-            <torus inner="0.4" outer="1" slices="50" loops="50"/>
-        </primitive>
     </primitives>
 
     <components>
-        <component id="front-drive">
-            <transformation>
-                <translate x="6" y="0" z="0.2"/>
-            </transformation>
-
-            <materials>
-                <material id="ss"/>
-            </materials>
-
-            <texture id="none"/>
-
-            <children>
-                <primitiveref id="drive"/>
-            </children>
-        </component>
-
-        <component id="back-drive">
-            <transformation>
-                <translate x="0" y="0" z="0.2"/>
-            </transformation>
-
-            <materials>
-                <material id="ss"/>
-            </materials>
-
-            <texture id="none"/>
-
-            <children>
-                <primitiveref id="drive"/>
-            </children>
-        </component>
 
         <component id="rim">
             <transformation></transformation>
@@ -286,6 +220,7 @@
             <transformation>
                 <translate x="0" y="1.5" z="0"/>
                 <rotate axis="x" angle="180"/>
+                <scale x="9" y="1.5" z="1"/>
             </transformation>
 
             <materials>
@@ -295,13 +230,14 @@
             <texture id="ss"/>
 
             <children>
-                <primitiveref id="side-body"/>
+                <primitiveref id="rectangle"/>
             </children>
         </component>
 
         <component id="left-side-body">
             <transformation>
                 <translate x="0" y="0" z="3.5"/>
+                <scale x="9" y="1.5" z="1"/>
             </transformation>
 
             <materials>
@@ -311,7 +247,7 @@
             <texture id="ss"/>
 
             <children>
-                <primitiveref id="side-body"/>
+                <primitiveref id="rectangle"/>
             </children>
         </component>
 
@@ -319,16 +255,17 @@
             <transformation>
                 <translate x="9" y="0" z="3.5"/>
                 <rotate axis="y" angle="90"/>
+                <scale x="3.5" y="1.5" z="1"/>
             </transformation>
 
             <materials>
-                <material id="gray"/>
+                <material id="ss"/>
             </materials>
 
-            <texture id="frontBumper"/>
+            <texture id="ss"/>
 
             <children>
-                <primitiveref id="front-body"/>
+                <primitiveref id="rectangle"/>
             </children>
         </component>
 
@@ -336,16 +273,17 @@
             <transformation>
                 <translate x="0" y="0" z="0"/>
                 <rotate axis="y" angle="270"/>
+                <scale x="3.5" y="1.5" z="1"/>
             </transformation>
 
             <materials>
                 <material id="ss"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="ss"/>
 
             <children>
-                <primitiveref id="front-body"/>
+                <primitiveref id="rectangle"/>
             </children>
         </component>
 
@@ -353,16 +291,17 @@
             <transformation>
                 <translate x="0" y="1.5" z="3.5"/>
                 <rotate axis="x" angle="270"/>
+                <scale x="9" y="3.5" z="1"/>
             </transformation>
 
             <materials>
                 <material id="ss"/>
             </materials>
 
-            <texture id="carbon"/>
+            <texture id="ss"/>
 
             <children>
-                <primitiveref id="top-body"/>
+                <primitiveref id="rectangle"/>
             </children>
         </component>
 
@@ -370,16 +309,17 @@
             <transformation>
                 <translate x="0" y="0" z="0"/>
                 <rotate axis="x" angle="90"/>
+                <scale x="9" y="3.5" z="1"/>
             </transformation>
 
             <materials>
                 <material id="ss"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="ss"/>
 
             <children>
-                <primitiveref id="top-body"/>
+                <primitiveref id="rectangle"/>
             </children>
         </component>
 
@@ -439,18 +379,18 @@
 
         <component id="rear-mirror">
             <transformation>
-                <translate x="1.5" y="1" z="3.5"/>
+
                 <rotate axis="z" angle="-146.3099"/>
-                <rotate axis="y" angle="90"/>
+                <rotate axis="y" angle="-90"/>
                 <rotate axis="x" angle="90"/>
                 <scale x="3.5" y="1.80278" z="1"/>
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="gray"/>
             </materials>
 
-            <texture id="backWindow"/>
+            <texture id="windows"/>
 
             <children>
                 <primitiveref id="rectangle"/>
@@ -464,10 +404,10 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="gray"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="windows"/>
 
             <children>
                 <primitiveref id="rectangle"/>
@@ -481,10 +421,10 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="gray"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="windows"/>
 
             <children>
                 <primitiveref id="rectangle"/>
@@ -554,7 +494,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="gray"/>
             </materials>
 
             <texture id="windows"/>
@@ -614,6 +554,38 @@
             </children>
         </component>
 
+        <component id="solid-body">
+            <transformation></transformation>
+
+            <materials>
+                <material id="ss"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="left-front-triangle"/>
+                <componentref id="right-front-triangle"/>
+                <componentref id="windshield"/>
+            </children>
+        </component>
+
+        <component id="windows-body">
+            <transformation></transformation>
+
+            <materials>
+                <material id="gray"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="left-front-triangle"/>
+                <componentref id="right-front-triangle"/>
+                <componentref id="windshield"/>
+            </children>
+        </component>
+
         <component id="upper-body">
             <transformation>
                 <translate x="0" y="1.5" z="0"/>
@@ -661,9 +633,6 @@
             <texture id="none"/>
 
             <children>
-                <componentref id="back-drive"/>
-                <componentref id="front-drive"/>
-
                 <componentref id="right-back-wheel"/>
                 <componentref id="left-back-wheel"/>
 
@@ -686,7 +655,7 @@
                 <material id="asphalt"/>
             </materials>
 
-            <texture id="road"/>
+            <texture id="none"/>
 
             <children>
                 <primitiveref id="rectangle"/>
