@@ -19,17 +19,17 @@
     </illumination>
 
     <lights>
-        <omni id="ss" enabled="0">
-            <location x="3" y="0" z="3" w="1"/>
-            <ambient r=".5" g="1" b="0" a="0.1"/>
-            <diffuse r=".5" g="1" b="0" a="0.1"/>
+        <omni id="ss" enabled="1">
+            <location x="3" y="10" z="3" w="1"/>
+            <ambient r="1" g="1" b="1" a="0.1"/>
+            <diffuse r="1" g="1" b="1" a="0.1"/>
             <specular r="0" g=".5" b="0" a="0.1"/>
         </omni>
 
         <spot id="sss" enabled="0" angle="45" exponent="45">
             <!-- atencao, "target" e' diferente de "direction" -->
             <target x="1" y="1" z="1"/>
-            <location x="1" y="1" z="1"/>
+            <location x="0" y="5" z="0"/>
             <ambient r=".5" g="1" b="1" a="0.1"/>
             <diffuse r="0" g="1" b="0" a="0.1"/>
             <specular r=".5" g="1" b="1" a="0.1"/>
@@ -49,8 +49,12 @@
         <!-- objetos respetivos podem a violar esta regra.         -->
         <!-- Nao necessario aplicar fatores de escala em  -->
         <!-- quadricas (esfera, ciclindro...) -->
-        <texture id="ss" file="ola.jpg" length_s="1" length_t="1"/>
-        <texture id="road" file="road.jpg" length_s="1" length_t="1"/>
+        <texture id="ss" file="../resources/ola.jpg" length_s="1" length_t="1"/>
+        <texture id="road" file="../resources/road.jpg" length_s="1" length_t="1"/>
+        <texture id="frontBumper" file="../resources/frontBumper.png" length_s="1" length_t="1"/>
+        <texture id="carbon" file="../resources/carbon.jpg" length_s="1" length_t="1"/>
+        <texture id="windows" file="../resources/windows.jpg" length_s="1" length_t="1"/>
+        <texture id="backWindow" file="../resources/backWindow.jpg" length_s="1" length_t="1"/>
 
     </textures>
 
@@ -64,12 +68,19 @@
             <specular r="1" g="1" b="1" a="1"/>
             <shininess value="1"/>
         </material>
+        <material id="gray">
+            <emission r="1" g="1" b="1" a="1"/>
+            <ambient r="0" g="1" b="0" a="1"/>
+            <diffuse r="0" g="1" b="0" a="1"/>
+            <specular r="1" g="1" b="1" a="1"/>
+            <shininess value="1"/>
+        </material>
 
         <material id="asphalt">
             <emission r="0.11" g="0.12" b="0.12" a="1"/>
-            <ambient r="0.11" g="0.12" b="0.12" a="1"/>
-            <diffuse r="0.11" g="0.12" b="0.12" a="1"/>
-            <specular r="1" g="1" b="1" a="1"/>
+            <ambient r="0.4" g="0.4" b="0.4" a=".1"/>
+            <diffuse r="0.4" g="0.4" b="0.4" a=".1"/>
+            <specular r="1" g="1" b="1" a=".1"/>
             <shininess value="1"/>
         </material>
     </materials>
@@ -182,7 +193,7 @@
             <transformation></transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="asphalt"/>
             </materials>
 
             <texture id="none"/>
@@ -268,7 +279,7 @@
                 <material id="ss"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="ss"/>
 
             <children>
                 <primitiveref id="side-body"/>
@@ -284,7 +295,7 @@
                 <material id="ss"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="ss"/>
 
             <children>
                 <primitiveref id="side-body"/>
@@ -298,10 +309,10 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="gray"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="frontBumper"/>
 
             <children>
                 <primitiveref id="front-body"/>
@@ -335,7 +346,7 @@
                 <material id="ss"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="carbon"/>
 
             <children>
                 <primitiveref id="top-body"/>
@@ -426,7 +437,7 @@
                 <material id="ss"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="backWindow"/>
 
             <children>
                 <primitiveref id="rectangle"/>
@@ -479,7 +490,7 @@
                 <material id="ss"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="ss"/>
 
             <children>
                 <primitiveref id="rectangle"/>
@@ -533,7 +544,7 @@
                 <material id="ss"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="windows"/>
 
             <children>
                 <primitiveref id="rectangle"/>
@@ -652,16 +663,17 @@
 
         <component id="road">
             <transformation>
-                <translate x="-4" y="0" z="4.5"/>
-                <scale x="14" y="1" z="5"/>
+                <translate x="-4" y="0" z="-1.5"/>
+                <scale x="14" y="1" z="6"/>
                 <rotate axis="x" angle="-90"/>
+                <rotate axis="z" angle="-90"/>
             </transformation>
 
             <materials>
                 <material id="asphalt"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="road"/>
 
             <children>
                 <primitiveref id="rectangle"/>
