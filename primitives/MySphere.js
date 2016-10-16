@@ -35,14 +35,16 @@ MySphere.prototype.initBuffers = function() {
         s = 0;
 
         for (var m = 0; m < this.slices; m++) {
-            this.vertices.push(Math.cos(angLat * m) * Math.sin(angVert * ind) * this.radius,
-                Math.sin(angLat * m) * Math.sin(angVert * ind) * this.radius,
-                Math.cos(angVert * ind) * this.radius);
-            this.normals.push(Math.cos(angLat * m) * Math.sin(angVert * ind),
-                Math.sin(angLat * m) * Math.sin(angVert * ind),
-                Math.cos(angVert * ind));
-            s += this.textS;
-            this.texCoords.push(s, t);
+
+            var nX = Math.cos(angLat * m) * Math.sin(angVert * ind);
+            var nY = Math.sin(angLat * m) * Math.sin(angVert * ind);
+            var nZ = Math.cos(angVert * ind);
+            this.vertices.push(nX * this.radius,
+                nY * this.radius,
+                nZ * this.radius);
+            this.normals.push(nX, nY, nZ);
+
+            this.texCoords.push(Math.asin(nX)/ Math.PI + 0.5, Math.asin(nY)/ Math.PI + 0.5);
 
         }
         t -= this.textT;

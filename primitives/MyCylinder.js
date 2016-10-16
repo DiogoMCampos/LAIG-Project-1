@@ -39,20 +39,24 @@ MyCylinder.prototype.initBuffers = function() {
         var sCoord = 0;
 
         for (var m = 0; m < this.slices; m++) {
-            this.vertices.push(Math.cos(ang * m) * (this.baseRadius - diff * ind),
-                Math.sin(ang * m) * (this.baseRadius - diff * ind),
+            var nX = Math.cos(ang * m);
+            var nY = Math.sin(ang * m);
+            this.vertices.push(nX * (this.baseRadius - diff * ind),
+                nY * (this.baseRadius - diff * ind),
                 n);
+            this.normals.push(nX, nY, 0);
             this.texCoords.push(sCoord, tCoord);
-            this.normals.push(Math.cos(ang * m), Math.sin(ang * m), 0);
             sCoord += sPatch;
         }
+
+        this.texCoords.push(sCoord, tCoord);
         tCoord -= tPatch;
         n += this.heightCylinder / this.stacks;
     }
 
     //Indices
     for (var j = 0; j < this.stacks; j++) {
-        for (var i = 0; i <= (this.slices); i += 1) {
+        for (var i = 0; i < (this.slices); i++) {
             this.indices.push((i + 1) % (this.slices) + (j + 0) * this.slices,
                 (i + 0) % (this.slices) + (j + 1) * this.slices,
                 (i + 0) % (this.slices) + (j + 0) * this.slices);
