@@ -271,6 +271,8 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
                 component.materials.push(materialID);
             }
 
+            component.materialsIndex = 0;
+
             var textID = this.reader.getString(texture[0], "id");
             component.textureID = textID;
 

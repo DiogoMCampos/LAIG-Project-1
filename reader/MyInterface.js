@@ -63,7 +63,10 @@ MyInterface.prototype.processKeyboard = function(event) {
             this.scene.switchPerspective();
             this.setActiveCamera(this.scene.camera);
             break;
-        //
+        case (77):
+        case (109):
+            this.scene.incrementMaterials();
+            break;
 
     }
 };

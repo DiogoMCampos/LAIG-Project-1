@@ -106,6 +106,7 @@ XMLscene.prototype.recursiveDisplay = function(componentId) {
 
     this.pushMatrix();
     this.applyTransformations(comp.transformations);
+    this.applyMaterialTexture(comp.materialsIndex, comp.materials, comp.textureID);
 
     var primitiveArray = comp.children.primitiveref;
     for (var i = 0; i < primitiveArray.length; i++) {
@@ -121,7 +122,6 @@ XMLscene.prototype.recursiveDisplay = function(componentId) {
 };
 
 XMLscene.prototype.applyTransformations = function(transformationsArray) {
-
     for (var i = 0; i < transformationsArray.length; i++) {
         var t = transformationsArray[i];
         switch (t.name) {
@@ -146,6 +146,20 @@ XMLscene.prototype.applyTransformations = function(transformationsArray) {
     }
 };
 
+XMLscene.prototype.applyMaterialTexture = function(materialsIndex, materials, textureID) {
+    var materialID = materials[materialsIndex];
+
+    if (textureID === "none") {
+        if (materialID !== "inherit") {
+            var material = this.materials[materialID];
+            material.apply();
+        }
+    } else if (textureID !== "inherit") {
+        var texture = this.textures[textureID];
+        texture.apply();
+    }
+};
+
 XMLscene.prototype.switchPerspective = function() {
     this.cameraIndex++;
     if (this.cameraIndex === this.cameras.length) {
@@ -153,3 +167,15 @@ XMLscene.prototype.switchPerspective = function() {
     }
     this.camera = this.cameras[this.cameraIndex];
 };
+
+XMLscene.prototype.incrementMaterials = function() {
+    for (var comp in this.components) {
+        var component = this.components[comp];
+
+        component.materialIndex++;
+        if (component.materialsIndex >= component.materials.length) {
+            component.materialsIndex = 0;
+        }
+    }
+
+}
