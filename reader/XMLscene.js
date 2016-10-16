@@ -46,6 +46,7 @@ XMLscene.prototype.onGraphLoaded = function(lights) {
     this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
 
     this.axis = new CGFaxis(this, this.axisLength);
+    this.enableTextures(true);
     //this.initCameras(details.cameras);
     //this.initLights(lights);
     //console.log(this.primitives);
