@@ -49,7 +49,7 @@ XMLscene.prototype.onGraphLoaded = function(lights) {
     this.enableTextures(true);
     //this.initCameras(details.cameras);
     //this.initLights(lights);
-    //console.log(this.primitives);
+    console.log("yee pee kayay");
 };
 
 XMLscene.prototype.initLights = function(info) {
@@ -94,7 +94,8 @@ XMLscene.prototype.display = function() {
     // only get executed after the graph has loaded correctly.
     // This is one possible way to do it
     if (this.graph.loadedOk) {
-        this.recursiveDisplay(this.root);
+        var root = this.components[this.root];
+        this.recursiveDisplay(this.root, root.materials[root.materialsIndex], root.textureID);
         this.axis.display();
         for (var j = 0; j < this.lights.length; j++) {
             this.lights[j].update();
@@ -102,12 +103,29 @@ XMLscene.prototype.display = function() {
     }
 };
 
-XMLscene.prototype.recursiveDisplay = function(componentId) {
+
+/**
+ *      Predecessor arguments are the last ID !==inherit
+ */
+XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, predecessorTextID) {
     var comp = this.components[componentId];
+    var matId, texId;
+    
+    if(comp.textureID === "inherit"){
+        texId = predecessorTextID;
+    } else {
+        texId = comp.textureID;
+    }
+
+    if(comp.materials[comp.materialsIndex] === "inherit"){
+        matId = predecessorMatID;
+    } else{
+        matId = comp.materials[comp.materialsIndex];
+    }
 
     this.pushMatrix();
     this.applyTransformations(comp.transformations);
-    this.applyMaterialTexture(comp.materialsIndex, comp.materials, comp.textureID);
+    this.applyMaterialTexture(matId, texId);
 
     var primitiveArray = comp.children.primitiveref;
     for (var i = 0; i < primitiveArray.length; i++) {
@@ -116,7 +134,7 @@ XMLscene.prototype.recursiveDisplay = function(componentId) {
 
     var componentArray = comp.children.componentref;
     for (var j = 0; j < componentArray.length; j++) {
-        this.recursiveDisplay(componentArray[j]);
+        this.recursiveDisplay(componentArray[j], matId, texId);
     }
 
     this.popMatrix();
@@ -147,18 +165,15 @@ XMLscene.prototype.applyTransformations = function(transformationsArray) {
     }
 };
 
-XMLscene.prototype.applyMaterialTexture = function(materialsIndex, materials, textureID) {
-    var materialID = materials[materialsIndex];
-
+XMLscene.prototype.applyMaterialTexture = function(materialId, textureID) {
+    var material = this.materials[materialId];
     if (textureID === "none") {
-        if (materialID !== "inherit") {
-            var material = this.materials[materialID];
-            material.apply();
-        }
-    } else if (textureID !== "inherit") {
-        var texture = this.textures[textureID];
-        texture.apply();
+        material.setTexture(null);
     }
+    else{
+        material.setTexture(this.textures[textureID]);
+    }
+    material.apply();
 };
 
 XMLscene.prototype.switchPerspective = function() {
@@ -178,5 +193,4 @@ XMLscene.prototype.incrementMaterials = function() {
             component.materialsIndex = 0;
         }
     }
-
-}
+};

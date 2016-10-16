@@ -144,9 +144,9 @@ MySceneGraph.prototype.createTextures = function(textures) {
         if (textures.hasOwnProperty(id)) {
             var t = textures[id];
 
-            var tex = new CGFappearance(this.scene);
-            tex.loadTexture(t.file);
-            tex.setTextureWrap(t.lengthS, t.lengthT);
+            var tex = new CGFtexture(this.scene, t.file);
+            //tex.loadTexture(t.file);
+            //tex.setTextureWrap(t.lengthS, t.lengthT);
             this.scene.textures[t.id] = tex;
         }
     }
