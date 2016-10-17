@@ -43,14 +43,12 @@ XMLscene.prototype.init = function(application) {
 
 // Handler called when the graph is finally loaded.
 // As loading is asynchronous, this may be called already after the application has started the run loop
-XMLscene.prototype.onGraphLoaded = function(lights) {
+XMLscene.prototype.onGraphLoaded = function() {
     this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
 
     this.axis = new CGFaxis(this, this.axisLength);
     this.enableTextures(true);
     this.interface.setActiveCamera(this.camera);
-    //this.initLights(lights);
-    console.log("yee pee kayay");
 };
 
 XMLscene.prototype.initLights = function(info) {
@@ -174,6 +172,7 @@ XMLscene.prototype.applyMaterialTexture = function(materialId, textureID) {
     }
     else{
         material.setTexture(this.textures[textureID]);
+        material.setTextureWrap(this.textures[textureID].lengthS, this.textures[textureID].lengthT);
     }
     material.apply();
 };

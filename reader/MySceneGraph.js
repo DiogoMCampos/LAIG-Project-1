@@ -145,8 +145,8 @@ MySceneGraph.prototype.createTextures = function(textures) {
             var t = textures[id];
 
             var tex = new CGFtexture(this.scene, t.file);
-            //tex.loadTexture(t.file);
-            //tex.setTextureWrap(t.lengthS, t.lengthT);
+            tex.lengthS = t.lengthS;
+            tex.lengthT = t.lengthT;
             this.scene.textures[t.id] = tex;
         }
     }
@@ -289,6 +289,25 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
             }
 
             this.scene.components[id] = component;
+        }
+    }
+
+    for (var id in this.scene.components) {
+        if (this.scene.components.hasOwnProperty(id)) {
+            var comp = this.scene.components[id];
+            for (var i = 0; i < comp.children.primitiveref.length; i++) {
+                var primref = comp.children.primitiveref[i];
+                if(!this.scene.primitives.hasOwnProperty(primref)){
+                    throw ("primitiveref id: " + primref + " used in componentref id: " + id + " is not recognized");
+                }
+            }
+
+            for (var h = 0; h < comp.children.componentref.length; h++) {
+                var compref = comp.children.componentref[h];
+                if(!this.scene.components.hasOwnProperty(compref)){
+                    throw ("componentref id: " + compref + " used in componentref id: " + id + " is not recognized");
+                }
+            }
         }
     }
 };
