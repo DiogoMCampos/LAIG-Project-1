@@ -259,6 +259,10 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
                 if (transformationNodes[j].tagName === this.scene.TRANSFORMATIONS.REFERENCE) {
                     t.name = this.scene.TRANSFORMATIONS.REFERENCE;
                     t.id = this.reader.getString(transformationNodes[j], "id");
+                    if(!this.scene.transformations.hasOwnProperty(t.id)){
+                        throw ("transformations id: " + t.id + " used in componentref id: " + id + " is not recognized");
+                    }
+                    component.textureID = textID;
                 } else {
                     t = this.getTransformationAttributes(transformationNodes[j]);
                 }
@@ -268,12 +272,19 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
             component.materials = [];
             for (var j = 0; j < material.length; j++) {
                 var materialID = this.reader.getString(material[j], "id");
-                component.materials.push(materialID);
+                if(this.scene.materials.hasOwnProperty(materialID) || materialID === "inherit"){
+                    component.materials.push(materialID);
+                } else {
+                    throw ("material id: " + materialID + " used in componentref id: " + id + " is not recognized");
+                }
             }
 
             component.materialsIndex = 0;
 
             var textID = this.reader.getString(texture[0], "id");
+            if(!this.scene.textures.hasOwnProperty(textID) & (textID !== "none") & textID !== "inherit"){
+                throw ("texture id: " + textID + " used in componentref id: " + id + " is not recognized");
+            }
             component.textureID = textID;
 
             var child = children[0].children;
