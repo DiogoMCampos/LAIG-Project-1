@@ -26,6 +26,13 @@
             <specular r="0" g=".5" b="0" a="0.1"/>
         </omni>
 
+        <omni id="lamp" enabled="1">
+            <location x="8" y="5.2" z="-0.7" w="1"/>
+            <ambient r="1" g="1" b="0" a="1"/>
+            <diffuse r="1" g="1" b="0" a="1"/>
+            <specular r="1" g="1" b="0" a="1"/>
+        </omni>
+
         <spot id="sss" enabled="0" angle="45" exponent="45">
             <target x="1" y="1" z="1"/>
             <location x="0" y="5" z="0"/>
@@ -36,13 +43,14 @@
     </lights>
 
     <textures>
-        <texture id="car" file="../resources/ola.jpg" length_s="1" length_t="1"/>
+        <texture id="car" file="../resources/bodyPaint.jpg" length_s="1" length_t="1"/>
         <texture id="windows" file="../resources/windows.jpg" length_s="1" length_t="1"/>
+        <texture id="xp" file="../resources/xp.jpg" length_s="1" length_t="1"/>
 
     </textures>
 
     <materials>
-        <material id="ss">
+        <material id="default">
             <emission r="1" g="1" b="1" a="1"/>
             <ambient r="1" g="1" b="1" a="1"/>
             <diffuse r="1" g="1" b="1" a="1"/>
@@ -52,34 +60,56 @@
 
         <material id="gray">
             <emission r="0.1" g="0.1" b="0.1" a="1"/>
-            <ambient r="0.1" g="0.1" b="0.1" a="1"/>
+            <ambient r="0" g="0" b="0" a="1"/>
             <diffuse r="0.1" g="0.1" b="0.1" a="1"/>
             <specular r="0.1" g="0.1" b="0.1" a="1"/>
             <shininess value="1"/>
         </material>
 
+        <material id="yellow">
+            <emission r="1" g="1" b="0" a="0.1"/>
+            <ambient r="1" g="1" b="0" a="0.1"/>
+            <diffuse r="1" g="1" b="0" a="0.1"/>
+            <specular r="1" g="1" b="0" a="0.1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="pink">
+            <emission r="1" g="0.08" b="0.58" a="1"/>
+            <ambient r="1" g="0.08" b="0.58" a="1"/>
+            <diffuse r="1" g="0.2" b="0.58" a="1"/>
+            <specular r="1" g="1" b="0" a="1"/>
+            <shininess value="1"/>
+        </material>
+
         <material id="post">
-            <emission r="0.21" g="0.22" b="0.23" a="1"/>
-            <ambient r="0.4" g="0.4" b="0.4" a=".1"/>
+            <emission r="0.1" g="0.1" b="0.1" a="1"/>
+            <ambient r="0.1" g="0.1" b="0.1" a=".1"/>
             <diffuse r="0.4" g="0.4" b="0.4" a=".1"/>
             <specular r="1" g="1" b="1" a=".1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="window">
+            <emission r="0.11" g="0.12" b="0.12" a="1"/>
+            <ambient r="0.2" g="0.2" b="0.2" a="1"/>
+            <diffuse r="0.1" g="0.1" b="0.1" a=".1"/>
+            <specular r="0" g="0" b="0" a=".1"/>
             <shininess value="1"/>
         </material>
 
         <material id="asphalt">
             <emission r="0.11" g="0.12" b="0.12" a="1"/>
-            <ambient r="0.4" g="0.4" b="0.4" a=".1"/>
-            <diffuse r="0.4" g="0.4" b="0.4" a=".1"/>
-            <specular r="1" g="1" b="1" a=".1"/>
-            <shininess value="1"/>
+            <ambient r="0" g="0" b="0" a="1"/>
+            <diffuse r="0.1" g="0.1" b="0.1" a=".1"/>
+            <specular r="0" g="0" b="0" a=".1"/>
+            <shininess value="0"/>
         </material>
     </materials>
 
     <transformations>
-        <transformation id="ss">
-            <translate x="5" y="0" z="2"/>
-            <rotate axis="x" angle="30"/>
-            <scale x="2" y="2" z="2"/>
+        <transformation id="background">
+            <scale x="8" y="8" z="1"/>
         </transformation>
         <transformation id="ass">
             <translate x="2" y="0" z="2"/>
@@ -91,10 +121,6 @@
     <primitives>
         <primitive id="tire">
             <torus inner="0.4" outer="1" slices="50" loops="50"/>
-        </primitive>
-
-        <primitive id="rim">
-            <cylinder base="0.4" top="0.4" height="0.2" slices="50" stacks="50"/>
         </primitive>
 
         <primitive id="triangle1">
@@ -112,11 +138,18 @@
         <primitive id="cylinder">
             <cylinder base="1" top="1" height="1" slices="50" stacks="50"/>
         </primitive>
+
+        <primitive id="lamp">
+            <sphere radius="1" slices="50" stacks="50"/>
+        </primitive>
+
     </primitives>
 
     <components>
         <component id="rim">
-            <transformation></transformation>
+            <transformation>
+                <scale x="0.4" y="0.4" z="0.2"/>
+            </transformation>
 
             <materials>
                 <material id="asphalt"/>
@@ -125,7 +158,7 @@
             <texture id="none"/>
 
             <children>
-                <primitiveref id="rim"/>
+                <primitiveref id="cylinder"/>
             </children>
         </component>
 
@@ -135,10 +168,10 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="inherit"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="inherit"/>
 
             <children>
                 <primitiveref id="tire"/>
@@ -152,10 +185,10 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="inherit"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="inherit"/>
 
             <children>
                 <primitiveref id="tire"/>
@@ -169,10 +202,10 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="inherit"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="inherit"/>
 
             <children>
                 <primitiveref id="tire"/>
@@ -184,10 +217,10 @@
             <transformation></transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="inherit"/>
             </materials>
 
-            <texture id="none"/>
+            <texture id="inherit"/>
 
             <children>
                 <primitiveref id="tire"/>
@@ -203,7 +236,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -220,7 +253,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -238,7 +271,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -256,7 +289,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -274,7 +307,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -292,7 +325,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -306,7 +339,7 @@
             <transformation></transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -329,7 +362,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -346,7 +379,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -366,10 +399,10 @@
             </transformation>
 
             <materials>
-                <material id="gray"/>
+                <material id="inherit"/>
             </materials>
 
-            <texture id="windows"/>
+            <texture id="inherit"/>
 
             <children>
                 <primitiveref id="rectangle"/>
@@ -383,10 +416,10 @@
             </transformation>
 
             <materials>
-                <material id="gray"/>
+                <material id="inherit"/>
             </materials>
 
-            <texture id="windows"/>
+            <texture id="inherit"/>
 
             <children>
                 <primitiveref id="rectangle"/>
@@ -400,10 +433,10 @@
             </transformation>
 
             <materials>
-                <material id="gray"/>
+                <material id="inherit"/>
             </materials>
 
-            <texture id="windows"/>
+            <texture id="inherit"/>
 
             <children>
                 <primitiveref id="rectangle"/>
@@ -419,7 +452,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -436,7 +469,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -453,7 +486,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -473,10 +506,10 @@
             </transformation>
 
             <materials>
-                <material id="gray"/>
+                <material id="inherit"/>
             </materials>
 
-            <texture id="windows"/>
+            <texture id="inherit"/>
 
             <children>
                 <primitiveref id="rectangle"/>
@@ -487,7 +520,7 @@
             <transformation></transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -505,7 +538,7 @@
             <transformation></transformation>
 
             <materials>
-                <material id="gray"/>
+                <material id="window"/>
             </materials>
 
             <texture id="windows"/>
@@ -524,7 +557,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -541,7 +574,7 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="inherit"/>
@@ -558,10 +591,26 @@
             </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="default"/>
             </materials>
 
             <texture id="car"/>
+
+            <children>
+                <componentref id="wheels"/>
+                <componentref id="body"/>
+            </children>
+        </component>
+
+        <component id="wheels">
+            <transformation>
+            </transformation>
+
+            <materials>
+                <material id="pink"/>
+            </materials>
+
+            <texture id="none"/>
 
             <children>
                 <componentref id="right-back-wheel"/>
@@ -569,15 +618,48 @@
 
                 <componentref id="right-front-wheel"/>
                 <componentref id="left-front-wheel"/>
+            </children>
+        </component>
 
-                <componentref id="body"/>
+        <component id="background">
+            <transformation>
+                <scale x="15" y="10" z="15"/>
+            </transformation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="xp"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+                <componentref id="road"/>
+                <componentref id="leftWall"/>
+            </children>
+        </component>
+
+        <component id="leftWall">
+            <transformation>
+
+                <rotate axis="y" angle="90"/>
+                <translate x="-1" y="0" z="0"/>
+            </transformation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
             </children>
         </component>
 
         <component id="road">
             <transformation>
-                <translate x="-4" y="0" z="-1.5"/>
-                <scale x="14" y="1" z="6"/>
+                <translate x="0" y="0" z="0"/>
                 <rotate axis="x" angle="-90"/>
                 <rotate axis="z" angle="-90"/>
             </transformation>
@@ -611,19 +693,93 @@
             </children>
         </component>
 
-        <component id="root">
-            <transformation></transformation>
+        <component id="lamp">
+            <transformation>
+                <translate x="8" y="5" z="-1"/>
+                <scale x="0.65" y="0.65" z="0.65"/>
+            </transformation>
 
             <materials>
-                <material id="ss"/>
+                <material id="yellow"/>
+            </materials>
+
+            <texture id="ss"/>
+
+            <children>
+                <primitiveref id="lamp"/>
+            </children>
+        </component>
+
+        <component id="wreckingBallWire">
+            <transformation>
+                <rotate axis="x" angle="60"/>
+                <rotate axis="y" angle="90"/>
+                <translate x="3.5" y="6.5" z="3"/>
+                <scale x="4" y="0.1" z="0.1"/>
+
+            </transformation>
+
+            <materials>
+                <material id="gray"/>
+            </materials>
+
+            <texture id="ss"/>
+
+            <children>
+                <primitiveref id="cylinder"/>
+            </children>
+        </component>
+
+        <component id="wreckingBall">
+            <transformation>
+                <translate x="3" y="2.5" z="6"/>
+                <rotate axis="x" angle="135"/>
+            </transformation>
+
+            <materials>
+                <material id="gray"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="lamp"/>
+            </children>
+        </component>
+
+        <component id="scene">
+            <transformation>
+                <translate x="5" y="0" z="5"/>
+            </transformation>
+
+            <materials>
+                <material id="inherit"/>
             </materials>
 
             <texture id="none"/>
 
             <children>
                 <componentref id="car"/>
-                <componentref id="road"/>
                 <componentref id="light-post"/>
+                <componentref id="lamp"/>
+                <componentref id="wreckingBallWire"/>
+                <componentref id="wreckingBall"/>
+            </children>
+        </component>
+
+        <component id="root">
+            <transformation>
+            </transformation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="scene"/>
+                <componentref id="background"/>
             </children>
         </component>
 

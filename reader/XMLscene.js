@@ -1,4 +1,4 @@
-function XMLscene() {
+function XMLscene(inter) {
     CGFscene.call(this);
     this.primitives = {};
     this.transformations = {};
@@ -7,6 +7,7 @@ function XMLscene() {
     this.textures = {};
     this.materials = {};
     this.cameraIndex = 0;
+    this.interface = inter;
 
     this.PRIMITIVES = {
         RECTANGLE: "rectangle",
@@ -47,7 +48,7 @@ XMLscene.prototype.onGraphLoaded = function(lights) {
 
     this.axis = new CGFaxis(this, this.axisLength);
     this.enableTextures(true);
-    //this.initCameras(details.cameras);
+    this.interface.setActiveCamera(this.camera);
     //this.initLights(lights);
     console.log("yee pee kayay");
 };

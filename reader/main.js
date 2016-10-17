@@ -49,8 +49,8 @@ serialInclude(["../lib/CGF.js", "XMLscene.js", "MySceneGraph.js", "DSXParser.js"
 
     main = function() {
         // Standard application, scene and interface setup
-        var myScene = new XMLscene();
-        var myInterface = new MyInterface(myScene);
+        var myInterface = new MyInterface();
+        var myScene = new XMLscene(myInterface);
         var app = new CGFapplication(document.body);
 
         app.init();
