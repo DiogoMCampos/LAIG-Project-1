@@ -7,9 +7,9 @@
             <to x="0" y="0" z="0"/>
         </perspective>
 
-        <perspective id="eagle eye" near="5" far="50" angle="50">
-            <from x="15" y="5" z="3"/>
-            <to x="0" y="0" z="1"/>
+        <perspective id="insideScene" near="5" far="50" angle="50">
+            <from x="19" y="5" z="5"/>
+            <to x="0" y="0" z="6"/>
         </perspective>
     </views>
 
@@ -19,7 +19,7 @@
     </illumination>
 
     <lights>
-        <omni id="ss" enabled="1">
+        <omni id="center" enabled="1">
             <location x="7" y="5" z="9" w="1"/>
             <ambient r="1" g="0" b="1" a="0.1"/>
             <diffuse r="1" g="0" b="1" a="0.1"/>
@@ -110,11 +110,6 @@
     <transformations>
         <transformation id="scaleToRim">
             <scale x="0.4" y="0.4" z="0.2"/>
-        </transformation>
-        <transformation id="ass">
-            <translate x="2" y="0" z="2"/>
-            <rotate axis="z" angle="60"/>
-            <scale x="2" y="1" z="0.5"/>
         </transformation>
     </transformations>
 
