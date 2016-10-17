@@ -236,7 +236,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -253,7 +253,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -271,7 +271,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -289,7 +289,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -307,7 +307,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -325,7 +325,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -339,7 +339,7 @@
             <transformation></transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -362,7 +362,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -379,7 +379,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -452,7 +452,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -469,7 +469,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -486,7 +486,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -520,7 +520,7 @@
             <transformation></transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -557,7 +557,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -574,7 +574,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="inherit"/>
@@ -591,7 +591,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="car"/>
@@ -627,7 +627,7 @@
             </transformation>
 
             <materials>
-                <material id="default"/>
+                <material id="inherit"/>
             </materials>
 
             <texture id="xp"/>
