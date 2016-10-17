@@ -20,9 +20,9 @@
 
     <lights>
         <omni id="ss" enabled="1">
-            <location x="3" y="10" z="3" w="1"/>
-            <ambient r="1" g="1" b="1" a="0.1"/>
-            <diffuse r="1" g="1" b="1" a="0.1"/>
+            <location x="7" y="5" z="9" w="1"/>
+            <ambient r="1" g="0" b="1" a="0.1"/>
+            <diffuse r="1" g="0" b="1" a="0.1"/>
             <specular r="0" g=".5" b="0" a="0.1"/>
         </omni>
 
@@ -33,12 +33,12 @@
             <specular r="1" g="1" b="0" a="1"/>
         </omni>
 
-        <spot id="sss" enabled="0" angle="45" exponent="45">
-            <target x="1" y="1" z="1"/>
-            <location x="0" y="5" z="0"/>
-            <ambient r=".5" g="1" b="1" a="0.1"/>
-            <diffuse r="0" g="1" b="0" a="0.1"/>
-            <specular r=".5" g="1" b="1" a="0.1"/>
+        <spot id="leftWall" enabled="1" angle="30" exponent="0.1">
+            <target x="5" y="0" z="5"/>
+            <location x="2" y="5" z="8"/>
+            <ambient r="1" g="0" b="0" a="1"/>
+            <diffuse r="1" g="0" b="0" a="1"/>
+            <specular r="1" g="0" b="0" a="1"/>
         </spot>
     </lights>
 
@@ -108,8 +108,8 @@
     </materials>
 
     <transformations>
-        <transformation id="background">
-            <scale x="8" y="8" z="1"/>
+        <transformation id="scaleToRim">
+            <scale x="0.4" y="0.4" z="0.2"/>
         </transformation>
         <transformation id="ass">
             <translate x="2" y="0" z="2"/>
@@ -148,7 +148,7 @@
     <components>
         <component id="rim">
             <transformation>
-                <scale x="0.4" y="0.4" z="0.2"/>
+                <transformationref id="scaleToRim"/>
             </transformation>
 
             <materials>
@@ -159,6 +159,24 @@
 
             <children>
                 <primitiveref id="cylinder"/>
+            </children>
+        </component>
+
+        <component id="wheels">
+            <transformation></transformation>
+
+            <materials>
+                <material id="pink"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="right-back-wheel"/>
+                <componentref id="left-back-wheel"/>
+
+                <componentref id="right-front-wheel"/>
+                <componentref id="left-front-wheel"/>
             </children>
         </component>
 
@@ -283,7 +301,6 @@
 
         <component id="back-body">
             <transformation>
-                <translate x="0" y="0" z="0"/>
                 <rotate axis="y" angle="270"/>
                 <scale x="3.5" y="1.5" z="1"/>
             </transformation>
@@ -302,7 +319,7 @@
         <component id="top-body">
             <transformation>
                 <translate x="0" y="1.5" z="3.5"/>
-                <rotate axis="x" angle="270"/>
+                <rotate axis="x" angle="-90"/>
                 <scale x="9" y="3.5" z="1"/>
             </transformation>
 
@@ -319,7 +336,6 @@
 
         <component id="bottom-body">
             <transformation>
-                <translate x="0" y="0" z="0"/>
                 <rotate axis="x" angle="90"/>
                 <scale x="9" y="3.5" z="1"/>
             </transformation>
@@ -389,7 +405,7 @@
             </children>
         </component>
 
-        <component id="rear-mirror">
+        <component id="rear-window">
             <transformation>
                 <translate x="1.5" y="0" z="0"/>
                 <rotate axis="z" angle="-146.3099"/>
@@ -544,7 +560,7 @@
             <texture id="windows"/>
 
             <children>
-                <componentref id="rear-mirror"/>
+                <componentref id="rear-window"/>
                 <componentref id="right-window"/>
                 <componentref id="left-window"/>
                 <componentref id="windshield"/>
@@ -602,25 +618,6 @@
             </children>
         </component>
 
-        <component id="wheels">
-            <transformation>
-            </transformation>
-
-            <materials>
-                <material id="pink"/>
-            </materials>
-
-            <texture id="none"/>
-
-            <children>
-                <componentref id="right-back-wheel"/>
-                <componentref id="left-back-wheel"/>
-
-                <componentref id="right-front-wheel"/>
-                <componentref id="left-front-wheel"/>
-            </children>
-        </component>
-
         <component id="background">
             <transformation>
                 <scale x="15" y="10" z="15"/>
@@ -636,6 +633,7 @@
                 <primitiveref id="rectangle"/>
                 <componentref id="road"/>
                 <componentref id="leftWall"/>
+                <componentref id="ceiling"/>
             </children>
         </component>
 
@@ -651,6 +649,24 @@
             </materials>
 
             <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="ceiling">
+            <transformation>
+                <translate x="0" y="1" z="0"/>
+                <rotate axis="x" angle="90"/>
+
+            </transformation>
+
+            <materials>
+                <material id="pink"/>
+            </materials>
+
+            <texture id="none"/>
 
             <children>
                 <primitiveref id="rectangle"/>
@@ -703,7 +719,7 @@
                 <material id="yellow"/>
             </materials>
 
-            <texture id="ss"/>
+            <texture id="none"/>
 
             <children>
                 <primitiveref id="lamp"/>
@@ -714,7 +730,7 @@
             <transformation>
                 <rotate axis="x" angle="60"/>
                 <rotate axis="y" angle="90"/>
-                <translate x="3.5" y="6.5" z="3"/>
+                <translate x="3.5" y="7" z="3"/>
                 <scale x="4" y="0.1" z="0.1"/>
 
             </transformation>
@@ -723,7 +739,7 @@
                 <material id="gray"/>
             </materials>
 
-            <texture id="ss"/>
+            <texture id="none"/>
 
             <children>
                 <primitiveref id="cylinder"/>
@@ -732,7 +748,7 @@
 
         <component id="wreckingBall">
             <transformation>
-                <translate x="3" y="2.5" z="6"/>
+                <translate x="3" y="3" z="6"/>
                 <rotate axis="x" angle="135"/>
             </transformation>
 
@@ -768,8 +784,7 @@
         </component>
 
         <component id="root">
-            <transformation>
-            </transformation>
+            <transformation></transformation>
 
             <materials>
                 <material id="default"/>
