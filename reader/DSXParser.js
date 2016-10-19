@@ -25,12 +25,19 @@ DSXParser.prototype.parseScene = function(scene) {
     }
     this.scene.root = this.reader.getString(scene, "root");
     this.scene.axisLength = this.reader.getFloat(scene, "axis_length");
+    if(this.scene.axisLength === null || isNaN(this.scene.axisLength) || this.scene.axisLength <= 0){
+        this.scene.axisLength = 10;
+        console.warn("Axis length value not recognized. Assigning default value 10");
+    }
 };
 
 DSXParser.prototype.parseViews = function(views) {
 
-    this.defaultView = this.reader.getFloat(views, "default");
+    if (views.tagName !== "views") {
+        throw "the main block order is wrong";
+    }
 
+    this.defaultView = this.reader.getFloat(views, "default");
     var perspectives = views.getElementsByTagName("perspective");
 
     if (perspectives.length < 1) {
@@ -72,6 +79,10 @@ DSXParser.prototype.getPerspectiveData = function(perspective) {
 };
 
 DSXParser.prototype.parseIllumination = function(illumination) {
+    if (illumination.tagName !== "illumination") {
+        throw "the main block order is wrong";
+    }
+
     this.illumination = {};
     this.illumination.doublesided = this.reader.getBoolean(illumination, "doublesided");
     this.illumination.local = this.reader.getBoolean(illumination, "local");
@@ -80,6 +91,9 @@ DSXParser.prototype.parseIllumination = function(illumination) {
 
 DSXParser.prototype.parseLights = function(lightNode) {
 
+    if (lightNode.tagName !== "lights") {
+        throw "the main block order is wrong";
+    }
     this.lights = {};
 
     var all = lightNode.children;
@@ -99,7 +113,15 @@ DSXParser.prototype.parseLights = function(lightNode) {
         switch (object.type) {
             case "spot":
                 object.angle = this.reader.getFloat(all[i], "angle");
+                if(object.angle === null || isNaN(object.angle) || object.angle <= 0){
+                    object.angle = 22.5;
+                    console.warn("Angle value not recognized. Assigning default value 22.5 DEG");
+                }
                 object.exponent = this.reader.getFloat(all[i], "exponent");
+                if(object.exponent === null || isNaN(object.exponent) || object.exponent <= 0){
+                    object.exponent = 1;
+                    console.warn("Angle value not recognized. Assigning default value 1");
+                }
                 break;
             case "omni":
                 break;
@@ -110,6 +132,9 @@ DSXParser.prototype.parseLights = function(lightNode) {
 
 DSXParser.prototype.parseTextures = function(textures) {
 
+    if (textures.tagName !== "textures") {
+        throw "the main block order is wrong";
+    }
     this.textures = {};
     var texturesArray = textures.getElementsByTagName("texture");
 
@@ -132,6 +157,10 @@ DSXParser.prototype.parseTextures = function(textures) {
 };
 
 DSXParser.prototype.parseMaterials = function(materials) {
+
+    if (materials.tagName !== "materials") {
+        throw "the main block order is wrong";
+    }
     this.materials = {};
     var materialArray = materials.getElementsByTagName("material");
 
@@ -150,6 +179,9 @@ DSXParser.prototype.parseMaterials = function(materials) {
 
 DSXParser.prototype.parseTransformations = function(transformations) {
 
+    if (transformations.tagName !== "transformations") {
+        throw "the main block order is wrong";
+    }
     this.transformations = {};
 
     var transformationList = transformations.getElementsByTagName("transformation");
@@ -185,6 +217,9 @@ DSXParser.prototype.getTransformationData = function(transformation) {
 
 DSXParser.prototype.parsePrimitives = function(primitives) {
 
+    if (primitives.tagName !== "primitives") {
+        throw "the main block order is wrong";
+    }
     this.primitives = {};
 
     var nodes = primitives.getElementsByTagName("primitive");
@@ -227,6 +262,9 @@ DSXParser.prototype.getPrimitiveData = function(nodes, primitives) {
 
 DSXParser.prototype.parseComponents = function(components) {
 
+    if (components.tagName !== "components") {
+        throw "the main block order is wrong";
+    }
     var componentArray = components.getElementsByTagName("component");
     this.components = {};
     for (var i = 0; i < componentArray.length; i++) {

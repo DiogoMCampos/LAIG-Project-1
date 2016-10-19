@@ -73,4 +73,16 @@ MySphere.prototype.parseAttributes = function(xmlNode) {
     this.radius = this.reader.getFloat(xmlNode, "radius");
     this.slices = this.reader.getInteger(xmlNode, "slices");
     this.stacks = this.reader.getInteger(xmlNode, "stacks");
+
+    if(this.radius === null || isNaN(this.radius) || this.radius <= 0){
+        console.warn();
+    }
+    if(this.slices === null || isNaN(this.slices) || this.slices <= 0){
+        this.slices = 10;
+        console.warn("primitive id: " + this.id + " has slices value not recognized. Assigning default value 10");
+    }
+    if(this.stacks === null || isNaN(this.stacks) || this.stacks <= 0) {
+        this.stacks = 10;
+        console.warn("primitive id: " + this.id + " has stacks value not recognized. Assigning default value 10");
+    }
 };

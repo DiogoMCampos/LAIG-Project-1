@@ -7,6 +7,7 @@ function MyCylinder(scene, info, reader) {
     this.scene = scene;
     this.reader = reader;
     this.id = info.id;
+
     this.parseAttributes(info.data);
 
     this.baseCircle = new MyCircle(this.scene, this.slices, this.baseRadius);
@@ -87,4 +88,22 @@ MyCylinder.prototype.parseAttributes = function(xmlNode) {
     this.heightCylinder = this.reader.getFloat(xmlNode, "height");
     this.slices = this.reader.getInteger(xmlNode, "slices");
     this.stacks = this.reader.getInteger(xmlNode, "stacks");
+
+    if(this.baseRadius === null || isNaN(this.baseRadius) || this.baseRadius <= 0){
+        console.warn("primitive id: " + this.id + " has base value not recognized");
+    }
+    if(this.topRadius === null || isNaN(this.topRadius) || this.topRadius <= 0){
+        console.warn();
+    }
+    if(this.heightCylinder === null || isNaN(this.heightCylinder) || this.heightCylinder <= 0){
+        console.warn();
+    }
+    if(this.slices === null || isNaN(this.slices) || this.slices <= 0){
+        this.slices = 10;
+        console.warn("primitive id: " + this.id + " has slices value not recognized. Assigning default value 10");
+    }
+    if(this.stacks === null || isNaN(this.stacks) || this.stacks <= 0) {
+        this.stacks = 10;
+        console.warn("primitive id: " + this.id + " has stacks value not recognized. Assigning default value 10");
+    }
 };

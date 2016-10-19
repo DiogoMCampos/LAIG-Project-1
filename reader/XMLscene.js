@@ -117,15 +117,15 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
     var comp = this.components[componentId];
     var matId, texId;
 
-    if(comp.textureID === "inherit"){
+    if (comp.textureID === "inherit") {
         texId = predecessorTextID;
     } else {
         texId = comp.textureID;
     }
 
-    if(comp.materials[comp.materialsIndex] === "inherit"){
+    if (comp.materials[comp.materialsIndex] === "inherit") {
         matId = predecessorMatID;
-    } else{
+    } else {
         matId = comp.materials[comp.materialsIndex];
     }
 
@@ -176,8 +176,7 @@ XMLscene.prototype.applyMaterialTexture = function(materialId, textureID) {
     var material = this.materials[materialId];
     if (textureID === "none") {
         material.setTexture(null);
-    }
-    else{
+    } else {
         material.setTexture(this.textures[textureID]);
         material.setTextureWrap(this.textures[textureID].lengthS, this.textures[textureID].lengthT);
     }
@@ -194,11 +193,12 @@ XMLscene.prototype.switchPerspective = function() {
 
 XMLscene.prototype.incrementMaterials = function() {
     for (var comp in this.components) {
-        var component = this.components[comp];
-
-        component.materialIndex++;
-        if (component.materialsIndex >= component.materials.length) {
-            component.materialsIndex = 0;
+        if (this.components.hasOwnProperty(comp)) {
+            var component = this.components[comp];
+            component.materialIndex++;
+            if (component.materialsIndex >= component.materials.length) {
+                component.materialsIndex = 0;
+            }
         }
     }
 };

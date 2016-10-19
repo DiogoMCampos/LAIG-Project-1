@@ -74,4 +74,19 @@ MyTorus.prototype.parseAttributes = function(xmlNode) {
     this.outerRadius = this.reader.getFloat(xmlNode, "outer");
     this.slices = this.reader.getInteger(xmlNode, "slices");
     this.loops = this.reader.getInteger(xmlNode, "loops");
+
+    if(this.innerRadius === null || isNaN(this.innerRadius) || this.innerRadius <= 0){
+        console.warn("primitive id: " + this.id + " has inner value not recognized");
+    }
+    if(this.outerRadius === null || isNaN(this.outerRadius) || this.outerRadius <= 0){
+        console.warn();
+    }
+    if(this.slices === null || isNaN(this.slices) || this.slices <= 0){
+        this.slices = 10;
+        console.warn("primitive id: " + this.id + " has slices value not recognized. Assigning default value 10");
+    }
+    if(this.loops === null || isNaN(this.loops) || this.loops <= 0) {
+        this.loops = 10;
+        console.warn("primitive id: " + this.id + " has loops value not recognized. Assigning default value 10");
+    }
 };
