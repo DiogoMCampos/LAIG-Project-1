@@ -4,10 +4,9 @@
  */
 
 
-function MyInterface(scene) {
+function MyInterface() {
     //call CGFinterface constructor
     CGFinterface.call(this);
-    this.scene = scene;
 }
 
 MyInterface.prototype = Object.create(CGFinterface.prototype);
@@ -23,14 +22,29 @@ MyInterface.prototype.init = function(application) {
 
     // init GUI. For more information on the methods, check:
     //  http://workshop.chromeexperiments.com/examples/gui
-    //this.gui = new dat.GUI();
+    this.gui = new dat.GUI();
 
     // add a button:
     // the first parameter is the object that is being controlled (in this case the scene)
     // the identifier 'doSomething' must be a function declared as part of that object (i.e. a member of the scene class)
     // e.g. LightingScene.prototype.doSomething = function () { console.log("Doing something..."); };
 
+    this.lightsGroup = this.gui.addFolder("Lights");
+    this.lightsGroup.open();
+
     return true;
+};
+
+MyInterface.prototype.addScene = function(scene) {
+    this.scene = scene;
+    this.addLights();
+};
+
+MyInterface.prototype.addLights = function() {
+    for (var i = 0; i < this.scene.lightsOn.length; i++) {
+        var name = "Light " + i;
+        this.lightsGroup.add(this.scene.lightsOn, i , this.scene.lightsOn[i]).name(name);
+    }
 };
 
 /**
@@ -41,7 +55,6 @@ MyInterface.prototype.processKeyUp = function(event) {
     // call CGFinterface default code (omit if you want to override)
     CGFinterface.prototype.processKeyUp.call(this, event);
 };
-
 
 /**
  * processKeyboard

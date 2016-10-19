@@ -49,6 +49,7 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.axis = new CGFaxis(this, this.axisLength);
     this.enableTextures(true);
     this.interface.setActiveCamera(this.camera);
+    this.interface.addScene(this);
 };
 
 XMLscene.prototype.initLights = function(info) {
@@ -96,7 +97,13 @@ XMLscene.prototype.display = function() {
         var root = this.components[this.root];
         this.recursiveDisplay(this.root, root.materials[root.materialsIndex], root.textureID);
         this.axis.display();
-        for (var j = 0; j < this.lights.length; j++) {
+        for (var j = 0; j < this.lightsOn.length; j++) {
+            if (!this.lightsOn[j]) {
+                this.lights[j].enabled = false;
+            } else {
+                this.lights[j].enabled = true;
+            }
+
             this.lights[j].update();
         }
     }

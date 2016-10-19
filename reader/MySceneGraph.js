@@ -15,7 +15,6 @@ function MySceneGraph(filename, scene) {
      */
 
     this.reader.open("scenes/" + filename, this);
-
 }
 
 /*
@@ -26,19 +25,14 @@ MySceneGraph.prototype.onXMLReady = function() {
     var rootElement = this.reader.xmlDoc.documentElement;
     try {
         var dsxInfo = new DSXParser(rootElement, this.reader);
-        console.log("parsing?");
         this.createScene(dsxInfo.scene);
         this.createCameras(dsxInfo.perspectives);
-        console.log("nixon");
         this.createIllumination(dsxInfo.illumination);
         this.createLights(dsxInfo.lights);
-        console.log("all of the lights");
         this.createTextures(dsxInfo.textures);
         this.createMaterials(dsxInfo.materials);
-        console.log("wood");
         this.createTransformations(dsxInfo.transformations);
         this.createElements(dsxInfo.primitives);
-        console.log("primas");
         this.createComponents(dsxInfo.components);
     } catch (err) {
         this.onXMLError(err);
@@ -87,6 +81,7 @@ MySceneGraph.prototype.createCameras = function(perspectives) {
 
 MySceneGraph.prototype.createLights = function(lightNodes) {
     var lightsIndex = 0;
+    this.scene.lightsOn = [];
 
     for (var id in lightNodes) {
         if (lightNodes.hasOwnProperty(id)) {
@@ -124,7 +119,9 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
                     break;
             }
         }
+
         lightsIndex++;
+        this.scene.lightsOn.push(true);
     }
 };
 
