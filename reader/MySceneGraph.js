@@ -82,6 +82,7 @@ MySceneGraph.prototype.createCameras = function(perspectives) {
 MySceneGraph.prototype.createLights = function(lightNodes) {
     var lightsIndex = 0;
     this.scene.lightsOn = [];
+    this.scene.lightsInfo = [];
 
     for (var id in lightNodes) {
         if (lightNodes.hasOwnProperty(id)) {
@@ -122,6 +123,10 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
 
         lightsIndex++;
         this.scene.lightsOn.push(true);
+        this.scene.lightsInfo.push({
+            'id': def.id,
+            'type': light.type
+        });
     }
 };
 

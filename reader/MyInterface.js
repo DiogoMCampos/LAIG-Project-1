@@ -29,8 +29,11 @@ MyInterface.prototype.init = function(application) {
     // the identifier 'doSomething' must be a function declared as part of that object (i.e. a member of the scene class)
     // e.g. LightingScene.prototype.doSomething = function () { console.log("Doing something..."); };
 
-    this.lightsGroup = this.gui.addFolder("Lights");
-    this.lightsGroup.open();
+    this.omniGroup = this.gui.addFolder("Omni Lights");
+    this.omniGroup.open();
+
+    this.spotGroup = this.gui.addFolder("Spot Lights");
+    this.spotGroup.open();
 
     return true;
 };
@@ -42,8 +45,13 @@ MyInterface.prototype.addScene = function(scene) {
 
 MyInterface.prototype.addLights = function() {
     for (var i = 0; i < this.scene.lightsOn.length; i++) {
-        var name = "Light " + i;
-        this.lightsGroup.add(this.scene.lightsOn, i , this.scene.lightsOn[i]).name(name);
+        var info = this.scene.lightsInfo[i];
+
+        if (info.type === "omni") {
+            this.omniGroup.add(this.scene.lightsOn, i, this.scene.lightsOn[i]).name(info.id);
+        } else {
+            this.spotGroup.add(this.scene.lightsOn, i, this.scene.lightsOn[i]).name(info.id);
+        }
     }
 };
 
@@ -52,7 +60,6 @@ MyInterface.prototype.addLights = function() {
  * @param event {Event}
  */
 MyInterface.prototype.processKeyUp = function(event) {
-    // call CGFinterface default code (omit if you want to override)
     CGFinterface.prototype.processKeyUp.call(this, event);
 };
 
@@ -61,16 +68,7 @@ MyInterface.prototype.processKeyUp = function(event) {
  * @param event {Event}
  */
 MyInterface.prototype.processKeyboard = function(event) {
-    // call CGFinterface default code (omit if you want to override)
-    CGFinterface.prototype.processKeyboard.call(this, event);
-
-    // Check key codes e.g. here: http://www.asciitable.com/
-    // or use String.fromCharCode(event.keyCode) to compare chars
-
-    // for better cross-browser support, you may also check suggestions on using event.which in http://www.w3schools.com/jsref/event_key_keycode.asp
     switch (event.which || event.keyCode) {
-
-        //V
         case (86):
         case (118):
             this.scene.switchPerspective();
@@ -80,6 +78,5 @@ MyInterface.prototype.processKeyboard = function(event) {
         case (109):
             this.scene.incrementMaterials();
             break;
-
     }
 };
