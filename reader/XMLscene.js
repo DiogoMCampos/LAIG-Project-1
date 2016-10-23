@@ -189,7 +189,7 @@ XMLscene.prototype.incrementMaterials = function() {
     for (var comp in this.components) {
         if (this.components.hasOwnProperty(comp)) {
             var component = this.components[comp];
-            component.materialIndex++;
+            component.materialsIndex++;
             if (component.materialsIndex >= component.materials.length) {
                 component.materialsIndex = 0;
             }
