@@ -47,6 +47,7 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.axis = new CGFaxis(this, this.axisLength);
     this.enableTextures(true);
     this.interface.setActiveCamera(this.camera);
+    this.interface.addScene(this);
 };
 
 XMLscene.prototype.initLights = function(info) {
@@ -97,7 +98,6 @@ XMLscene.prototype.display = function() {
             } else {
                 this.lights[j].enabled = true;
             }
-
             this.lights[j].update();
         }
     }

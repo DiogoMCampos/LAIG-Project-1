@@ -67,8 +67,8 @@ MySceneGraph.prototype.createCameras = function(views) {
         if (perspectives.hasOwnProperty(id)) {
             var p = perspectives[id];
 
-            var f = this.getXYZ(p.from);
-            var to = this.getXYZ(p.to);
+            var f = this.getXYZ(p.from, id);
+            var to = this.getXYZ(p.to, id);
             var fromVector = vec3.fromValues(f.x, f.y, f.z);
             var toVector = vec3.fromValues(to.x, to.y, to.z);
 
@@ -95,7 +95,7 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
             var l = this.scene.lights[lightsIndex];
             var def = this.getLightAttributes(light);
             var locArray = light.data.getElementsByTagName("location");
-            def.location = this.getXYZ(locArray[0]);
+            def.location = this.getXYZ(locArray[0], id);
 
             l.setAmbient(def.ambient.r, def.ambient.g, def.ambient.b, def.ambient.a);
             l.setDiffuse(def.diffuse.r, def.diffuse.g, def.diffuse.b, def.diffuse.a);
@@ -109,7 +109,7 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
             switch (light.type) {
                 case "spot":
                     var tarArray = light.data.getElementsByTagName("target");
-                    var direction = this.getXYZ(tarArray[0]);
+                    var direction = this.getXYZ(tarArray[0], id);
                     direction.x -= def.location.x;
                     direction.y -= def.location.y;
                     direction.z -= def.location.z;
@@ -126,7 +126,7 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
             }
 
             lightsIndex++;
-            this.scene.lightsOn.push(true);
+            this.scene.lightsOn.push(def.enabled);
             this.scene.lightsInfo.push({
                 'id': def.id,
                 'type': light.type
@@ -187,14 +187,14 @@ MySceneGraph.prototype.createTransformations = function(transformationNodes) {
             var collections = transformationNodes[id];
             this.scene.transformations[collections.id] = [];
             for (var j = 0; j < collections.data.length; j++) {
-                var t = this.getTransformationAttributes(collections.data[j]);
+                var t = this.getTransformationAttributes(collections.data[j], id);
                 this.scene.transformations[collections.id].push(t);
             }
         }
     }
 };
 
-MySceneGraph.prototype.getTransformationAttributes = function(node) {
+MySceneGraph.prototype.getTransformationAttributes = function(node, id) {
     var result = {};
     switch (node.tagName) {
         case this.scene.TRANSFORMATIONS.ROTATE:
@@ -202,10 +202,10 @@ MySceneGraph.prototype.getTransformationAttributes = function(node) {
             result.angle = this.reader.getFloat(node, "angle");
             break;
         case this.scene.TRANSFORMATIONS.TRANSLATE:
-            result = this.getXYZ(node);
+            result = this.getXYZ(node, id);
             break;
         case this.scene.TRANSFORMATIONS.SCALE:
-            result = this.getXYZ(node);
+            result = this.getXYZ(node, id);
             break;
     }
     result.name = node.tagName;
@@ -335,11 +335,19 @@ MySceneGraph.prototype.checkChildren = function() {
     }
 };
 
-MySceneGraph.prototype.getXYZ = function(node) {
+MySceneGraph.prototype.getXYZ = function(node, id) {
     var dest = {};
     dest.x = this.reader.getFloat(node, "x");
     dest.y = this.reader.getFloat(node, "y");
     dest.z = this.reader.getFloat(node, "z");
+
+    for (var coord in dest) {
+        if (dest.hasOwnProperty(coord)) {
+            if(dest[coord] === null || isNaN(dest[coord])){
+                throw "ID: " + id + " has node " + node.tagName + " with " + coord + " value not recognized";
+            }
+        }
+    }
     return dest;
 };
 
@@ -350,6 +358,17 @@ MySceneGraph.prototype.getRGBA = function(node, tag) {
     dest.g = this.reader.getFloat(array[0], "g");
     dest.b = this.reader.getFloat(array[0], "b");
     dest.a = this.reader.getFloat(array[0], "a");
+
+    for (var value in dest) {
+        if (dest.hasOwnProperty(value)) {
+            if(dest[value] === null || isNaN(dest[value]) || dest[value] < 0 || dest[value] > 1){
+                var id = this.reader.getString(node, "id");
+                dest[value] = 0.1;
+                console.warn(tag + " id: " + id + " has " + value + " value not recognized. Assuming default value 0.1");
+            }
+        }
+    }
+
     return dest;
 };
 
