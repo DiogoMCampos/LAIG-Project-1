@@ -336,7 +336,16 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
 };
 
 MySceneGraph.prototype.setComponentAppearance = function(id, component, data) {
-    var material = data.getElementsByTagName("material");
+
+    var materialNode = data.getElementsByTagName("materials");
+    if (materialNode.length !== 1) {
+        throw ("Component " + id + " has zero or more than one material categories.");
+    }
+    var material = materialNode[0].getElementsByTagName("material");
+    if(material.length < 1){
+        throw ("Component " + id + " has zero material tags.");
+    }
+    
     component.materials = [];
     for (var matID = 0; matID < material.length; matID++) {
         var materialID = this.reader.getString(material[matID], "id");
@@ -352,6 +361,9 @@ MySceneGraph.prototype.setComponentAppearance = function(id, component, data) {
     component.materialsIndex = 0;
 
     var texture = data.getElementsByTagName("texture");
+    if (texture.length !== 1) {
+        throw ("Component " + id + " has zero or more texture tags.");
+    }
     var textID = this.reader.getString(texture[0], "id");
     if (!textID) {
         throw ("Component " + id + " has a texture with an invalid id.");
