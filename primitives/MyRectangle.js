@@ -18,11 +18,12 @@ MyRectangle.prototype.constructor = MyRectangle;
 
 
 MyRectangle.prototype.initBuffers = function() {
+    var coords = this.coordinates;
     this.vertices = [
-        this.x1, this.y1, 0,
-        this.x2, this.y1, 0,
-        this.x1, this.y2, 0,
-        this.x2, this.y2, 0
+        coords.x1, coords.y1, 0,
+        coords.x2, coords.y1, 0,
+        coords.x1, coords.y2, 0,
+        coords.x2, coords.y2, 0
     ];
 
     this.indices = [
@@ -49,9 +50,17 @@ MyRectangle.prototype.initBuffers = function() {
 
 
 MyRectangle.prototype.parseAttributes = function(xmlNode) {
+    this.coordinates = {};
+    this.coordinates.x1 = this.reader.getFloat(xmlNode, "x1");
+    this.coordinates.y1 = this.reader.getFloat(xmlNode, "y1");
+    this.coordinates.x2 = this.reader.getFloat(xmlNode, "x2");
+    this.coordinates.y2 = this.reader.getFloat(xmlNode, "y2");
 
-    this.x1 = this.reader.getFloat(xmlNode, "x1");
-    this.y1 = this.reader.getFloat(xmlNode, "y1");
-    this.x2 = this.reader.getFloat(xmlNode, "x2");
-    this.y2 = this.reader.getFloat(xmlNode, "y2");
+    for (var coord in this.coordinates) {
+        if (this.coordinates.hasOwnProperty(coord)) {
+            if(this.coordinates[coord] === null || isNaN(this.coordinates[coord])){
+                throw "primitive id: " + this.id + " has " + coord + " value not recognized";
+            }
+        }
+    }
 };

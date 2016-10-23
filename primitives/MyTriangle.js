@@ -15,19 +15,20 @@ MyTriangle.prototype = Object.create(CGFobject.prototype);
 MyTriangle.prototype.constructor = MyTriangle;
 
 MyTriangle.prototype.initBuffers = function() {
+    var coords = this.coordinates;
     this.vertices = [
-        this.x1, this.y1, this.z1,
-        this.x2, this.y2, this.z2,
-        this.x3, this.y3, this.z3,
+        coords.x1, coords.y1, coords.z1,
+        coords.x2, coords.y2, coords.z2,
+        coords.x3, coords.y3, coords.z3,
     ];
 
     this.indices = [
         0, 1, 2,
     ];
 
-    var a = Math.sqrt(Math.pow(this.x1-this.x2, 2) + Math.pow(this.y1-this.y2, 2) + Math.pow(this.z1-this.z2, 2));
-    var b = Math.sqrt(Math.pow(this.x2-this.x3, 2) + Math.pow(this.y2-this.y3, 2) + Math.pow(this.z2-this.z3, 2));
-    var c = Math.sqrt(Math.pow(this.x3-this.x1, 2) + Math.pow(this.y3-this.y1, 2) + Math.pow(this.z3-this.z1, 2));
+    var a = Math.sqrt(Math.pow(coords.x1-coords.x2, 2) + Math.pow(coords.y1-coords.y2, 2) + Math.pow(coords.z1-coords.z2, 2));
+    var b = Math.sqrt(Math.pow(coords.x2-coords.x3, 2) + Math.pow(coords.y2-coords.y3, 2) + Math.pow(coords.z2-coords.z3, 2));
+    var c = Math.sqrt(Math.pow(coords.x3-coords.x1, 2) + Math.pow(coords.y3-coords.y1, 2) + Math.pow(coords.z3-coords.z1, 2));
 
     var cosA = (-Math.pow(a,2) + Math.pow(b,2) + Math.pow(c,2)) / (2*b*c);
     var cosB = (Math.pow(a,2) - Math.pow(b,2) + Math.pow(c,2)) / (2*c*a);
@@ -40,8 +41,8 @@ MyTriangle.prototype.initBuffers = function() {
         a,0];
 
     var vec1 = {}, vec2 = {}, vecf = {};
-    vec1.x = (this.x3-this.x1) / c; vec1.y = (this.y3-this.y1) / c; vec1.z = (this.z3-this.z1) / c;
-    vec2.x = (this.x2-this.x1) / a; vec2.y = (this.y2-this.y1) / a; vec2.z = (this.z2-this.z1) / a;
+    vec1.x = (coords.x3-coords.x1) / c; vec1.y = (coords.y3-coords.y1) / c; vec1.z = (coords.z3-coords.z1) / c;
+    vec2.x = (coords.x2-coords.x1) / a; vec2.y = (coords.y2-coords.y1) / a; vec2.z = (coords.z2-coords.z1) / a;
 
     vecf.x = vec1.y*vec2.z - vec1.z*vec2.y;
     vecf.y = vec1.z*vec2.x - vec1.x*vec2.z;
@@ -58,13 +59,22 @@ MyTriangle.prototype.initBuffers = function() {
 };
 
 MyTriangle.prototype.parseAttributes = function(xmlNode) {
-    this.x1 = this.reader.getFloat(xmlNode, "x1");
-    this.y1 = this.reader.getFloat(xmlNode, "y1");
-    this.z1 = this.reader.getFloat(xmlNode, "z1");
-    this.x2 = this.reader.getFloat(xmlNode, "x2");
-    this.y2 = this.reader.getFloat(xmlNode, "y2");
-    this.z2 = this.reader.getFloat(xmlNode, "z2");
-    this.x3 = this.reader.getFloat(xmlNode, "x3");
-    this.y3 = this.reader.getFloat(xmlNode, "y3");
-    this.z3 = this.reader.getFloat(xmlNode, "z3");
+    this.coordinates = {};
+    this.coordinates.x1 = this.reader.getFloat(xmlNode, "x1");
+    this.coordinates.y1 = this.reader.getFloat(xmlNode, "y1");
+    this.coordinates.z1 = this.reader.getFloat(xmlNode, "z1");
+    this.coordinates.x2 = this.reader.getFloat(xmlNode, "x2");
+    this.coordinates.y2 = this.reader.getFloat(xmlNode, "y2");
+    this.coordinates.z2 = this.reader.getFloat(xmlNode, "z2");
+    this.coordinates.x3 = this.reader.getFloat(xmlNode, "x3");
+    this.coordinates.y3 = this.reader.getFloat(xmlNode, "y3");
+    this.coordinates.z3 = this.reader.getFloat(xmlNode, "z3");
+
+    for (var coord in this.coordinates) {
+        if (this.coordinates.hasOwnProperty(coord)) {
+            if(this.coordinates[coord] === null || isNaN(this.coordinates[coord])){
+                throw "primitive id: " + this.id + " has " + coord + " value not recognized";
+            }
+        }
+    }
 };
