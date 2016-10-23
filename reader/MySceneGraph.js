@@ -46,7 +46,7 @@ MySceneGraph.prototype.onXMLReady = function() {
 
 MySceneGraph.prototype.createScene = function(scene, components) {
     if (!components.hasOwnProperty(scene.root)) {
-        throw "The specified root is not a valid component."
+        throw "The specified root is not a valid component.";
     }
 
     this.scene.root = scene.root;
@@ -179,7 +179,7 @@ MySceneGraph.prototype.createMaterials = function(materialsArray) {
             var mat = materialsArray[id];
             var shininess = mat.data.getElementsByTagName("shininess");
             var shi;
-            
+
             if (shininess.length !== 1) {
                 console.warn("Material " + id + " has zero or more than one shininess elements. Assigning default value 1.");
                 shi = 1;
@@ -307,7 +307,7 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
                 component.transformations.push(t);
             }
 
-            this.setComponentAppearance(component, data);
+            this.setComponentAppearance(id, component, data);
 
             var children = data.getElementsByTagName("children");
             if (children.length !== 1) {
@@ -335,11 +335,14 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
     this.checkChildren();
 };
 
-MySceneGraph.prototype.setComponentAppearance = function(component, data) {
+MySceneGraph.prototype.setComponentAppearance = function(id, component, data) {
     var material = data.getElementsByTagName("material");
     component.materials = [];
     for (var matID = 0; matID < material.length; matID++) {
         var materialID = this.reader.getString(material[matID], "id");
+        if (!materialID) {
+            throw ("Component " + id + " has a material with an invalid id.");
+        }
         if (this.scene.materials.hasOwnProperty(materialID) || materialID === "inherit") {
             component.materials.push(materialID);
         } else {
@@ -350,6 +353,10 @@ MySceneGraph.prototype.setComponentAppearance = function(component, data) {
 
     var texture = data.getElementsByTagName("texture");
     var textID = this.reader.getString(texture[0], "id");
+    if (!textID) {
+        throw ("Component " + id + " has a texture with an invalid id.");
+    }
+
     if (!this.scene.textures.hasOwnProperty(textID) & (textID !== "none") & textID !== "inherit") {
         throw ("texture id: " + textID + " used in componentref id: " + id + " is not recognized");
     }
