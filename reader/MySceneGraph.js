@@ -220,12 +220,12 @@ MySceneGraph.prototype.getTransformationAttributes = function(node, id) {
     switch (node.tagName) {
         case this.scene.TRANSFORMATIONS.ROTATE:
             result.axis = this.reader.getString(node, "axis");
-            if (!axis || !(axis === "x" || axis === "y" || axis ==="z")) {
+            if (!result.axis || !(result.axis === "x" || result.axis === "y" || result.axis === "z")) {
                 throw "Invalid rotation axis. Pick one of {x, y, z}";
             }
 
             result.angle = this.reader.getFloat(node, "angle");
-            if (!angle && angle !== 0) {
+            if (!result.angle && result.angle !== 0) {
                 throw "Invalid rotation angle";
             }
             break;
@@ -282,7 +282,7 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
 
             var transformation = data.getElementsByTagName("transformation");
             if (transformation.length !== 1) {
-                throw "Component " + id + " has zero or more than one transformation groups";
+                throw ("Component " + id + " has zero or more than one transformation groups");
             }
 
             var transformationNodes = transformation[0].children;
@@ -306,7 +306,7 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
 
             var children = data.getElementsByTagName("children");
             if (children.length !== 1) {
-                throw "Component " + id + " has zero or more than one children groups";
+                throw ("Component " + id + " has zero or more than one children groups");
             }
 
             var child = children[0].children;
@@ -318,6 +318,9 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
             for (var ind = 0; ind < child.length; ind++) {
                 var tag = child[ind].tagName;
                 var primitiveID = this.reader.getString(child[ind], "id");
+                if (!primitiveID) {
+                    throw ("Component " + id + " has a primitive with an invalid id.");
+                }
                 component.children[tag].push(primitiveID);
             }
 
@@ -328,7 +331,6 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
 };
 
 MySceneGraph.prototype.setComponentAppearance = function(component, data) {
-
     var material = data.getElementsByTagName("material");
     component.materials = [];
     for (var matID = 0; matID < material.length; matID++) {
@@ -379,7 +381,7 @@ MySceneGraph.prototype.getXYZ = function(node, id) {
 
     for (var coord in dest) {
         if (dest.hasOwnProperty(coord)) {
-            if(dest[coord] === null || isNaN(dest[coord])){
+            if (dest[coord] === null || isNaN(dest[coord])) {
                 throw "ID: " + id + " has node " + node.tagName + " with " + coord + " value not recognized";
             }
         }
@@ -397,7 +399,7 @@ MySceneGraph.prototype.getRGBA = function(node, tag) {
 
     for (var value in dest) {
         if (dest.hasOwnProperty(value)) {
-            if(dest[value] === null || isNaN(dest[value]) || dest[value] < 0 || dest[value] > 1){
+            if (dest[value] === null || isNaN(dest[value]) || dest[value] < 0 || dest[value] > 1) {
                 var id = this.reader.getString(node, "id");
                 dest[value] = 0.1;
                 console.warn(tag + " id: " + id + " has " + value + " value not recognized. Assuming default value 0.1");
