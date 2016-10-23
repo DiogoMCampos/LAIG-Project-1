@@ -98,6 +98,9 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
             var l = this.scene.lights[lightsIndex];
             var def = this.getLightAttributes(light);
             var locArray = light.data.getElementsByTagName("location");
+            if (locArray.length !== 1) {
+                throw ("Light " + id + " has zero or more than one locations.");
+            }
             def.location = this.getXYZ(locArray[0], id);
 
             l.setAmbient(def.ambient.r, def.ambient.g, def.ambient.b, def.ambient.a);
@@ -175,11 +178,13 @@ MySceneGraph.prototype.createMaterials = function(materialsArray) {
         if (materialsArray.hasOwnProperty(id)) {
             var mat = materialsArray[id];
             var shininess = mat.data.getElementsByTagName("shininess");
+            var shi;
+            
             if (shininess.length !== 1) {
                 console.warn("Material " + id + " has zero or more than one shininess elements. Assigning default value 1.");
-                var shi = 1;
+                shi = 1;
             } else {
-                var shi = this.reader.getFloat(shininess[0], "value");
+                shi = this.reader.getFloat(shininess[0], "value");
                 if (!shi && shi !== 0) {
                     console.warn("Material " + id + " doesn't have a valid shininess value. Assigning default value 1.");
                     shi = 1;
