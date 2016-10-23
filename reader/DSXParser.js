@@ -70,8 +70,22 @@ DSXParser.prototype.getPerspectiveData = function(perspective) {
         return;
     }
     object.angle = this.reader.getFloat(perspective, "angle");
+    if(object.angle === null || isNaN(object.angle)){
+        object.angle = 22.5;
+        console.warn("Perspective ID: " + object.id + " has angle value not recognized. Assigning default value 22.5");
+    }
+
     object.near = this.reader.getFloat(perspective, "near");
+    if(object.near === null || isNaN(object.near)){
+        object.near = 0.4;
+        console.warn("Perspective ID: " + object.id + " has near value not recognized. Assigning default value 0.4");
+    }
+
     object.far = this.reader.getFloat(perspective, "far");
+    if(object.far === null || isNaN(object.far)){
+        object.far = 500;
+        console.warn("Perspective ID: " + object.id + " has far value not recognized. Assigning default value 500");
+    }
     object.from = fromElems[0];
     object.to = toElems[0];
 
@@ -86,6 +100,14 @@ DSXParser.prototype.parseIllumination = function(illumination) {
     this.illumination = {};
     this.illumination.doublesided = this.reader.getBoolean(illumination, "doublesided");
     this.illumination.local = this.reader.getBoolean(illumination, "local");
+    if(this.illumination.doublesided === null){
+        this.illumination.doublesided = true;
+        console.warn("Illumination has doublesided value not recognized. Assigning defalut value true");
+    }
+    if(this.illumination.local === null){
+        console.warn("Illumination has local value not recognized. Assigning defalut value true");
+    }
+
     this.illumination.data = illumination;
 };
 
@@ -107,6 +129,9 @@ DSXParser.prototype.parseLights = function(lightNode) {
             continue;
         }
         object.enabled = this.reader.getBoolean(all[i], "enabled");
+        if(object.enabled === null){
+            console.warn("Light id: " + object.id + " has enabled value not recognized. Assigning defalut value true");
+        }
         object.type = all[i].tagName;
         object.data = all[i];
 
@@ -136,7 +161,11 @@ DSXParser.prototype.parseTextures = function(textures) {
         throw "the main block order is wrong";
     }
     this.textures = {};
+
     var texturesArray = textures.getElementsByTagName("texture");
+    if(texturesArray.length < 1){
+        throw "No 'texture' element found";
+    }
 
     for (var i = 0; i < texturesArray.length; i++) {
         var texture = texturesArray[i];
@@ -150,7 +179,16 @@ DSXParser.prototype.parseTextures = function(textures) {
         }
         t.file = this.reader.getString(texture, "file");
         t.lengthS = this.reader.getFloat(texture, "length_s");
+        if(t.lengthS === null || isNaN(t.lengthS)){
+            t.lengthS = 1;
+            console.warn("Texture id: " + t.id + " has length_s value not recognized. Assigning default value 1");
+        }
+
         t.lengthT = this.reader.getFloat(texture, "length_t");
+        if(t.lengthT === null || isNaN(t.lengthT)){
+            t.lengthT = 1;
+            console.warn("Texture id: " + t.id + " has length_t value not recognized. Assigning default value 1");
+        }
 
         this.textures[t.id] = t;
     }
@@ -163,6 +201,9 @@ DSXParser.prototype.parseMaterials = function(materials) {
     }
     this.materials = {};
     var materialArray = materials.getElementsByTagName("material");
+    if(materialArray.length < 1){
+        throw "No 'material' element found";
+    }
 
     for (var i = 0; i < materialArray.length; i++) {
         var m = {};
@@ -185,6 +226,9 @@ DSXParser.prototype.parseTransformations = function(transformations) {
     this.transformations = {};
 
     var transformationList = transformations.getElementsByTagName("transformation");
+    if(transformationList.length < 1){
+        throw "No 'transformation' element found";
+    }
 
     for (var i = 0; i < transformationList.length; i++) {
         this.getTransformationData(transformationList[i]);
@@ -223,10 +267,8 @@ DSXParser.prototype.parsePrimitives = function(primitives) {
     this.primitives = {};
 
     var nodes = primitives.getElementsByTagName("primitive");
-
-    if (!nodes || nodes.length === 0) {
-        console.warn("no primitives found");
-        return;
+    if (nodes.length < 1) {
+        throw "no primitives found";
     }
 
     for (var i = 0; i < nodes.length; i++) {
@@ -235,13 +277,7 @@ DSXParser.prototype.parsePrimitives = function(primitives) {
 };
 
 DSXParser.prototype.getPrimitiveData = function(nodes, primitives) {
-    var children = nodes.children;
 
-    if (children.length !== 1) {
-        throw "either zero or more than one tag for a specific primitive.";
-    }
-
-    var data = children[0];
     var id = this.reader.getString(nodes, "id", false);
     if (!id) {
         console.warn("primitive without id (required). Proceeded without that primitive.");
@@ -252,6 +288,12 @@ DSXParser.prototype.getPrimitiveData = function(nodes, primitives) {
         return;
     }
 
+    var children = nodes.children;
+    if (children.length !== 1) {
+        throw "either zero or more than one tag for primitive id: " + id;
+    }
+
+    var data = children[0];
     var object = {};
     object.id = id;
     object.type = data.tagName;
@@ -265,7 +307,12 @@ DSXParser.prototype.parseComponents = function(components) {
     if (components.tagName !== "components") {
         throw "the main block order is wrong";
     }
+
     var componentArray = components.getElementsByTagName("component");
+    if(componentArray.length < 1){
+        throw "No 'component' element found";
+    }
+
     this.components = {};
     for (var i = 0; i < componentArray.length; i++) {
         var object = {};
