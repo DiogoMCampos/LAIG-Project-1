@@ -25,7 +25,7 @@ MySceneGraph.prototype.onXMLReady = function() {
     var rootElement = this.reader.xmlDoc.documentElement;
     try {
         var dsxInfo = new DSXParser(rootElement, this.reader);
-        this.createScene(dsxInfo.scene);
+        this.createScene(dsxInfo.scene, dsxInfo.components);
         this.createCameras(dsxInfo.views);
         this.createIllumination(dsxInfo.illumination);
         this.createLights(dsxInfo.lights);
@@ -44,13 +44,16 @@ MySceneGraph.prototype.onXMLReady = function() {
     this.scene.onGraphLoaded();
 };
 
-MySceneGraph.prototype.createScene = function(scene) {
+MySceneGraph.prototype.createScene = function(scene, components) {
+    if (!components.hasOwnProperty(scene.root)) {
+        throw "The specified root is not a valid component."
+    }
+
     this.scene.root = scene.root;
     this.scene.axisLength = scene.axisLength;
 };
 
 MySceneGraph.prototype.createIllumination = function(illuminationNode) {
-
     var doublesided = illuminationNode.doublesided;
     var local = illuminationNode.local;
 
@@ -109,6 +112,10 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
             switch (light.type) {
                 case "spot":
                     var tarArray = light.data.getElementsByTagName("target");
+                    if (tarArray.length !== 1) {
+                        throw ("Spot light " + id + " has zero or more than one targets.");
+                    }
+
                     var direction = this.getXYZ(tarArray[0], id);
                     direction.x -= def.location.x;
                     direction.y -= def.location.y;
@@ -121,6 +128,10 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
                     break;
                 case "omni":
                     def.location.w = this.reader.getFloat(locArray[0], "w");
+                    if (!def.location.w && def.location.w !== 0) {
+                        def.location.w = 1;
+                        console.warn("Omni light " + id + " doesn't have a valid w value. Assigning default value 1.");
+                    }
                     l.setPosition(def.location.x, def.location.y, def.location.z, def.location.w);
                     break;
             }
@@ -164,11 +175,21 @@ MySceneGraph.prototype.createMaterials = function(materialsArray) {
         if (materialsArray.hasOwnProperty(id)) {
             var mat = materialsArray[id];
             var shininess = mat.data.getElementsByTagName("shininess");
+            if (shininess.length !== 1) {
+                console.warn("Material " + id + " has zero or more than one shininess elements. Assigning default value 1.");
+                var shi = 1;
+            } else {
+                var shi = this.reader.getFloat(shininess[0], "value");
+                if (!shi && shi !== 0) {
+                    console.warn("Material " + id + " doesn't have a valid shininess value. Assigning default value 1.");
+                    shi = 1;
+                }
+            }
+
             var amb = this.getRGBA(mat.data, "ambient");
             var dif = this.getRGBA(mat.data, "diffuse");
             var spe = this.getRGBA(mat.data, "specular");
             var emi = this.getRGBA(mat.data, "emission");
-            var shi = this.reader.getFloat(shininess[0], "value");
 
             var m = new CGFappearance(this.scene);
             m.setAmbient(amb.r, amb.g, amb.b, amb.a);
@@ -199,7 +220,14 @@ MySceneGraph.prototype.getTransformationAttributes = function(node, id) {
     switch (node.tagName) {
         case this.scene.TRANSFORMATIONS.ROTATE:
             result.axis = this.reader.getString(node, "axis");
+            if (!axis || !(axis === "x" || axis === "y" || axis ==="z")) {
+                throw "Invalid rotation axis. Pick one of {x, y, z}";
+            }
+
             result.angle = this.reader.getFloat(node, "angle");
+            if (!angle && angle !== 0) {
+                throw "Invalid rotation angle";
+            }
             break;
         case this.scene.TRANSFORMATIONS.TRANSLATE:
             result = this.getXYZ(node, id);
@@ -253,6 +281,10 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
             var data = componentNodes[id].data;
 
             var transformation = data.getElementsByTagName("transformation");
+            if (transformation.length !== 1) {
+                throw "Component " + id + " has zero or more than one transformation groups";
+            }
+
             var transformationNodes = transformation[0].children;
             component.transformations = [];
             for (var j = 0; j < transformationNodes.length; j++) {
@@ -273,6 +305,10 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
             this.setComponentAppearance(component, data);
 
             var children = data.getElementsByTagName("children");
+            if (children.length !== 1) {
+                throw "Component " + id + " has zero or more than one children groups";
+            }
+
             var child = children[0].children;
             component.children = {
                 "componentref": [],

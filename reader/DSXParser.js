@@ -24,6 +24,10 @@ DSXParser.prototype.parseScene = function(scene) {
         throw "the main block order is wrong";
     }
     this.scene.root = this.reader.getString(scene, "root");
+    if (!this.scene.root) {
+        throw "There is no specified root";
+    }
+
     this.scene.axisLength = this.reader.getFloat(scene, "axis_length");
     if(this.scene.axisLength === null || isNaN(this.scene.axisLength) || this.scene.axisLength <= 0){
         this.scene.axisLength = 10;
@@ -32,7 +36,6 @@ DSXParser.prototype.parseScene = function(scene) {
 };
 
 DSXParser.prototype.parseViews = function(views) {
-
     if (views.tagName !== "views") {
         throw "the main block order is wrong";
     }
