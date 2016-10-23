@@ -26,7 +26,7 @@ MySceneGraph.prototype.onXMLReady = function() {
     try {
         var dsxInfo = new DSXParser(rootElement, this.reader);
         this.createScene(dsxInfo.scene);
-        this.createCameras(dsxInfo.perspectives);
+        this.createCameras(dsxInfo.views);
         this.createIllumination(dsxInfo.illumination);
         this.createLights(dsxInfo.lights);
         this.createTextures(dsxInfo.textures);
@@ -61,8 +61,8 @@ MySceneGraph.prototype.createIllumination = function(illuminationNode) {
     this.scene.setGlobalAmbientLight(amb.r, amb.g, amb.b, amb.a);
 };
 
-MySceneGraph.prototype.createCameras = function(perspectives) {
-
+MySceneGraph.prototype.createCameras = function(views) {
+    var perspectives = views.perspectives;
     for (var id in perspectives) {
         if (perspectives.hasOwnProperty(id)) {
             var p = perspectives[id];
@@ -73,10 +73,15 @@ MySceneGraph.prototype.createCameras = function(perspectives) {
             var toVector = vec3.fromValues(to.x, to.y, to.z);
 
             var camera = new CGFcamera(p.angle * 2 * Math.PI / 360, p.near, p.far, fromVector, toVector);
+            camera.id = id;
+
             this.scene.cameras.push(camera);
+            if (views.defaultView == id) {
+                this.scene.camera = camera;
+                this.scene.cameraIndex = this.scene.cameras.length - 1;
+            }
         }
     }
-    this.scene.camera = this.scene.cameras[0];
 };
 
 MySceneGraph.prototype.createLights = function(lightNodes) {
@@ -119,14 +124,14 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
                     l.setPosition(def.location.x, def.location.y, def.location.z, def.location.w);
                     break;
             }
-        }
 
-        lightsIndex++;
-        this.scene.lightsOn.push(true);
-        this.scene.lightsInfo.push({
-            'id': def.id,
-            'type': light.type
-        });
+            lightsIndex++;
+            this.scene.lightsOn.push(true);
+            this.scene.lightsInfo.push({
+                'id': def.id,
+                'type': light.type
+            });
+        }
     }
 };
 
@@ -248,77 +253,82 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
             var data = componentNodes[id].data;
 
             var transformation = data.getElementsByTagName("transformation");
-            var texture = data.getElementsByTagName("texture");
-            var material = data.getElementsByTagName("material");
-            var children = data.getElementsByTagName("children");
-
             var transformationNodes = transformation[0].children;
             component.transformations = [];
             for (var j = 0; j < transformationNodes.length; j++) {
 
                 var t = {};
-
                 if (transformationNodes[j].tagName === this.scene.TRANSFORMATIONS.REFERENCE) {
                     t.name = this.scene.TRANSFORMATIONS.REFERENCE;
                     t.id = this.reader.getString(transformationNodes[j], "id");
-                    if(!this.scene.transformations.hasOwnProperty(t.id)){
+                    if (!this.scene.transformations.hasOwnProperty(t.id)) {
                         throw ("transformations id: " + t.id + " used in componentref id: " + id + " is not recognized");
                     }
-                    component.textureID = textID;
                 } else {
                     t = this.getTransformationAttributes(transformationNodes[j]);
                 }
                 component.transformations.push(t);
             }
 
-            component.materials = [];
-            for (var j = 0; j < material.length; j++) {
-                var materialID = this.reader.getString(material[j], "id");
-                if(this.scene.materials.hasOwnProperty(materialID) || materialID === "inherit"){
-                    component.materials.push(materialID);
-                } else {
-                    throw ("material id: " + materialID + " used in componentref id: " + id + " is not recognized");
-                }
-            }
+            this.setComponentAppearance(component, data);
 
-            component.materialsIndex = 0;
-
-            var textID = this.reader.getString(texture[0], "id");
-            if(!this.scene.textures.hasOwnProperty(textID) & (textID !== "none") & textID !== "inherit"){
-                throw ("texture id: " + textID + " used in componentref id: " + id + " is not recognized");
-            }
-            component.textureID = textID;
-
+            var children = data.getElementsByTagName("children");
             var child = children[0].children;
             component.children = {
                 "componentref": [],
                 "primitiveref": []
             };
 
-            for (var j = 0; j < child.length; j++) {
-                var tag = child[j].tagName;
-                var primitiveID = this.reader.getString(child[j], "id");
+            for (var ind = 0; ind < child.length; ind++) {
+                var tag = child[ind].tagName;
+                var primitiveID = this.reader.getString(child[ind], "id");
                 component.children[tag].push(primitiveID);
             }
 
             this.scene.components[id] = component;
         }
     }
+    this.checkChildren();
+};
 
-    for (var id in this.scene.components) {
-        if (this.scene.components.hasOwnProperty(id)) {
-            var comp = this.scene.components[id];
+MySceneGraph.prototype.setComponentAppearance = function(component, data) {
+
+    var material = data.getElementsByTagName("material");
+    component.materials = [];
+    for (var matID = 0; matID < material.length; matID++) {
+        var materialID = this.reader.getString(material[matID], "id");
+        if (this.scene.materials.hasOwnProperty(materialID) || materialID === "inherit") {
+            component.materials.push(materialID);
+        } else {
+            throw ("material id: " + materialID + " used in componentref id: " + id + " is not recognized");
+        }
+    }
+    component.materialsIndex = 0;
+
+    var texture = data.getElementsByTagName("texture");
+    var textID = this.reader.getString(texture[0], "id");
+    if (!this.scene.textures.hasOwnProperty(textID) & (textID !== "none") & textID !== "inherit") {
+        throw ("texture id: " + textID + " used in componentref id: " + id + " is not recognized");
+    }
+    component.textureID = textID;
+};
+
+MySceneGraph.prototype.checkChildren = function() {
+
+    for (var compID in this.scene.components) {
+        if (this.scene.components.hasOwnProperty(compID)) {
+            var comp = this.scene.components[compID];
             for (var i = 0; i < comp.children.primitiveref.length; i++) {
                 var primref = comp.children.primitiveref[i];
-                if(!this.scene.primitives.hasOwnProperty(primref)){
-                    throw ("primitiveref id: " + primref + " used in componentref id: " + id + " is not recognized");
+                if (!this.scene.primitives.hasOwnProperty(primref)) {
+                    throw ("primitiveref id: " + primref + " used in componentref id: " + compID + " is not recognized");
                 }
             }
 
             for (var h = 0; h < comp.children.componentref.length; h++) {
                 var compref = comp.children.componentref[h];
-                if(!this.scene.components.hasOwnProperty(compref)){
-                    throw ("componentref id: " + compref + " used in componentref id: " + id + " is not recognized");
+                if (!this.scene.components.hasOwnProperty(compref)) {
+                    throw ("componentref id: " + compref + " used in componentref id: " + compID + " is not recognized");
                 }
             }
         }

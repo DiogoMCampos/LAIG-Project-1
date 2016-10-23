@@ -65,8 +65,6 @@ serialInclude(["../lib/CGF.js", "XMLscene.js", "MySceneGraph.js", "DSXParser.js"
         // Check console for loading errors
         var myGraph = new MySceneGraph(filename, myScene);
 
-        myInterface.setActiveCamera(myScene.camera);
-
         // start
         app.run();
     }

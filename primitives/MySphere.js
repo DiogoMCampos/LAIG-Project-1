@@ -75,7 +75,7 @@ MySphere.prototype.parseAttributes = function(xmlNode) {
     this.stacks = this.reader.getInteger(xmlNode, "stacks");
 
     if(this.radius === null || isNaN(this.radius) || this.radius <= 0){
-        console.warn();
+        throw "primitive id: " + this.id + " has radius value not recognized";
     }
     if(this.slices === null || isNaN(this.slices) || this.slices <= 0){
         this.slices = 10;

@@ -36,15 +36,15 @@ DSXParser.prototype.parseViews = function(views) {
     if (views.tagName !== "views") {
         throw "the main block order is wrong";
     }
-
-    this.defaultView = this.reader.getFloat(views, "default");
+    this.views = {};
+    this.views.defaultView = this.reader.getString(views, "default");
     var perspectives = views.getElementsByTagName("perspective");
 
     if (perspectives.length < 1) {
         throw "no 'perspective' element found.";
     }
 
-    this.perspectives = {};
+    this.views.perspectives = {};
 
     for (var i = 0; i < perspectives.length; i++) {
         this.getPerspectiveData(perspectives[i]);
@@ -65,7 +65,7 @@ DSXParser.prototype.getPerspectiveData = function(perspective) {
     var object = {};
     object.id = this.reader.getString(perspective, "id");
 
-    if (this.perspectives.hasOwnProperty(object.id)) {
+    if (this.views.perspectives.hasOwnProperty(object.id)) {
         console.warn("Repeated perspective id: " + object.id);
         return;
     }
@@ -75,7 +75,7 @@ DSXParser.prototype.getPerspectiveData = function(perspective) {
     object.from = fromElems[0];
     object.to = toElems[0];
 
-    this.perspectives[object.id] = object;
+    this.views.perspectives[object.id] = object;
 };
 
 DSXParser.prototype.parseIllumination = function(illumination) {

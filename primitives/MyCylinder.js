@@ -39,7 +39,7 @@ MyCylinder.prototype.initBuffers = function() {
 
         var sCoord = 0;
 
-        for (var m = 0; m < this.slices; m++) {
+        for (var m = 0; m <= this.slices; m++) {
             var nX = Math.cos(ang * m);
             var nY = Math.sin(ang * m);
             this.vertices.push(nX * (this.baseRadius - diff * ind),
@@ -50,7 +50,6 @@ MyCylinder.prototype.initBuffers = function() {
             sCoord += sPatch;
         }
 
-        this.texCoords.push(sCoord, tCoord);
         tCoord -= tPatch;
         n += this.heightCylinder / this.stacks;
     }
@@ -58,13 +57,13 @@ MyCylinder.prototype.initBuffers = function() {
     //Indices
     for (var j = 0; j < this.stacks; j++) {
         for (var i = 0; i < (this.slices); i++) {
-            this.indices.push((i + 1) % (this.slices) + (j + 0) * this.slices,
-                (i + 0) % (this.slices) + (j + 1) * this.slices,
-                (i + 0) % (this.slices) + (j + 0) * this.slices);
+            this.indices.push((i + 1) + (j + 0) * (this.slices + 1),
+                (i + 0)  + (j + 1) * (this.slices + 1),
+                (i + 0)  + (j + 0) * (this.slices + 1));
 
-            this.indices.push((i + 0) % (this.slices) + (j + 1) * this.slices,
-                (i + 1) % (this.slices) + (j + 0) * this.slices,
-                (i + 1) % (this.slices) + (j + 1) * this.slices);
+            this.indices.push((i + 0)  + (j + 1) * (this.slices + 1),
+                (i + 1)  + (j + 0) * (this.slices + 1),
+                (i + 1)  + (j + 1) * (this.slices + 1));
         }
 
     }
@@ -90,13 +89,13 @@ MyCylinder.prototype.parseAttributes = function(xmlNode) {
     this.stacks = this.reader.getInteger(xmlNode, "stacks");
 
     if(this.baseRadius === null || isNaN(this.baseRadius) || this.baseRadius <= 0){
-        console.warn("primitive id: " + this.id + " has base value not recognized");
+        throw "primitive id: " + this.id + " has base value not recognized";
     }
     if(this.topRadius === null || isNaN(this.topRadius) || this.topRadius <= 0){
-        console.warn();
+        throw "primitive id: " + this.id + " has top value not recognized";
     }
     if(this.heightCylinder === null || isNaN(this.heightCylinder) || this.heightCylinder <= 0){
-        console.warn();
+        throw "primitive id: " + this.id + " has height value not recognized";
     }
     if(this.slices === null || isNaN(this.slices) || this.slices <= 0){
         this.slices = 10;
