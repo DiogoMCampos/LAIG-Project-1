@@ -79,7 +79,3 @@ MyCylinder.prototype.display = function() {
     this.scene.translate(0, 0, -this.data.heightCylinder);
     this.data.topCircle.display();
 };
-
-MyCylinder.prototype.parseAttributes = function(xmlNode) {
-
-};

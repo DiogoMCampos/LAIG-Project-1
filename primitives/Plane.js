@@ -11,7 +11,7 @@ function Plane(scene, id, data) {
 }
 
 Plane.prototype = Object.create(CGFnurbsObject.prototype);
-Plane.prototype.constructor = Plane;
+//Plane.prototype.constructor = Plane;
 
 Plane.prototype.createObject = function() {
 
@@ -21,7 +21,7 @@ Plane.prototype.createObject = function() {
     var xF = this.data.dimX/2;
 
 
-    var controlVertex = [
+    var controlVertexes = [
                     [   //U=0 V=[0,1]
                         [xI, yI, 0, 1],
                         [xI, yF, 0, 1],
@@ -38,5 +38,11 @@ Plane.prototype.createObject = function() {
                     1,0
     ];
 
-    Patch.call(this, this.scene, this.data.dimX, this.data.dimY, controlVertex, this.data.partsX, this.data.partsY);
+    var data = {};
+    data.orderU = 1;
+    data.orderV = 1;
+    data.partsU = this.data.partsX;
+    data.partsV = this.data.partsY;
+    data.controlVertexes = controlVertexes;
+    Patch.call(this, this.scene, this.id, data);
 };

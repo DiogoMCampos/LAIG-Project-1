@@ -165,10 +165,9 @@ var getControlVertexes = function(reader, id, orderU, orderV, xmlNode){
     var vertexes = [];
     for (var i = 0; i <= orderU; i++) {
         var middle = [];
-
         for (var j = 0; j <= orderV; j++) {
             var index = i * (orderV+1) + j;
-            var point = getXYZ(reader, controlPoints[index], id);
+            var point = getXYZ(reader, xmlNode[index], id);
             var coordinates = [];
             coordinates.push(point.x,point.y,point.z, 1);
             middle.push(coordinates);

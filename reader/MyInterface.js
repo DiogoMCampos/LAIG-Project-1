@@ -35,7 +35,7 @@ MyInterface.prototype.init = function(application) {
     this.spotGroup = this.gui.addFolder("Spot Lights");
     this.spotGroup.open();
 
-    this.gui.add(this.scene, 'selectedShader', {
+    /*this.gui.add(this.scene, 'selectedShader', {
         'Flat Shading': 0,
         'Passing a scale as uniform': 1,
         'Passing a varying parameter from VS -> FS': 2,
@@ -43,7 +43,7 @@ MyInterface.prototype.init = function(application) {
         'Multiple textures in the FS': 4,
         'Multiple textures in VS and FS': 5,
         'Sepia': 6,
-    }).name('Shaders');
+    }).name('Shaders');*/
 
     return true;
 };

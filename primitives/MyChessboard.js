@@ -3,14 +3,10 @@
  * @constructor
  */
 
-function MyChessboard(scene, du, dv, textureRef, su, sv) {
+function MyChessboard(scene, id, data) {
     this.scene = scene;
 
-    this.du = du;
-    this.dv = dv;
-    this.textureRef = textureRef;
-    this.su = su;
-    this.sv = sv;
+    this.data = data;
 
     this.createObject();
 }
