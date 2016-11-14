@@ -14,7 +14,9 @@ function XMLscene(inter) {
         TRIANGLE: "triangle",
         CYLINDER: "cylinder",
         SPHERE: "sphere",
-        TORUS: "torus"
+        TORUS: "torus",
+        PLANE: "plane",
+        PATCH: "patch"
     };
 
     this.TRANSFORMATIONS = {

@@ -270,6 +270,12 @@ MySceneGraph.prototype.createElements = function(primitivesNodes) {
                 case this.scene.PRIMITIVES.TORUS:
                     obj = new MyTorus(this.scene, p, this.reader);
                     break;
+                case this.scene.PRIMITIVES.PLANE:
+                    obj = new Plane(this.scene, p, this.reader);
+                    break;
+                case this.scene.PRIMITIVES.PATCH:
+                    obj = new Patch(this.scene, p, this.reader);
+                    break;
                 default:
                     console.warn("tagName " + p.type + " is not recognized");
                     continue;
@@ -345,7 +351,7 @@ MySceneGraph.prototype.setComponentAppearance = function(id, component, data) {
     if(material.length < 1){
         throw ("Component " + id + " has zero material tags.");
     }
-    
+
     component.materials = [];
     for (var matID = 0; matID < material.length; matID++) {
         var materialID = this.reader.getString(material[matID], "id");
