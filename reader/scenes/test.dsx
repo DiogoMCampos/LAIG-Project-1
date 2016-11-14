@@ -113,6 +113,16 @@
         </transformation>
     </transformations>
 
+    <animations>
+        <animation id="linear" span="2" type="linear">
+            <controlpoint xx="0" yy="1" zz="0" />
+            <controlpoint xx="0" yy="1" zz="1" />
+        </animation>
+        <animation id="circular" span="2" type="circular"
+                centerx="0" centery="1" centerz="0"
+                radius="2" startang="30" rotang="50"/>
+    </animations>
+
     <primitives>
         <primitive id="tire">
             <torus inner="0.4" outer="1" slices="50" loops="50"/>

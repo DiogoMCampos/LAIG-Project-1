@@ -42,7 +42,7 @@ Patch.prototype.getControlVertexes = function(orderU, orderV, controlPoints){
         for (var j = 0; j <= orderV; j++) {
             var point = {};
 
-            var index = i * (orderU+1) + j;
+            var index = i * (orderV+1) + j;
             var coordinates = [];
             point.x = this.reader.getFloat(controlPoints[index], "x");
             point.y = this.reader.getFloat(controlPoints[index], "y");
@@ -50,7 +50,7 @@ Patch.prototype.getControlVertexes = function(orderU, orderV, controlPoints){
 
             for (var coord in point) {
                 if(point[coord] === null || isNaN(point[coord])){
-                    throw "point id: " + this.id + " has " + coord + " value in control point " + index + "not recognized";
+                    throw "point id: " + this.id + " has " + coord + " value in control point " + index + " not recognized";
                 }
             }
             coordinates.push(point.x,point.y,point.z, 1);

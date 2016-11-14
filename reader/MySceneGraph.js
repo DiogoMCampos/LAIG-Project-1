@@ -32,6 +32,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.createTextures(dsxInfo.textures);
         this.createMaterials(dsxInfo.materials);
         this.createTransformations(dsxInfo.transformations);
+        this.createAnimations(dsxInfo.animations);
         this.createElements(dsxInfo.primitives);
         this.createComponents(dsxInfo.components);
     } catch (err) {
@@ -244,6 +245,101 @@ MySceneGraph.prototype.getTransformationAttributes = function(node, id) {
     result.name = node.tagName;
     return result;
 };
+
+MySceneGraph.prototype.createAnimations = function(animationNodes) {
+    this.scene.animations = {};
+    
+    for (var i = 0; i < animationNodes.length; i++) {
+        this.getAnimationData(animationNodes[i]);
+    }
+};
+
+MySceneGraph.prototype.getAnimationData = function(node) {
+    var id = this.reader.getString(node, "id", false);
+    if (!id) {
+        console.warn("animation without id (required). Proceeded without that animation.");
+        return;
+    }
+
+    if (this.scene.animations.hasOwnProperty(id)) {
+        console.warn("repeated animation id: " + id);
+        return;
+    }
+
+    var span = this.reader.getFloat(node, "span");
+    if (!span) {
+        console.warn("animation " + id + " without span (required). Proceeded without that animation.");
+        return;
+    }
+
+    var type = this.reader.getString(node, "type");
+    if (!type) {
+        console.warn("animation " + id + " without type (required). Proceeded without that animation.");
+        return;
+    }
+
+    var animation = {};
+    animation.id = id;
+    animation.type = type;
+    animation.duration = span;
+
+    if (type === "linear") {
+        this.getLinearAnimation(animation, node);
+    } else if (type === "circular") {
+        this.getCircularAnimation(animation, node);
+    } else {
+        console.warn("animation " + id + " with wrong type (should be either \"linear\" or \"circular\". Proceeded without that animation.");
+        return;
+    }
+};
+
+MySceneGraph.prototype.getLinearAnimation = function(animation, node) {
+    var children = node.children;
+    if (children.length <= 1) {
+        throw "less than two control points for animation id: " + id + ". Proceeded without that animation.";
+    }
+
+    var controlPoints = []
+    for (var i = 0; i < children.length; i++) {
+        controlPoints.push(this.getControlPoint(children[i]));
+    }
+
+    animation.controlPoints = controlPoints;
+    this.scene.animations[animation.id] = animation;
+};
+
+MySceneGraph.prototype.getCircularAnimation = function(animation, node) {
+    var animationAttributes = ["centerx", "centery", "centerz", "radius", "startang", "rotang"];
+
+    for (var i = 0; i < animationAttributes.length; i++) {
+        var attribute = animationAttributes[i];
+        animation[attribute] = this.reader.getFloat(node, attribute);
+        if (animation[attribute] === null || isNaN(animation[attribute])) {
+            console.warn("animation " + animation.id + " without " + attribute + " (required). Proceeded without that animation.");
+            return;
+        }
+    }
+
+    this.scene.animations[animation.id] = animation;
+};
+
+MySceneGraph.prototype.getControlPoint = function(controlPoint) {
+    var point = {};
+
+    var coordinates = [];
+    point.x = this.reader.getFloat(controlPoint, "xx");
+    point.y = this.reader.getFloat(controlPoint, "yy");
+    point.z = this.reader.getFloat(controlPoint, "zz");
+
+    for (var coord in point) {
+        if (point[coord] === null || isNaN(point[coord])) {
+            throw "Coord " + coord + " value not recognized";
+        }
+    }
+
+    return point;
+};
+
 
 MySceneGraph.prototype.createElements = function(primitivesNodes) {
     for (var id in primitivesNodes) {

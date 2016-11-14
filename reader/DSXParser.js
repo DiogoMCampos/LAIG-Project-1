@@ -2,7 +2,7 @@ function DSXParser(rootElement, reader) {
     this.reader = reader;
     var root = rootElement.children;
 
-    if (root.length !== 9) {
+    if (root.length !== 10) {
         throw "dsx file has incorrect number of main categories";
     }
     this.parseScene(root[0]);
@@ -12,9 +12,9 @@ function DSXParser(rootElement, reader) {
     this.parseTextures(root[4]);
     this.parseMaterials(root[5]);
     this.parseTransformations(root[6]);
-    this.parsePrimitives(root[7]);
-    this.parseComponents(root[8]);
-
+    this.parseAnimations(root[7]);
+    this.parsePrimitives(root[8]);
+    this.parseComponents(root[9]);
 }
 
 DSXParser.prototype.parseScene = function(scene) {
@@ -29,7 +29,7 @@ DSXParser.prototype.parseScene = function(scene) {
     }
 
     this.scene.axisLength = this.reader.getFloat(scene, "axis_length");
-    if(this.scene.axisLength === null || isNaN(this.scene.axisLength) || this.scene.axisLength <= 0){
+    if (this.scene.axisLength === null || isNaN(this.scene.axisLength) || this.scene.axisLength <= 0) {
         this.scene.axisLength = 10;
         console.warn("Axis length value not recognized. Assigning default value 10");
     }
@@ -73,19 +73,19 @@ DSXParser.prototype.getPerspectiveData = function(perspective) {
         return;
     }
     object.angle = this.reader.getFloat(perspective, "angle");
-    if(object.angle === null || isNaN(object.angle)){
+    if (object.angle === null || isNaN(object.angle)) {
         object.angle = 22.5;
         console.warn("Perspective ID: " + object.id + " has angle value not recognized. Assigning default value 22.5");
     }
 
     object.near = this.reader.getFloat(perspective, "near");
-    if(object.near === null || isNaN(object.near)){
+    if (object.near === null || isNaN(object.near)) {
         object.near = 0.4;
         console.warn("Perspective ID: " + object.id + " has near value not recognized. Assigning default value 0.4");
     }
 
     object.far = this.reader.getFloat(perspective, "far");
-    if(object.far === null || isNaN(object.far)){
+    if (object.far === null || isNaN(object.far)) {
         object.far = 500;
         console.warn("Perspective ID: " + object.id + " has far value not recognized. Assigning default value 500");
     }
@@ -103,11 +103,11 @@ DSXParser.prototype.parseIllumination = function(illumination) {
     this.illumination = {};
     this.illumination.doublesided = this.reader.getBoolean(illumination, "doublesided");
     this.illumination.local = this.reader.getBoolean(illumination, "local");
-    if(this.illumination.doublesided === null){
+    if (this.illumination.doublesided === null) {
         this.illumination.doublesided = true;
         console.warn("Illumination has doublesided value not recognized. Assigning defalut value true");
     }
-    if(this.illumination.local === null){
+    if (this.illumination.local === null) {
         console.warn("Illumination has local value not recognized. Assigning defalut value true");
     }
 
@@ -132,7 +132,7 @@ DSXParser.prototype.parseLights = function(lightNode) {
             continue;
         }
         object.enabled = this.reader.getBoolean(all[i], "enabled");
-        if(object.enabled === null){
+        if (object.enabled === null) {
             console.warn("Light id: " + object.id + " has enabled value not recognized. Assigning defalut value true");
         }
         object.type = all[i].tagName;
@@ -141,12 +141,12 @@ DSXParser.prototype.parseLights = function(lightNode) {
         switch (object.type) {
             case "spot":
                 object.angle = this.reader.getFloat(all[i], "angle");
-                if(object.angle === null || isNaN(object.angle) || object.angle <= 0){
+                if (object.angle === null || isNaN(object.angle) || object.angle <= 0) {
                     object.angle = 22.5;
                     console.warn("Angle value not recognized. Assigning default value 22.5 DEG");
                 }
                 object.exponent = this.reader.getFloat(all[i], "exponent");
-                if(object.exponent === null || isNaN(object.exponent) || object.exponent <= 0){
+                if (object.exponent === null || isNaN(object.exponent) || object.exponent <= 0) {
                     object.exponent = 1;
                     console.warn("Angle value not recognized. Assigning default value 1");
                 }
@@ -166,7 +166,7 @@ DSXParser.prototype.parseTextures = function(textures) {
     this.textures = {};
 
     var texturesArray = textures.getElementsByTagName("texture");
-    if(texturesArray.length < 1){
+    if (texturesArray.length < 1) {
         throw "No 'texture' element found";
     }
 
@@ -176,19 +176,19 @@ DSXParser.prototype.parseTextures = function(textures) {
         var t = {};
         t.id = this.reader.getString(texture, "id");
 
-        if(this.textures.hasOwnProperty(t.id)){
+        if (this.textures.hasOwnProperty(t.id)) {
             console.warn("Repeated texture id: " + t.id);
             continue;
         }
         t.file = this.reader.getString(texture, "file");
         t.lengthS = this.reader.getFloat(texture, "length_s");
-        if(t.lengthS === null || isNaN(t.lengthS)){
+        if (t.lengthS === null || isNaN(t.lengthS)) {
             t.lengthS = 1;
             console.warn("Texture id: " + t.id + " has length_s value not recognized. Assigning default value 1");
         }
 
         t.lengthT = this.reader.getFloat(texture, "length_t");
-        if(t.lengthT === null || isNaN(t.lengthT)){
+        if (t.lengthT === null || isNaN(t.lengthT)) {
             t.lengthT = 1;
             console.warn("Texture id: " + t.id + " has length_t value not recognized. Assigning default value 1");
         }
@@ -204,7 +204,7 @@ DSXParser.prototype.parseMaterials = function(materials) {
     }
     this.materials = {};
     var materialArray = materials.getElementsByTagName("material");
-    if(materialArray.length < 1){
+    if (materialArray.length < 1) {
         throw "No 'material' element found";
     }
 
@@ -212,7 +212,7 @@ DSXParser.prototype.parseMaterials = function(materials) {
         var m = {};
 
         m.id = this.reader.getString(materialArray[i], "id");
-        if(this.materials.hasOwnProperty(m.id)){
+        if (this.materials.hasOwnProperty(m.id)) {
             console.warn("Repeated material id: " + m.id);
             continue;
         }
@@ -229,7 +229,7 @@ DSXParser.prototype.parseTransformations = function(transformations) {
     this.transformations = {};
 
     var transformationList = transformations.getElementsByTagName("transformation");
-    if(transformationList.length < 1){
+    if (transformationList.length < 1) {
         throw "No 'transformation' element found";
     }
 
@@ -262,6 +262,22 @@ DSXParser.prototype.getTransformationData = function(transformation) {
     this.transformations[id] = object;
 };
 
+DSXParser.prototype.parseAnimations = function(animations) {
+    if (animations.tagName !== "animations") {
+        throw "the main block order is wrong";
+    }
+    this.animations = [];
+
+    var nodes = animations.getElementsByTagName("animation");
+    if (nodes.length < 1) {
+        console.warn("no animations found");
+    }
+
+    for (var i = 0; i < nodes.length; i++) {
+        this.animations.push(nodes[i]);
+    }
+};
+
 DSXParser.prototype.parsePrimitives = function(primitives) {
 
     if (primitives.tagName !== "primitives") {
@@ -279,7 +295,7 @@ DSXParser.prototype.parsePrimitives = function(primitives) {
     }
 };
 
-DSXParser.prototype.getPrimitiveData = function(nodes, primitives) {
+DSXParser.prototype.getPrimitiveData = function(nodes) {
 
     var id = this.reader.getString(nodes, "id", false);
     if (!id) {
@@ -312,7 +328,7 @@ DSXParser.prototype.parseComponents = function(components) {
     }
 
     var componentArray = components.getElementsByTagName("component");
-    if(componentArray.length < 1){
+    if (componentArray.length < 1) {
         throw "No 'component' element found";
     }
 
