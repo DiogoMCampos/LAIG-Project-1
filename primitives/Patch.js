@@ -28,7 +28,6 @@ Patch.prototype.createSurface = function(orderU, orderV, controlVertexes){
     var knots2 = this.getKnotsVector(orderV); // to be built inside webCGF in later versions
 
     var nurbsSurface = new CGFnurbsSurface(orderU, orderV, knots1, knots2, controlVertexes); // TODO  (CGF 0.19.3): remove knots1 and knots2 from CGFnurbsSurface method call. Calculate inside method.
-    console.log(nurbsSurface);
     getSurfacePoint = function(u, v) {
         return nurbsSurface.getPoint(u, v);
     };
@@ -43,7 +42,7 @@ Patch.prototype.getControlVertexes = function(orderU, orderV, controlPoints){
         for (var j = 0; j <= orderV; j++) {
             var point = {};
 
-            var index = i * (j+1) + j;
+            var index = i * (orderU+1) + j;
             var coordinates = [];
             point.x = this.reader.getFloat(controlPoints[index], "x");
             point.y = this.reader.getFloat(controlPoints[index], "y");
