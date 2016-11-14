@@ -2,16 +2,15 @@
  * MyCylinder
  * @constructor
  */
-function MyCylinder(scene, info, reader) {
+function MyCylinder(scene, id, data) {
     CGFobject.call(this, scene);
     this.scene = scene;
-    this.reader = reader;
-    this.id = info.id;
+    this.id = id;
 
-    this.parseAttributes(info.data);
+    this.data = data;
 
-    this.baseCircle = new MyCircle(this.scene, this.slices, this.baseRadius);
-    this.topCircle = new MyCircle(this.scene, this.slices, this.topRadius);
+    this.data.baseCircle = new MyCircle(this.scene, this.data.slices, this.data.baseRadius);
+    this.data.topCircle = new MyCircle(this.scene, this.data.slices, this.data.topRadius);
 
     this.initBuffers();
 }
@@ -26,24 +25,24 @@ MyCylinder.prototype.initBuffers = function() {
     this.normals = [];
     this.texCoords = [];
 
-    var diff = (this.baseRadius - this.topRadius) / this.stacks;
+    var diff = (this.data.baseRadius - this.data.topRadius) / this.data.stacks;
 
-    var ang = 2 * Math.PI / this.slices;
+    var ang = 2 * Math.PI / this.data.slices;
     var n = 0;
     var tCoord = 1;
-    var sPatch = 1 / this.slices;
-    var tPatch = 1 / this.stacks;
+    var sPatch = 1 / this.data.slices;
+    var tPatch = 1 / this.data.stacks;
 
     //Vertices & Normals
     for (var ind = 0; ind <= this.stacks; ind++) {
 
         var sCoord = 0;
 
-        for (var m = 0; m <= this.slices; m++) {
+        for (var m = 0; m <= this.data.slices; m++) {
             var nX = Math.cos(ang * m);
             var nY = Math.sin(ang * m);
-            this.vertices.push(nX * (this.baseRadius - diff * ind),
-                nY * (this.baseRadius - diff * ind),
+            this.data.vertices.push(nX * (this.data.baseRadius - diff * ind),
+                nY * (this.data.baseRadius - diff * ind),
                 n);
             this.normals.push(nX, nY, 0);
             this.texCoords.push(sCoord, tCoord);
@@ -51,19 +50,19 @@ MyCylinder.prototype.initBuffers = function() {
         }
 
         tCoord -= tPatch;
-        n += this.heightCylinder / this.stacks;
+        n += this.data.heightCylinder / this.data.stacks;
     }
 
     //Indices
-    for (var j = 0; j < this.stacks; j++) {
-        for (var i = 0; i < (this.slices); i++) {
-            this.indices.push((i + 1) + (j + 0) * (this.slices + 1),
-                (i + 0)  + (j + 1) * (this.slices + 1),
-                (i + 0)  + (j + 0) * (this.slices + 1));
+    for (var j = 0; j < this.data.stacks; j++) {
+        for (var i = 0; i < (this.data.slices); i++) {
+            this.indices.push((i + 1) + (j + 0) * (this.data.slices + 1),
+                (i + 0)  + (j + 1) * (this.data.slices + 1),
+                (i + 0)  + (j + 0) * (this.data.slices + 1));
 
-            this.indices.push((i + 0)  + (j + 1) * (this.slices + 1),
-                (i + 1)  + (j + 0) * (this.slices + 1),
-                (i + 1)  + (j + 1) * (this.slices + 1));
+            this.indices.push((i + 0)  + (j + 1) * (this.data.slices + 1),
+                (i + 1)  + (j + 0) * (this.data.slices + 1),
+                (i + 1)  + (j + 1) * (this.data.slices + 1));
         }
 
     }
@@ -75,34 +74,12 @@ MyCylinder.prototype.initBuffers = function() {
 MyCylinder.prototype.display = function() {
 
     CGFobject.prototype.display.call(this);
-    this.baseCircle.display();
+    this.data.baseCircle.display();
     this.scene.rotate(Math.PI, 1, 0, 0);
-    this.scene.translate(0, 0, -this.heightCylinder);
-    this.topCircle.display();
+    this.scene.translate(0, 0, -this.data.heightCylinder);
+    this.data.topCircle.display();
 };
 
 MyCylinder.prototype.parseAttributes = function(xmlNode) {
-    this.baseRadius = this.reader.getFloat(xmlNode, "base");
-    this.topRadius = this.reader.getFloat(xmlNode, "top");
-    this.heightCylinder = this.reader.getFloat(xmlNode, "height");
-    this.slices = this.reader.getInteger(xmlNode, "slices");
-    this.stacks = this.reader.getInteger(xmlNode, "stacks");
 
-    if(this.baseRadius === null || isNaN(this.baseRadius) || this.baseRadius <= 0){
-        throw "primitive id: " + this.id + " has base value not recognized";
-    }
-    if(this.topRadius === null || isNaN(this.topRadius) || this.topRadius <= 0){
-        throw "primitive id: " + this.id + " has top value not recognized";
-    }
-    if(this.heightCylinder === null || isNaN(this.heightCylinder) || this.heightCylinder <= 0){
-        throw "primitive id: " + this.id + " has height value not recognized";
-    }
-    if(this.slices === null || isNaN(this.slices) || this.slices <= 0){
-        this.slices = 10;
-        console.warn("primitive id: " + this.id + " has slices value not recognized. Assigning default value 10");
-    }
-    if(this.stacks === null || isNaN(this.stacks) || this.stacks <= 0) {
-        this.stacks = 10;
-        console.warn("primitive id: " + this.id + " has stacks value not recognized. Assigning default value 10");
-    }
 };

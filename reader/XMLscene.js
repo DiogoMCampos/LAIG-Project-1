@@ -50,10 +50,31 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.enableTextures(true);
     this.interface.setActiveCamera(this.camera);
     this.interface.addScene(this);
+    this.initShaders();
 };
 
-XMLscene.prototype.initLights = function(info) {
+XMLscene.prototype.initShaders = function() {
 
+    this.shaders=[
+		new CGFshader(this.gl, "shaders/flat.vert", "shaders/flat.frag"),
+		new CGFshader(this.gl, "shaders/uScale.vert", "shaders/uScale.frag"),
+		new CGFshader(this.gl, "shaders/varying.vert", "shaders/varying.frag"),
+		new CGFshader(this.gl, "shaders/texture1.vert", "shaders/texture1.frag"),
+		new CGFshader(this.gl, "shaders/texture2.vert", "shaders/texture2.frag"),
+		new CGFshader(this.gl, "shaders/texture3.vert", "shaders/texture3.frag"),
+		new CGFshader(this.gl, "shaders/texture3.vert", "shaders/sepia.frag"),
+		new CGFshader(this.gl, "shaders/texture3.vert", "shaders/convolution.frag")
+	];
+
+    /*this.shade = new CGFshader(this.gl,  "../lib/CGF/shaders/picking/vertex.glsl",  "../lib/CGF/shaders/picking/fragment.glsl");
+    /*this.shaders=[
+        new CGFshader(this.gl, "../lib/CGF/shaders/Gouraud/textured/multiple_light-vertex.glsl",  "../lib/CGF/shaders/Gouraud/textured/Gouraud/textured/fragment.glsl"),
+        new CGFshader(this.gl, "../lib/CGF/shaders/Gouraud/multiple_light-vertex.glsl", "../lib/CGF/shaders/Gouraud/fragment.glsl"),
+        new CGFshader(this.gl, "../lib/CGF/shaders/Gouraud/lambert-vertex.glsl", "../lib/CGF/shaders/Gouraud/fragment.glsl"),
+        new CGFshader(this.gl, "../lib/CGF/shaders/Phong/multiple_light-vertex.glsl", "../lib/CGF/shaders/Phong/multiple_light-phong-fragment.glsl"),
+        new CGFshader(this.gl, "../lib/CGF/shaders/Phong/phong-vertex.glsl", "../lib/CGF/shaders/Phong/phong-fragment.glsl"),
+        new CGFshader(this.gl,  "../lib/CGF/shaders/picking/vertex.glsl",  "../lib/CGF/shaders/picking/fragment.glsl")
+    ];*/
 };
 
 XMLscene.prototype.initCameras = function(cameras) {
@@ -85,6 +106,14 @@ XMLscene.prototype.display = function() {
         // Apply transformations corresponding to the camera position relative to the origin
         this.applyViewMatrix();
 
+        for (var j = 0; j < this.lightsOn.length; j++) {
+            if (!this.lightsOn[j]) {
+                this.lights[j].enabled = false;
+            } else {
+                this.lights[j].enabled = true;
+            }
+            this.lights[j].update();
+        }
         // Draw axis
         this.axis.display();
 
@@ -94,14 +123,6 @@ XMLscene.prototype.display = function() {
 
         var root = this.components[this.root];
         this.recursiveDisplay(this.root, root.materials[root.materialsIndex], root.textureID);
-        for (var j = 0; j < this.lightsOn.length; j++) {
-            if (!this.lightsOn[j]) {
-                this.lights[j].enabled = false;
-            } else {
-                this.lights[j].enabled = true;
-            }
-            this.lights[j].update();
-        }
     }
 };
 

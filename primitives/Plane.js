@@ -3,14 +3,10 @@
  * @constructor
  */
 
-function Plane(scene, dimX, dimY, partsX, partsY) {
+function Plane(scene, id, data) {
     this.scene = scene;
-
-    this.dimX = dimX;
-    this.dimY = dimY;
-    this.partsX = partsX;
-    this.partsY = partsY;
-
+    this.id = id;
+    this.data = data;
     this.createObject();
 }
 
@@ -19,10 +15,10 @@ Plane.prototype.constructor = Plane;
 
 Plane.prototype.createObject = function() {
 
-    var yI = -this.dimY/2;
-    var xI = -this.dimX/2;
-    var yF = this.dimY/2;
-    var xF = this.dimX/2;
+    var yI = -this.data.dimY/2;
+    var xI = -this.data.dimX/2;
+    var yF = this.data.dimY/2;
+    var xF = this.data.dimX/2;
 
 
     var controlVertex = [
@@ -42,5 +38,5 @@ Plane.prototype.createObject = function() {
                     1,0
     ];
 
-    Patch.call(this, this.scene, this.dimX, this.dimY, controlVertex, this.partsX, this.partsY);
+    Patch.call(this, this.scene, this.data.dimX, this.data.dimY, controlVertex, this.data.partsX, this.data.partsY);
 };

@@ -3,12 +3,11 @@
  * @constructor
  */
 
-function MyRectangle(scene, info, reader) {
+function MyRectangle(scene, id, coords) {
     CGFobject.call(this, scene);
     this.scene = scene;
-    this.reader = reader;
-    this.id = info.id;
-    this.parseAttributes(info.data);
+    this.id = id;
+    this.coordinates = coords;
     this.initBuffers();
 
 }
@@ -50,17 +49,5 @@ MyRectangle.prototype.initBuffers = function() {
 
 
 MyRectangle.prototype.parseAttributes = function(xmlNode) {
-    this.coordinates = {};
-    this.coordinates.x1 = this.reader.getFloat(xmlNode, "x1");
-    this.coordinates.y1 = this.reader.getFloat(xmlNode, "y1");
-    this.coordinates.x2 = this.reader.getFloat(xmlNode, "x2");
-    this.coordinates.y2 = this.reader.getFloat(xmlNode, "y2");
 
-    for (var coord in this.coordinates) {
-        if (this.coordinates.hasOwnProperty(coord)) {
-            if(this.coordinates[coord] === null || isNaN(this.coordinates[coord])){
-                throw "primitive id: " + this.id + " has " + coord + " value not recognized";
-            }
-        }
-    }
 };
