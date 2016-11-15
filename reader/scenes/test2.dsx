@@ -1,0 +1,127 @@
+<dsx>
+    <scene root="root" axis_length="60"/>
+
+    <views default="front">
+        <perspective id="front" near="0.1" far="500" angle="90">
+            <from x="0" y="0" z="5"/>
+            <to x="0" y="0" z="0"/>
+        </perspective>
+
+        <perspective id="insideScene" near="5" far="50" angle="50">
+            <from x="19" y="5" z="5"/>
+            <to x="0" y="0" z="6"/>
+        </perspective>
+    </views>
+
+    <illumination doublesided="1" local="1">
+        <ambient r="0.3" g="0.3" b="0.3" a="1"/>
+        <background r="0" g="0" b="0" a="1"/>
+    </illumination>
+
+    <lights>
+        <omni id="center" enabled="1">
+            <location x="0" y="0" z="10" w="1"/>
+            <ambient r="0.2" g="0.2" b="0.2" a="1"/>
+            <diffuse r="0.9" g="0.9" b="1" a="1"/>
+            <specular r="0" g="0" b="0" a="1"/>
+        </omni>
+
+        <omni id="lamp" enabled="0">
+            <location x="8" y="5.2" z="-0.7" w="1"/>
+            <ambient r="1" g="1" b="0" a="1"/>
+            <diffuse r="1" g="1" b="0" a="1"/>
+            <specular r="1" g="1" b="0" a="1"/>
+        </omni>
+
+        <spot id="leftWall" enabled="0" angle="30" exponent="0.1">
+            <target x="5" y="0" z="5"/>
+            <location x="2" y="5" z="8"/>
+            <ambient r="1" g="0" b="0" a="1"/>
+            <diffuse r="1" g="0" b="0" a="1"/>
+            <specular r="1" g="0" b="0" a="1"/>
+        </spot>
+    </lights>
+
+    <textures>
+        <texture id="car" file="../resources/bodyPaint.jpg" length_s="1" length_t="1"/>
+        <texture id="windows" file="../resources/windows.jpg" length_s="1" length_t="1"/>
+        <texture id="xp" file="../resources/xp.jpg" length_s="1" length_t="1"/>
+        <texture id="wood" file="../resources/wood.jpg" length_s="1" length_t="1"/>
+
+    </textures>
+
+    <materials>
+        <material id="default">
+            <emission r="1" g="1" b="1" a="1"/>
+            <ambient r="1" g="1" b="1" a="1"/>
+            <diffuse r="1" g="1" b="1" a="1"/>
+            <specular r="1" g="1" b="1" a="1"/>
+            <shininess value="1"/>
+        </material>
+
+    </materials>
+
+    <transformations>
+        <transformation id="scaleToRim">
+            <scale x="0.4" y="0.4" z="0.2"/>
+        </transformation>
+    </transformations>
+
+    <animations>
+        <animation id="linear" span="2" type="linear">
+            <controlpoint xx="0" yy="1" zz="0" />
+            <controlpoint xx="0" yy="1" zz="1" />
+        </animation>
+    </animations>
+
+
+    <primitives>
+
+        <primitive id="patch">
+            <patch orderU="2" orderV="1" partsU="20" partsV="20" >
+                <controlpoint x="-2.0" y="-2.0" z="0.0" />
+                <controlpoint x="-2.0" y="2.0" z="0.0" />
+                <controlpoint x="0.0" y="-2.0" z="3.0" />
+                <controlpoint x="0.0" y="2.0" z="3.0" />
+                <controlpoint x="2.0" y="-2.0" z="0.0" />
+                <controlpoint x="2.0" y="2.0" z="0.0" />
+            </patch>
+        </primitive>
+
+        <primitive id="plane">
+            <plane dimX="3" dimY="2" partsX="10" partsY="7"/>
+        </primitive>
+
+        <primitive id="rectangle">
+            <rectangle x1="0" y1="0" x2="4" y2="4"/>
+        </primitive>
+
+        <primitive id="chessboard">
+            <chessboard du="8" dv="8" textureref="none" su="0" sv="0">
+               <c1 r="0.85" g="0.5" b="0.07" a="1" />
+               <c2 r="0.92" g="0.83" b="0.7" a="1" />
+               <cs r="0.95" g="0" b="0" a="1" />
+              </chessboard>
+        </primitive>
+
+    </primitives>
+
+    <components>
+        <component id="root">
+            <transformation>
+
+            </transformation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="wood"/>
+
+            <children>
+                <primitiveref id="chessboard" />
+            </children>
+        </component>
+
+    </components>
+</dsx>

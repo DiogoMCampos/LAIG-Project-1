@@ -80,6 +80,7 @@ var parseTorus = function(reader, id, xmlNode){
     }
     return data;
 };
+
 var parseCylinder = function(reader, id, xmlNode){
     var data = {};
     data.baseRadius = reader.getFloat(xmlNode, "base");
@@ -161,6 +162,37 @@ var parsePatch = function(reader, id, xmlNode){
     return data;
 };
 
+var parseChessboard = function(reader, id, xmlNode){
+    var data = {};
+    data.du = reader.getInteger(xmlNode, "du");
+    data.dv = reader.getInteger(xmlNode, "dv");
+    data.textureref = reader.getString(xmlNode, "textureref");
+    data.su = reader.getInteger(xmlNode, "su");
+    data.sv = reader.getInteger(xmlNode, "sv");
+    if(data.du === null || isNaN(data.du) || data.du < 0){
+        throw "primitive id: " + data.id + " has du value not recognized";
+    }
+    if(data.dv === null || isNaN(data.dv) || data.dv < 0){
+        throw "primitive id: " + data.id + " has dv value not recognized";
+    }
+    if(data.textureref === null){
+        throw "primitive id: " + data.id + " has textureref value not recognized";
+    }
+    if(data.su === null || isNaN(data.su) || data.su < 0){
+        data.su = -1;
+        console.warn("primitive id: " + data.id + " has su value not recognized. Assigning default value -1");
+    }
+    if(data.sv === null || isNaN(data.sv) || data.sv < 0) {
+        data.sv = -1;
+        console.warn("primitive id: " + data.id + " has sv value not recognized. Assigning default value -1");
+    }
+    data.c1 = getRGBA(reader, id, xmlNode, "c1");
+    data.c2 = getRGBA(reader, id, xmlNode, "c2");
+    data.cs = getRGBA(reader, id, xmlNode, "cs");
+
+    return data;
+};
+
 var getControlVertexes = function(reader, id, orderU, orderV, xmlNode){
     var vertexes = [];
     for (var i = 0; i <= orderU; i++) {
@@ -177,7 +209,7 @@ var getControlVertexes = function(reader, id, orderU, orderV, xmlNode){
     return vertexes;
 };
 
-var getRGBA = function(reader, node, tag){
+var getRGBA = function(reader, id, node, tag){
     var dest = {};
     var array = node.getElementsByTagName(tag);
     dest.r = reader.getFloat(array[0], "r");
@@ -188,7 +220,6 @@ var getRGBA = function(reader, node, tag){
     for (var value in dest) {
         if (dest.hasOwnProperty(value)) {
             if (dest[value] === null || isNaN(dest[value]) || dest[value] < 0 || dest[value] > 1) {
-                var id = reader.getString(node, "id");
                 dest[value] = 0.1;
                 console.warn(tag + " id: " + id + " has " + value + " value not recognized. Assuming default value 0.1");
             }

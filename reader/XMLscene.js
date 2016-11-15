@@ -8,6 +8,8 @@ function XMLscene(inter) {
     this.materials = {};
     this.cameraIndex = 0;
     this.interface = inter;
+    this.selectedShader = 0;
+    this.appearance = null;
 
     this.PRIMITIVES = {
         RECTANGLE: "rectangle",
@@ -16,7 +18,8 @@ function XMLscene(inter) {
         SPHERE: "sphere",
         TORUS: "torus",
         PLANE: "plane",
-        PATCH: "patch"
+        PATCH: "patch",
+        CHESSBOARD: "chessboard"
     };
 
     this.TRANSFORMATIONS = {
@@ -34,11 +37,14 @@ XMLscene.prototype.init = function(application) {
     CGFscene.prototype.init.call(this, application);
 
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    this.setUpdatePeriod(250);
 
-    this.gl.clearDepth(100.0);
+    this.gl.clearDepth(10000.0);
     this.gl.enable(this.gl.DEPTH_TEST);
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
+    this.teapot=new Teapot(this);
+
 };
 
 // Handler called when the graph is finally loaded.
@@ -51,19 +57,20 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.interface.setActiveCamera(this.camera);
     this.interface.addScene(this);
     this.initShaders();
+    this.setDefaultAppearance();
 };
 
 XMLscene.prototype.initShaders = function() {
 
     this.shaders=[
-		new CGFshader(this.gl, "shaders/flat.vert", "shaders/flat.frag"),
-		new CGFshader(this.gl, "shaders/uScale.vert", "shaders/uScale.frag"),
+		// new CGFshader(this.gl, "shaders/flat.vert", "shaders/flat.frag"),
+		// new CGFshader(this.gl, "shaders/uScale.vert", "shaders/uScale.frag"),
 		new CGFshader(this.gl, "shaders/varying.vert", "shaders/varying.frag"),
-		new CGFshader(this.gl, "shaders/texture1.vert", "shaders/texture1.frag"),
-		new CGFshader(this.gl, "shaders/texture2.vert", "shaders/texture2.frag"),
-		new CGFshader(this.gl, "shaders/texture3.vert", "shaders/texture3.frag"),
-		new CGFshader(this.gl, "shaders/texture3.vert", "shaders/sepia.frag"),
-		new CGFshader(this.gl, "shaders/texture3.vert", "shaders/convolution.frag")
+		// new CGFshader(this.gl, "shaders/texture1.vert", "shaders/texture1.frag"),
+		// new CGFshader(this.gl, "shaders/texture2.vert", "shaders/texture2.frag"),
+		// new CGFshader(this.gl, "shaders/texture3.vert", "shaders/texture3.frag"),
+		// new CGFshader(this.gl, "shaders/texture3.vert", "shaders/sepia.frag"),
+		// new CGFshader(this.gl, "shaders/texture3.vert", "shaders/convolution.frag")
 	];
 
     /*this.shade = new CGFshader(this.gl,  "../lib/CGF/shaders/picking/vertex.glsl",  "../lib/CGF/shaders/picking/fragment.glsl");
@@ -82,10 +89,11 @@ XMLscene.prototype.initCameras = function(cameras) {
 };
 
 XMLscene.prototype.setDefaultAppearance = function() {
-    this.setAmbient(0.2, 0.4, 0.8, 1.0);
-    this.setDiffuse(0.2, 0.4, 0.8, 1.0);
-    this.setSpecular(0.2, 0.4, 0.8, 1.0);
-    this.setShininess(10.0);
+    this.appearance = new CGFappearance(this);
+	this.appearance.setAmbient(0.3, 0.3, 0.3, 1);
+	this.appearance.setDiffuse(0.7, 0.7, 0.7, 1);
+	this.appearance.setSpecular(0.0, 0.0, 0.0, 1);
+	this.appearance.setShininess(120);
 };
 
 XMLscene.prototype.display = function() {
@@ -98,6 +106,8 @@ XMLscene.prototype.display = function() {
         // Clear image and depth buffer everytime we update the scene
         this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
+        this.gl.enable(this.gl.DEPTH_TEST);
 
         // Initialize Model-View matrix as identity (no transformation
         this.updateProjectionMatrix();
@@ -117,12 +127,12 @@ XMLscene.prototype.display = function() {
         // Draw axis
         this.axis.display();
 
-        this.setDefaultAppearance();
 
         // ---- END Background, camera and axis setup
-
+        // this.setActiveShader(this.shaders[this.selectedShader]);
         var root = this.components[this.root];
         this.recursiveDisplay(this.root, root.materials[root.materialsIndex], root.textureID);
+        // this.setActiveShader(this.defaultShader);
     }
 };
 
@@ -152,7 +162,18 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
 
     var primitiveArray = comp.children.primitiveref;
     for (var i = 0; i < primitiveArray.length; i++) {
-        this.primitives[primitiveArray[i]].display();
+        if (this.primitives[primitiveArray[i]].hasOwnProperty('data')){
+            if (this.primitives[primitiveArray[i]].data.hasOwnProperty('su') &&
+                    this.primitives[primitiveArray[i]].data.hasOwnProperty('sv')) {
+
+                this.setChessboardShading(this.primitives[primitiveArray[i]].data);
+                this.setActiveShader(this.shaders[this.selectedShader]);
+                this.primitives[primitiveArray[i]].display();
+                this.setActiveShader(this.defaultShader);
+            }
+        } else{
+            this.primitives[primitiveArray[i]].display();
+        }
     }
 
     var componentArray = comp.children.componentref;
@@ -161,6 +182,25 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
     }
 
     this.popMatrix();
+};
+
+XMLscene.prototype.update = function(currTime) {
+
+    for (var id in this.primitives) {
+        if (this.primitives[id].hasOwnProperty('data')){
+            if (this.primitives[id].data.hasOwnProperty('su') && this.primitives[id].data.hasOwnProperty('sv')) {
+                this.primitives[id].data.su++;
+                if(this.primitives[id].data.su >= this.primitives[id].data.du){
+                    this.primitives[id].data.su = 0;
+                    this.primitives[id].data.sv++;
+                    if(this.primitives[id].data.sv >= this.primitives[id].data.dv){
+                        this.primitives[id].data.sv = 0;
+                    }
+                }
+
+            }
+        }
+    }
 };
 
 XMLscene.prototype.applyTransformations = function(transformationsArray) {
@@ -218,4 +258,17 @@ XMLscene.prototype.incrementMaterials = function() {
             }
         }
     }
+};
+
+XMLscene.prototype.setChessboardShading = function(data){
+    this.shaders[this.selectedShader].setUniformsValues({du: data.du});
+    this.shaders[this.selectedShader].setUniformsValues({dv: data.dv});
+    this.shaders[this.selectedShader].setUniformsValues({su: data.su});
+    this.shaders[this.selectedShader].setUniformsValues({sv: data.sv});
+    var color1 = vec4.fromValues(data.c1.r, data.c1.g, data.c1.b, data.c1.a);
+    var color2 = vec4.fromValues(data.c2.r, data.c2.g, data.c2.b, data.c2.a);
+    var colorS = vec4.fromValues(data.cs.r, data.cs.g, data.cs.b, data.cs.a);
+    this.shaders[this.selectedShader].setUniformsValues({c1: color1});
+    this.shaders[this.selectedShader].setUniformsValues({c2: color2});
+    this.shaders[this.selectedShader].setUniformsValues({cs: colorS});
 };

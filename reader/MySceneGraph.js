@@ -58,8 +58,8 @@ MySceneGraph.prototype.createIllumination = function(illuminationNode) {
     var doublesided = illuminationNode.doublesided;
     var local = illuminationNode.local;
 
-    var amb = getRGBA(this.reader, illuminationNode.data, "ambient");
-    var back = getRGBA(this.reader, illuminationNode.data, "background");
+    var amb = getRGBA(this.reader, "illumination", illuminationNode.data, "ambient");
+    var back = getRGBA(this.reader, "illumination", illuminationNode.data, "background");
     this.background = [];
     this.background.push(back.r, back.g, back.b, back.a);
     this.scene.setGlobalAmbientLight(amb.r, amb.g, amb.b, amb.a);
@@ -155,9 +155,9 @@ MySceneGraph.prototype.getLightAttributes = function(node) {
     result.enabled = node.enabled;
     result.id = node.id;
 
-    result.ambient = getRGBA(this.reader, node.data, "ambient");
-    result.diffuse = getRGBA(this.reader, node.data, "diffuse");
-    result.specular = getRGBA(this.reader, node.data, "specular");
+    result.ambient = getRGBA(this.reader, result.id, node.data, "ambient");
+    result.diffuse = getRGBA(this.reader, result.id, node.data, "diffuse");
+    result.specular = getRGBA(this.reader, result.id, node.data, "specular");
     return result;
 };
 
@@ -192,10 +192,10 @@ MySceneGraph.prototype.createMaterials = function(materialsArray) {
                 }
             }
 
-            var amb = getRGBA(this.reader, mat.data, "ambient");
-            var dif = getRGBA(this.reader, mat.data, "diffuse");
-            var spe = getRGBA(this.reader, mat.data, "specular");
-            var emi = getRGBA(this.reader, mat.data, "emission");
+            var amb = getRGBA(this.reader, id, mat.data, "ambient");
+            var dif = getRGBA(this.reader, id, mat.data, "diffuse");
+            var spe = getRGBA(this.reader, id, mat.data, "specular");
+            var emi = getRGBA(this.reader, id, mat.data, "emission");
 
             var m = new CGFappearance(this.scene);
             m.setAmbient(amb.r, amb.g, amb.b, amb.a);
@@ -377,6 +377,10 @@ MySceneGraph.prototype.createElements = function(primitivesNodes) {
                 case this.scene.PRIMITIVES.PATCH:
                     data = parsePatch(this.reader, id, p.data);
                     obj = new Patch(this.scene, id, data);
+                    break;
+                case this.scene.PRIMITIVES.CHESSBOARD:
+                    data = parseChessboard(this.reader, id, p.data);
+                    obj = new MyChessboard(this.scene, id, data);
                     break;
                 default:
                     console.warn("tagName " + p.type + " is not recognized");
