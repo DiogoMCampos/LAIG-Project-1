@@ -153,14 +153,15 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
     } else {
         matId = comp.materials[comp.materialsIndex];
     }
+    this.applyMaterialTexture(matId, texId);
 
     this.pushMatrix();
-    this.applyTransformations(comp.transformations);
-    this.applyMaterialTexture(matId, texId);
+    //this.applyTransformations(comp.transformations);
+    this.multMatrix(comp.transformations);
 
     var primitiveArray = comp.children.primitiveref;
     for (var i = 0; i < primitiveArray.length; i++) {
-        if (this.primitives[primitiveArray[i]].hasOwnProperty('data')){
+        /*if (this.primitives[primitiveArray[i]].hasOwnProperty('data')){
             if (this.primitives[primitiveArray[i]].data.hasOwnProperty('su') &&
                     this.primitives[primitiveArray[i]].data.hasOwnProperty('sv')) {
 
@@ -171,9 +172,9 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
                 this.primitives[primitiveArray[i]].display();
                 this.setActiveShader(this.defaultShader);
             }
-        } else{
+        } else{*/
             this.primitives[primitiveArray[i]].display();
-        }
+        //}
     }
 
     var componentArray = comp.children.componentref;
@@ -185,7 +186,7 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
 };
 
 XMLscene.prototype.update = function(currTime) {
-
+/*
     for (var id in this.primitives) {
         if (this.primitives[id].hasOwnProperty('data')){
             if (this.primitives[id].data.hasOwnProperty('su') && this.primitives[id].data.hasOwnProperty('sv')) {
@@ -200,7 +201,7 @@ XMLscene.prototype.update = function(currTime) {
 
             }
         }
-    }
+    }*/
 };
 
 XMLscene.prototype.applyTransformations = function(transformationsArray) {

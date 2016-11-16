@@ -209,6 +209,10 @@ var getControlVertexes = function(reader, id, orderU, orderV, xmlNode){
     return vertexes;
 };
 
+var toRadians = function(degree){
+    return Math.PI*degree/180;
+};
+
 var getRGBA = function(reader, id, node, tag){
     var dest = {};
     var array = node.getElementsByTagName(tag);

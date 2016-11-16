@@ -212,38 +212,56 @@ MySceneGraph.prototype.createTransformations = function(transformationNodes) {
     for (var id in transformationNodes) {
         if (transformationNodes.hasOwnProperty(id)) {
             var collections = transformationNodes[id];
-            this.scene.transformations[collections.id] = [];
-            for (var j = 0; j < collections.data.length; j++) {
-                var t = this.getTransformationAttributes(collections.data[j], id);
-                this.scene.transformations[collections.id].push(t);
-            }
+            this.scene.transformations[collections.id] = this.getTransformationAttributes(collections.data);
+            console.log(this.scene.transformations[collections.id]);
         }
     }
 };
 
-MySceneGraph.prototype.getTransformationAttributes = function(node, id) {
+MySceneGraph.prototype.getTransformationAttributes = function(nodeArray) {
     var result = {};
-    switch (node.tagName) {
-        case this.scene.TRANSFORMATIONS.ROTATE:
-            result.axis = this.reader.getString(node, "axis");
-            if (!result.axis || !(result.axis === "x" || result.axis === "y" || result.axis === "z")) {
-                throw "Invalid rotation axis. Pick one of {x, y, z}";
-            }
-
-            result.angle = this.reader.getFloat(node, "angle");
-            if (!result.angle && result.angle !== 0) {
-                throw "Invalid rotation angle";
-            }
-            break;
-        case this.scene.TRANSFORMATIONS.TRANSLATE:
-            result = getXYZ(this.reader, node, id);
-            break;
-        case this.scene.TRANSFORMATIONS.SCALE:
-            result = getXYZ(this.reader, node, id);
-            break;
+    var matrix = mat4.create();
+    for (var i = 0; i < nodeArray.length; i++) {
+        node = nodeArray[i];
+        switch (node.tagName) {
+            case this.scene.TRANSFORMATIONS.ROTATE:
+                result.axis = this.reader.getString(node, "axis");
+                if (!result.axis || !(result.axis === "x" || result.axis === "y" || result.axis === "z")) {
+                    throw "Invalid rotation axis. Pick one of {x, y, z}";
+                }
+                result.angle = this.reader.getFloat(node, "angle");
+                if (!result.angle && result.angle !== 0) {
+                    throw "Invalid rotation angle";
+                }
+                switch(result.axis){
+                    case "x":
+                        mat4.rotateX(matrix, matrix, toRadians(result.angle));
+                        break;
+                    case "y":
+                        mat4.rotateY(matrix, matrix, toRadians(result.angle));
+                        break;
+                    case "y":
+                        mat4.rotateY(matrix, matrix, toRadians(result.angle));
+                        break;
+                }
+                break;
+            case this.scene.TRANSFORMATIONS.TRANSLATE:
+                result = getXYZ(this.reader, node, 'translate');
+                mat4.translate(matrix, matrix, [result.x, result.y, result.z]);
+                break;
+            case this.scene.TRANSFORMATIONS.SCALE:
+                result = getXYZ(this.reader, node, 'scale');
+                mat4.scale(matrix, matrix, [result.x, result.y, result.z]);
+                break;
+            case this.scene.TRANSFORMATIONS.REFERENCE:
+                var idRef = this.reader.getString(node, "id");
+                if (!this.scene.transformations.hasOwnProperty(idRef)) {
+                    throw ("transformations id: " + idRef + " used in componentref is not recognized");
+                }
+                mat4.multiply(matrix, matrix, this.scene.transformations[idRef]);
+        }
     }
-    result.name = node.tagName;
-    return result;
+    return matrix;
 };
 
 MySceneGraph.prototype.createAnimations = function(animationNodes) {
@@ -403,21 +421,7 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
             }
 
             var transformationNodes = transformation[0].children;
-            component.transformations = [];
-            for (var j = 0; j < transformationNodes.length; j++) {
-
-                var t = {};
-                if (transformationNodes[j].tagName === this.scene.TRANSFORMATIONS.REFERENCE) {
-                    t.name = this.scene.TRANSFORMATIONS.REFERENCE;
-                    t.id = this.reader.getString(transformationNodes[j], "id");
-                    if (!this.scene.transformations.hasOwnProperty(t.id)) {
-                        throw ("transformations id: " + t.id + " used in componentref id: " + id + " is not recognized");
-                    }
-                } else {
-                    t = this.getTransformationAttributes(transformationNodes[j]);
-                }
-                component.transformations.push(t);
-            }
+            component.transformations = this.getTransformationAttributes(transformationNodes);
 
             this.setComponentAppearance(id, component, data);
 
