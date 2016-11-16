@@ -1,9 +1,9 @@
 <dsx>
-    <scene root="root" axis_length="60"/>
+    <scene root="root" axis_length="0"/>
 
     <views default="front">
         <perspective id="front" near="0.1" far="500" angle="90">
-            <from x="0" y="0" z="5"/>
+            <from x="0.5" y="-1.0" z="1"/>
             <to x="0" y="0" z="0"/>
         </perspective>
 

@@ -43,7 +43,6 @@ XMLscene.prototype.init = function(application) {
     this.gl.enable(this.gl.DEPTH_TEST);
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
-    this.teapot=new Teapot(this);
 
 };
 
@@ -72,7 +71,6 @@ XMLscene.prototype.initShaders = function() {
 		// new CGFshader(this.gl, "shaders/texture3.vert", "shaders/sepia.frag"),
 		// new CGFshader(this.gl, "shaders/texture3.vert", "shaders/convolution.frag")
 	];
-
     /*this.shade = new CGFshader(this.gl,  "../lib/CGF/shaders/picking/vertex.glsl",  "../lib/CGF/shaders/picking/fragment.glsl");
     /*this.shaders=[
         new CGFshader(this.gl, "../lib/CGF/shaders/Gouraud/textured/multiple_light-vertex.glsl",  "../lib/CGF/shaders/Gouraud/textured/Gouraud/textured/fragment.glsl"),
@@ -168,6 +166,8 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
 
                 this.setChessboardShading(this.primitives[primitiveArray[i]].data);
                 this.setActiveShader(this.shaders[this.selectedShader]);
+                var a = this.shaders[this.selectedShader].getUniformsValues();
+                console.log(a);
                 this.primitives[primitiveArray[i]].display();
                 this.setActiveShader(this.defaultShader);
             }
