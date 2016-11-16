@@ -186,7 +186,7 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
 
 XMLscene.prototype.update = function(currTime) {
 
-    for (var id in this.primitives) {
+    /*for (var id in this.primitives) {
         if (this.primitives[id].hasOwnProperty('data')){
             if (this.primitives[id].data.hasOwnProperty('su') && this.primitives[id].data.hasOwnProperty('sv')) {
                 this.primitives[id].data.su++;
@@ -200,7 +200,7 @@ XMLscene.prototype.update = function(currTime) {
 
             }
         }
-    }
+    }*/
 };
 
 XMLscene.prototype.applyTransformations = function(transformationsArray) {
