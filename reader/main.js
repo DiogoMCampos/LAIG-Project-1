@@ -61,7 +61,7 @@ serialInclude(["../lib/CGF.js", "XMLscene.js", "MySceneGraph.js", "DSXParser.js"
         app.setInterface(myInterface);
         // get file name provided in URL, e.g. http://localhost/myproj/?file=myfile.xml
         // or use "demo.xml" as default (assumes files in subfolder "scenes", check MySceneGraph constructor)
-        var filename = getUrlVars()["file"] || "test.dsx";
+        var filename = getUrlVars()["file"] || "test2.dsx";
 
         // create and load graph, and associate it to scene.
         // Check console for loading errors
