@@ -21,11 +21,11 @@ void main() {
 	float divX = 1.0/float(du);
 	float divY = 1.0/float(dv);
 
-	float relX = (coords.x/divX);
+	float relX = ((vTextureCoord.s)/divX);
 	float ceX = floor(relX);
 	float inX = mod(ceX, 2.0);
 
-	float relY = (coords.y/divY);
+	float relY = (-vTextureCoord.t/divY);
 	float ceY = floor(relY);
 	float inY = mod(ceY, 2.0);
 
@@ -35,11 +35,11 @@ void main() {
 	gl_FragColor = texture2D(uSampler, vTextureCoord)/2.0;
 
 	if((coords.x >= relS) && (coords.x <= (relS+divX)) && (coords.y >= relT) && (coords.y <= (relT+divY)))
-		gl_FragColor +=  (cs/2.0);
-	else if ( ((inX == 0.0) && (inY != 0.0)) || ((inX != 0.0) && (inY == 0.0)))
-		gl_FragColor +=  (c1/2.0);
+		gl_FragColor += (cs/2.0);
+	else if ( ((inX >= 0.5) && (inY < 0.5)) || ((inX <= 0.5) && (inY > 0.5)))
+		gl_FragColor += (c1/2.0);
 	else
 	{
-		gl_FragColor +=  (c2/2.0);
+		gl_FragColor += (c2/2.0);
 	}
 }
