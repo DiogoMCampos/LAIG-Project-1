@@ -2,30 +2,23 @@
  * Plane
  * @constructor
  */
-
-function Plane(scene, dimX, dimY, partsX, partsY) {
-    this.scene = scene;
-
-    this.dimX = dimX;
-    this.dimY = dimY;
-    this.partsX = partsX;
-    this.partsY = partsY;
-
-    this.createObject();
+function Plane(scene, id, data) {
+    var specs = createObject(data);
+    Patch.call(this, scene, id, specs);
 }
 
 Plane.prototype = Object.create(CGFnurbsObject.prototype);
 Plane.prototype.constructor = Plane;
 
-Plane.prototype.createObject = function() {
+var createObject = function(data) {
 
-    var yI = -this.dimY/2;
-    var xI = -this.dimX/2;
-    var yF = this.dimY/2;
-    var xF = this.dimX/2;
+    var yI = -data.dimY/2;
+    var xI = -data.dimX/2;
+    var yF = data.dimY/2;
+    var xF = data.dimX/2;
 
 
-    var controlVertex = [
+    var controlVertexes = [
                     [   //U=0 V=[0,1]
                         [xI, yI, 0, 1],
                         [xI, yF, 0, 1],
@@ -42,5 +35,11 @@ Plane.prototype.createObject = function() {
                     1,0
     ];
 
-    Patch.call(this, this.scene, this.dimX, this.dimY, controlVertex, this.partsX, this.partsY);
+    var specs = {};
+    specs.orderU = 1;
+    specs.orderV = 1;
+    specs.partsU = data.partsX;
+    specs.partsV = data.partsY;
+    specs.controlVertexes = controlVertexes;
+    return specs;
 };

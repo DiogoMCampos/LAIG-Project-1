@@ -2,12 +2,11 @@
  * MyTriangle
  * @constructor
  */
-function MyTriangle(scene, info, reader) {
+function MyTriangle(scene, id, coords) {
     CGFobject.call(this, scene);
     this.scene = scene;
-    this.reader = reader;
-    this.id = info.id;
-    this.parseAttributes(info.data);
+    this.id = id;
+    this.coordinates = coords;
     this.initBuffers();
 }
 
@@ -56,25 +55,4 @@ MyTriangle.prototype.initBuffers = function() {
 
     this.primitiveType = this.scene.gl.TRIANGLES;
     this.initGLBuffers();
-};
-
-MyTriangle.prototype.parseAttributes = function(xmlNode) {
-    this.coordinates = {};
-    this.coordinates.x1 = this.reader.getFloat(xmlNode, "x1");
-    this.coordinates.y1 = this.reader.getFloat(xmlNode, "y1");
-    this.coordinates.z1 = this.reader.getFloat(xmlNode, "z1");
-    this.coordinates.x2 = this.reader.getFloat(xmlNode, "x2");
-    this.coordinates.y2 = this.reader.getFloat(xmlNode, "y2");
-    this.coordinates.z2 = this.reader.getFloat(xmlNode, "z2");
-    this.coordinates.x3 = this.reader.getFloat(xmlNode, "x3");
-    this.coordinates.y3 = this.reader.getFloat(xmlNode, "y3");
-    this.coordinates.z3 = this.reader.getFloat(xmlNode, "z3");
-
-    for (var coord in this.coordinates) {
-        if (this.coordinates.hasOwnProperty(coord)) {
-            if(this.coordinates[coord] === null || isNaN(this.coordinates[coord])){
-                throw "primitive id: " + this.id + " has " + coord + " value not recognized";
-            }
-        }
-    }
 };
