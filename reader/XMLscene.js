@@ -44,7 +44,6 @@ XMLscene.prototype.init = function(application) {
     this.gl.enable(this.gl.DEPTH_TEST);
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
-
 };
 
 // Handler called when the graph is finally loaded.
@@ -157,8 +156,8 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
     this.applyMaterialTexture(matId, texId);
 
     this.pushMatrix();
-    //this.applyTransformations(comp.transformations);
     this.multMatrix(comp.transformations);
+    this.applyAnimations(comp.animations);
 
     var primitiveArray = comp.children.primitiveref;
     for (var i = 0; i < primitiveArray.length; i++) {
@@ -229,6 +228,23 @@ XMLscene.prototype.applyTransformations = function(transformationsArray) {
                 break;
         }
     }
+};
+
+XMLscene.prototype.applyAnimations = function(animationArray) {
+    var matrix = mat4.create();
+
+    for (var i = 0; i < animationArray.length; i++) {
+        var animation = animationArray[i];
+        var animMatrix = animation.getTransformationMatrix(this.currTime);
+
+        mat4.multiply(matrix, matrix, animMatrix);
+
+        if (!animation.finished) {
+            break;
+        }
+    }
+
+    this.multMatrix(matrix);
 };
 
 XMLscene.prototype.applyMaterialTexture = function(materialId, textureID) {

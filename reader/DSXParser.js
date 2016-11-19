@@ -12,7 +12,7 @@ function DSXParser(rootElement, reader) {
     this.parseTextures(root[4]);
     this.parseMaterials(root[5]);
     this.parseTransformations(root[6]);
-    //this.parseAnimations(root[7]);
+    this.parseAnimations(root[7]);
     this.parsePrimitives(root[8]);
     this.parseComponents(root[9]);
 }

@@ -32,7 +32,7 @@ MySceneGraph.prototype.onXMLReady = function() {
         this.createTextures(dsxInfo.textures);
         this.createMaterials(dsxInfo.materials);
         this.createTransformations(dsxInfo.transformations);
-        //this.createAnimations(dsxInfo.animations);
+        this.createAnimations(dsxInfo.animations);
         this.createElements(dsxInfo.primitives);
         this.createComponents(dsxInfo.components);
     } catch (err) {
@@ -264,6 +264,7 @@ MySceneGraph.prototype.getTransformationAttributes = function(nodeArray) {
     return matrix;
 };
 
+
 MySceneGraph.prototype.createAnimations = function(animationNodes) {
     this.scene.animations = {};
 
@@ -317,7 +318,7 @@ MySceneGraph.prototype.getLinearAnimation = function(animation, node) {
         throw "less than two control points for animation id: " + id + ". Proceeded without that animation.";
     }
 
-    var controlPoints = [];
+    var controlPoints = []
     for (var i = 0; i < children.length; i++) {
         controlPoints.push(this.getControlPoint(children[i]));
     }
@@ -425,6 +426,41 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
 
             var transformationNodes = transformation[0].children;
             component.transformations = this.getTransformationAttributes(transformationNodes);
+            
+            var animation = data.getElementsByTagName("animation");
+            if (animation.length !== 1) {
+                throw ("Component " + id + " has zero or more than one animation groups");
+            }
+
+            var animationRefs = animation[0].children;
+            component.animations = [];
+            for (var k = 0; k < animationRefs.length; k++) {
+                if (animationRefs[k].tagName === "animationref") {
+                    var animId = this.reader.getString(animationRefs[k], "id");
+
+                    if (!this.scene.animations.hasOwnProperty(animId)) {
+                        console.warn("animationref id " + animId + " in componentref id " + id + " doesn't exist.");
+                    } else {
+                        var animationInfo = this.scene.animations[animId];
+                        var animationObject;
+
+                        if (animationInfo.type === "linear") {
+                            animationObject = new LinearAnimation(animationInfo.id, animationInfo.duration, animationInfo.controlPoints);
+                        } else if (animationInfo.type === "circular") {
+                            animationObject = new CircularAnimation(animationInfo);
+                        } else {
+                            console.warn("animationref id " + animId + " in componentref id " + id + " has an invalid type.");
+                        }
+
+                        if (animationObject) {
+                            component.animations.push(animationObject);
+                        }
+                    }
+
+                } else {
+                    console.warn("animationref tagname invalid in componentref id: " + id + ". Proceeding without that animation.")
+                }
+            }
 
             this.setComponentAppearance(id, component, data);
 
