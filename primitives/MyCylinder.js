@@ -34,14 +34,14 @@ MyCylinder.prototype.initBuffers = function() {
     var tPatch = 1 / this.data.stacks;
 
     //Vertices & Normals
-    for (var ind = 0; ind <= this.stacks; ind++) {
+    for (var ind = 0; ind <= this.data.stacks; ind++) {
 
         var sCoord = 0;
 
         for (var m = 0; m <= this.data.slices; m++) {
             var nX = Math.cos(ang * m);
             var nY = Math.sin(ang * m);
-            this.data.vertices.push(nX * (this.data.baseRadius - diff * ind),
+            this.vertices.push(nX * (this.data.baseRadius - diff * ind),
                 nY * (this.data.baseRadius - diff * ind),
                 n);
             this.normals.push(nX, nY, 0);

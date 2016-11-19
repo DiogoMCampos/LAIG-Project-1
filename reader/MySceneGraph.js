@@ -239,8 +239,8 @@ MySceneGraph.prototype.getTransformationAttributes = function(nodeArray) {
                     case "y":
                         mat4.rotateY(matrix, matrix, toRadians(result.angle));
                         break;
-                    case "y":
-                        mat4.rotateY(matrix, matrix, toRadians(result.angle));
+                    case "z":
+                        mat4.rotateZ(matrix, matrix, toRadians(result.angle));
                         break;
                 }
                 break;
@@ -258,6 +258,7 @@ MySceneGraph.prototype.getTransformationAttributes = function(nodeArray) {
                     throw ("transformations id: " + idRef + " used in componentref is not recognized");
                 }
                 mat4.multiply(matrix, matrix, this.scene.transformations[idRef]);
+                break;
         }
     }
     return matrix;

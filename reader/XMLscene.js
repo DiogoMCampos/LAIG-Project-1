@@ -162,8 +162,8 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
 
     var primitiveArray = comp.children.primitiveref;
     for (var i = 0; i < primitiveArray.length; i++) {
-        if (this.primitives[primitiveArray[i]].hasOwnProperty("data")){
-            if (this.primitives[primitiveArray[i]].data.hasOwnProperty("su") &&
+        if (this.primitives[primitiveArray[i]].hasOwnProperty("data") &&
+                    this.primitives[primitiveArray[i]].data.hasOwnProperty("su") &&
                     this.primitives[primitiveArray[i]].data.hasOwnProperty("sv")) {
 
                 this.applyMaterialTexture(matId, this.primitives[primitiveArray[i]].data.textureref);
@@ -172,8 +172,8 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
                 this.primitives[primitiveArray[i]].display();
                 this.applyMaterialTexture(matId, texId);
                 this.setActiveShader(this.defaultShader);
-            }
         } else{
+
             this.primitives[primitiveArray[i]].display();
         }
     }
