@@ -213,7 +213,6 @@ MySceneGraph.prototype.createTransformations = function(transformationNodes) {
         if (transformationNodes.hasOwnProperty(id)) {
             var collections = transformationNodes[id];
             this.scene.transformations[collections.id] = this.getTransformationAttributes(collections.data);
-            console.log(this.scene.transformations[collections.id]);
         }
     }
 };
@@ -399,6 +398,9 @@ MySceneGraph.prototype.createElements = function(primitivesNodes) {
                 case this.scene.PRIMITIVES.CHESSBOARD:
                     data = parseChessboard(this.reader, id, p.data);
                     obj = new MyChessboard(this.scene, id, data);
+                    break;
+                case this.scene.PRIMITIVES.VEHICLE:
+                    obj = new MyVehicle(this.scene, id);
                     break;
                 default:
                     console.warn("tagName " + p.type + " is not recognized");

@@ -104,6 +104,10 @@
               </chessboard>
         </primitive>
 
+        <primitive id="vehicle">
+            <vehicle/>
+        </primitive>
+
     </primitives>
 
     <components>
@@ -119,7 +123,7 @@
             <texture id="wood"/>
 
             <children>
-                <primitiveref id="chessboard" />
+                <primitiveref id="vehicle" />
             </children>
         </component>
 

@@ -20,5 +20,4 @@ MyChessboard.prototype.createObject = function(){
     specs.partsX = this.data.du*10;
     specs.partsY = this.data.dv*10;
     Plane.call(this,this.scene, this.id, specs);
-    console.log(this);
 };

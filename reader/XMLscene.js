@@ -19,7 +19,8 @@ function XMLscene(inter) {
         TORUS: "torus",
         PLANE: "plane",
         PATCH: "patch",
-        CHESSBOARD: "chessboard"
+        CHESSBOARD: "chessboard",
+        VEHICLE: "vehicle",
     };
 
     this.TRANSFORMATIONS = {
@@ -161,9 +162,9 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
 
     var primitiveArray = comp.children.primitiveref;
     for (var i = 0; i < primitiveArray.length; i++) {
-        if (this.primitives[primitiveArray[i]].hasOwnProperty('data')){
-            if (this.primitives[primitiveArray[i]].data.hasOwnProperty('su') &&
-                    this.primitives[primitiveArray[i]].data.hasOwnProperty('sv')) {
+        if (this.primitives[primitiveArray[i]].hasOwnProperty("data")){
+            if (this.primitives[primitiveArray[i]].data.hasOwnProperty("su") &&
+                    this.primitives[primitiveArray[i]].data.hasOwnProperty("sv")) {
 
                 this.applyMaterialTexture(matId, this.primitives[primitiveArray[i]].data.textureref);
                 this.setChessboardShading(this.primitives[primitiveArray[i]].data);
@@ -188,8 +189,8 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
 XMLscene.prototype.update = function(currTime) {
 
     for (var id in this.primitives) {
-        if (this.primitives[id].hasOwnProperty('data')){
-            if (this.primitives[id].data.hasOwnProperty('su') && this.primitives[id].data.hasOwnProperty('sv')) {
+        if (this.primitives[id].hasOwnProperty("data")){
+            if (this.primitives[id].data.hasOwnProperty("su") && this.primitives[id].data.hasOwnProperty("sv")) {
                 this.primitives[id].data.su++;
                 if(this.primitives[id].data.su >= this.primitives[id].data.du){
                     this.primitives[id].data.su = 0;
