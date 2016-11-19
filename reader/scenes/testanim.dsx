@@ -1,0 +1,883 @@
+<dsx>
+    <scene root="root" axis_length="6"/>
+
+    <views default="front">
+        <perspective id="front" near="0.1" far="500" angle="90">
+            <from x="15" y="15" z="15"/>
+            <to x="0" y="0" z="0"/>
+        </perspective>
+
+        <perspective id="insideScene" near="5" far="50" angle="50">
+            <from x="19" y="5" z="5"/>
+            <to x="0" y="0" z="6"/>
+        </perspective>
+    </views>
+
+    <illumination doublesided="1" local="1">
+        <ambient r="0" g="0" b="0" a="1"/>
+        <background r="0" g="0" b="0" a="1"/>
+    </illumination>
+
+    <lights>
+        <omni id="center" enabled="1">
+            <location x="7" y="5" z="9" w="1"/>
+            <ambient r="1" g="0" b="1" a="0.1"/>
+            <diffuse r="1" g="0" b="1" a="0.1"/>
+            <specular r="0" g=".5" b="0" a="0.1"/>
+        </omni>
+
+        <omni id="lamp" enabled="1">
+            <location x="8" y="5.2" z="-0.7" w="1"/>
+            <ambient r="1" g="1" b="0" a="1"/>
+            <diffuse r="1" g="1" b="0" a="1"/>
+            <specular r="1" g="1" b="0" a="1"/>
+        </omni>
+
+        <spot id="leftWall" enabled="1" angle="30" exponent="0.1">
+            <target x="5" y="0" z="5"/>
+            <location x="2" y="5" z="8"/>
+            <ambient r="1" g="0" b="0" a="1"/>
+            <diffuse r="1" g="0" b="0" a="1"/>
+            <specular r="1" g="0" b="0" a="1"/>
+        </spot>
+    </lights>
+
+    <textures>
+        <texture id="car" file="../resources/bodyPaint.jpg" length_s="1" length_t="1"/>
+        <texture id="windows" file="../resources/windows.jpg" length_s="1" length_t="1"/>
+        <texture id="xp" file="../resources/xp.jpg" length_s="1" length_t="1"/>
+
+    </textures>
+
+    <materials>
+        <material id="default">
+            <emission r="1" g="1" b="1" a="1"/>
+            <ambient r="1" g="1" b="1" a="1"/>
+            <diffuse r="1" g="1" b="1" a="1"/>
+            <specular r="1" g="1" b="1" a="1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="gray">
+            <emission r="0.1" g="0.1" b="0.1" a="1"/>
+            <ambient r="0" g="0" b="0" a="1"/>
+            <diffuse r="0.1" g="0.1" b="0.1" a="1"/>
+            <specular r="0.1" g="0.1" b="0.1" a="1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="yellow">
+            <emission r="1" g="1" b="0" a="0.1"/>
+            <ambient r="1" g="1" b="0" a="0.1"/>
+            <diffuse r="1" g="1" b="0" a="0.1"/>
+            <specular r="1" g="1" b="0" a="0.1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="pink">
+            <emission r="1" g="0.08" b="0.58" a="1"/>
+            <ambient r="1" g="0.08" b="0.58" a="1"/>
+            <diffuse r="1" g="0.2" b="0.58" a="1"/>
+            <specular r="1" g="1" b="0" a="1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="post">
+            <emission r="0.1" g="0.1" b="0.1" a="1"/>
+            <ambient r="0.1" g="0.1" b="0.1" a=".1"/>
+            <diffuse r="0.4" g="0.4" b="0.4" a=".1"/>
+            <specular r="1" g="1" b="1" a=".1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="window">
+            <emission r="0.11" g="0.12" b="0.12" a="1"/>
+            <ambient r="0.2" g="0.2" b="0.2" a="1"/>
+            <diffuse r="0.1" g="0.1" b="0.1" a=".1"/>
+            <specular r="0" g="0" b="0" a=".1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="asphalt">
+            <emission r="0.11" g="0.12" b="0.12" a="1"/>
+            <ambient r="0" g="0" b="0" a="1"/>
+            <diffuse r="0.1" g="0.1" b="0.1" a=".1"/>
+            <specular r="0" g="0" b="0" a=".1"/>
+            <shininess value="0"/>
+        </material>
+    </materials>
+
+    <transformations>
+        <transformation id="scaleToRim">
+            <scale x="0.4" y="0.4" z="0.2"/>
+        </transformation>
+    </transformations>
+
+    <animations>
+        <animation id="linear" span="1" type="linear">
+            <controlpoint xx="0" yy="5" zz="0"/>
+            <controlpoint xx="-4" yy="0" zz="1"/>
+            <controlpoint xx="0" yy="0" zz="0"/>
+        </animation>
+        <animation id="circular" span="2" type="circular" centerx="0" centery="0" centerz="0" radius="5" startang="30" rotang="50"/>
+    </animations>
+
+    <primitives>
+        <primitive id="tire">
+            <torus inner="0.4" outer="1" slices="50" loops="50"/>
+        </primitive>
+
+        <primitive id="triangle1">
+            <triangle x1="0" y1="0" z1="0" x2="1" y2="0" z2="0" x3="0" y3="1" z3="0"/>
+        </primitive>
+
+        <primitive id="triangle2">
+            <triangle x1="0" y1="0" z1="0" x2="1" y2="0" z2="0" x3="1" y3="1" z3="0"/>
+        </primitive>
+
+        <primitive id="rectangle">
+            <rectangle x1="0" y1="0" x2="1" y2="1"/>
+        </primitive>
+
+        <primitive id="cylinder">
+            <cylinder base="1" top="1" height="1" slices="50" stacks="50"/>
+        </primitive>
+
+        <primitive id="lamp">
+            <sphere radius="1" slices="50" stacks="50"/>
+        </primitive>
+
+    </primitives>
+
+    <components>
+        <component id="rim">
+            <transformation>
+                <transformationref id="scaleToRim"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="asphalt"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="cylinder"/>
+            </children>
+        </component>
+
+        <component id="wheels">
+            <transformation></transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="pink"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="right-back-wheel"/>
+                <componentref id="left-back-wheel"/>
+
+                <componentref id="right-front-wheel"/>
+                <componentref id="left-front-wheel"/>
+            </children>
+        </component>
+
+        <component id="right-front-wheel">
+            <transformation>
+                <translate x="6" y="0" z="4"/>
+            </transformation>
+
+            <animation>
+                <animationref id="linear"/>
+                    <animationref id="circular"/>
+            </animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="tire"/>
+                <componentref id="rim"/>
+            </children>
+        </component>
+
+        <component id="left-front-wheel">
+            <transformation>
+                <translate x="6" y="0" z="0"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="tire"/>
+                <componentref id="rim"/>
+            </children>
+        </component>
+
+        <component id="right-back-wheel">
+            <transformation>
+                <translate x="0" y="0" z="4"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="tire"/>
+                <componentref id="rim"/>
+            </children>
+        </component>
+
+        <component id="left-back-wheel">
+            <transformation></transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="tire"/>
+                <componentref id="rim"/>
+            </children>
+        </component>
+
+        <component id="right-side-body">
+            <transformation>
+                <translate x="0" y="1.5" z="0"/>
+                <rotate axis="x" angle="180"/>
+                <scale x="9" y="1.5" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="left-side-body">
+            <transformation>
+                <translate x="0" y="0" z="3.5"/>
+                <scale x="9" y="1.5" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="front-body">
+            <transformation>
+                <translate x="9" y="0" z="3.5"/>
+                <rotate axis="y" angle="90"/>
+                <scale x="3.5" y="1.5" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="back-body">
+            <transformation>
+                <rotate axis="y" angle="270"/>
+                <scale x="3.5" y="1.5" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="top-body">
+            <transformation>
+                <translate x="0" y="1.5" z="3.5"/>
+                <rotate axis="x" angle="-90"/>
+                <scale x="9" y="3.5" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="bottom-body">
+            <transformation>
+                <rotate axis="x" angle="90"/>
+                <scale x="9" y="3.5" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="lower-body">
+            <transformation></transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <componentref id="right-side-body"/>
+                <componentref id="left-side-body"/>
+                <componentref id="front-body"/>
+                <componentref id="back-body"/>
+                <componentref id="top-body"/>
+                <componentref id="bottom-body"/>
+            </children>
+        </component>
+
+        <component id="left-back-triangle">
+            <transformation>
+                <translate x="3" y="0" z="0"/>
+                <rotate axis="y" angle="180"/>
+                <scale x="1.5" y="1" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="triangle1"/>
+            </children>
+        </component>
+
+        <component id="right-back-triangle">
+            <transformation>
+                <translate x="1.5" y="0" z="3.5"/>
+                <scale x="1.5" y="1" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="triangle2"/>
+            </children>
+        </component>
+
+        <component id="rear-window">
+            <transformation>
+                <translate x="1.5" y="0" z="0"/>
+                <rotate axis="z" angle="-146.3099"/>
+                <rotate axis="y" angle="-90"/>
+                <rotate axis="x" angle="90"/>
+                <scale x="3.5" y="1.80278" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="left-window">
+            <transformation>
+                <translate x="5.5" y="0" z="0"/>
+                <scale x="-2.5" y="1" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="right-window">
+            <transformation>
+                <translate x="3" y="0" z="3.5"/>
+                <scale x="2.5" y="1" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="car-top">
+            <transformation>
+                <translate x="5.5" y="1" z="3.5"/>
+                <rotate axis="x" angle="270"/>
+                <rotate axis="z" angle="90"/>
+                <scale x="3.5" y="2.5" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="left-front-triangle">
+            <transformation>
+                <translate x="7.5" y="0" z="0"/>
+                <scale x="-2" y="1" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="triangle2"/>
+            </children>
+        </component>
+
+        <component id="right-front-triangle">
+            <transformation>
+                <translate x="5.5" y="0" z="3.5"/>
+                <scale x="2" y="1" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="triangle1"/>
+            </children>
+        </component>
+
+        <component id="windshield">
+            <transformation>
+                <translate x="7.5" y="0" z="3.5"/>
+                <rotate axis="z" angle="153.43495"/>
+                <rotate axis="y" angle="90"/>
+                <rotate axis="x" angle="90"/>
+                <scale x="3.5" y="2.23607" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="solid-body">
+            <transformation></transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <componentref id="left-front-triangle"/>
+                <componentref id="right-front-triangle"/>
+                <componentref id="left-back-triangle"/>
+                <componentref id="right-back-triangle"/>
+                <componentref id="car-top"/>
+            </children>
+        </component>
+
+        <component id="windows-body">
+            <transformation></transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="window"/>
+            </materials>
+
+            <texture id="windows"/>
+
+            <children>
+                <componentref id="rear-window"/>
+                <componentref id="right-window"/>
+                <componentref id="left-window"/>
+                <componentref id="windshield"/>
+            </children>
+        </component>
+
+        <component id="upper-body">
+            <transformation>
+                <translate x="0" y="1.5" z="0"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <componentref id="solid-body"/>
+                <componentref id="windows-body"/>
+            </children>
+        </component>
+
+        <component id="body">
+            <transformation>
+                <translate x="-1.5" y="0" z="0.25"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <componentref id="lower-body"/>
+                <componentref id="upper-body"/>
+            </children>
+        </component>
+
+        <component id="car">
+            <transformation>
+                <translate x="0" y="1" z="0"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="car"/>
+
+            <children>
+                <componentref id="wheels"/>
+                <componentref id="body"/>
+            </children>
+        </component>
+
+        <component id="background">
+            <transformation>
+                <scale x="15" y="10" z="15"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="xp"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+                <componentref id="road"/>
+                <componentref id="leftWall"/>
+                <componentref id="ceiling"/>
+            </children>
+        </component>
+
+        <component id="leftWall">
+            <transformation>
+
+                <rotate axis="y" angle="90"/>
+                <translate x="-1" y="0" z="0"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="ceiling">
+            <transformation>
+                <translate x="0" y="1" z="0"/>
+                <rotate axis="x" angle="90"/>
+
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="pink"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="road">
+            <transformation>
+                <translate x="0" y="0" z="0"/>
+                <rotate axis="x" angle="-90"/>
+                <rotate axis="z" angle="-90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="asphalt"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="light-post">
+            <transformation>
+                <translate x="8" y="5" z="-1"/>
+                <scale x="0.15" y="5" z="0.15"/>
+                <rotate axis="x" angle="90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="post"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="cylinder"/>
+            </children>
+        </component>
+
+        <component id="lamp">
+            <transformation>
+                <translate x="8" y="5" z="-1"/>
+                <scale x="0.65" y="0.65" z="0.65"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="yellow"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="lamp"/>
+            </children>
+        </component>
+
+        <component id="wreckingBallWire">
+            <transformation>
+                <rotate axis="x" angle="60"/>
+                <rotate axis="y" angle="90"/>
+                <translate x="3.5" y="7" z="3"/>
+                <scale x="4" y="0.1" z="0.1"/>
+
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="gray"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="cylinder"/>
+            </children>
+        </component>
+
+        <component id="wreckingBall">
+            <transformation>
+                <translate x="3" y="3" z="6"/>
+                <rotate axis="x" angle="135"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="gray"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="lamp"/>
+            </children>
+        </component>
+
+        <component id="scene">
+            <transformation>
+                <translate x="5" y="0" z="5"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="car"/>
+                <componentref id="light-post"/>
+                <componentref id="lamp"/>
+                <componentref id="wreckingBallWire"/>
+                <componentref id="wreckingBall"/>
+            </children>
+        </component>
+
+        <component id="root">
+            <transformation></transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="scene"/>
+                <componentref id="background"/>
+            </children>
+        </component>
+
+    </components>
+</dsx>
