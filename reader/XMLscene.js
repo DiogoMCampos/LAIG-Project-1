@@ -38,12 +38,14 @@ XMLscene.prototype.init = function(application) {
     CGFscene.prototype.init.call(this, application);
 
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    this.setUpdatePeriod(250);
 
     this.gl.clearDepth(10000.0);
     this.gl.enable(this.gl.DEPTH_TEST);
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
+
+    this.beginTime = -1;
+    this.setUpdatePeriod(30);
 };
 
 // Handler called when the graph is finally loaded.
@@ -61,16 +63,16 @@ XMLscene.prototype.onGraphLoaded = function() {
 
 XMLscene.prototype.initShaders = function() {
 
-    this.shaders=[
-		// new CGFshader(this.gl, "shaders/flat.vert", "shaders/flat.frag"),
-		// new CGFshader(this.gl, "shaders/uScale.vert", "shaders/uScale.frag"),
-		new CGFshader(this.gl, "shaders/varying.vert", "shaders/varying.frag"),
-		// new CGFshader(this.gl, "shaders/texture1.vert", "shaders/texture1.frag"),
-		// new CGFshader(this.gl, "shaders/texture2.vert", "shaders/texture2.frag"),
-		// new CGFshader(this.gl, "shaders/texture3.vert", "shaders/texture3.frag"),
-		// new CGFshader(this.gl, "shaders/texture3.vert", "shaders/sepia.frag"),
-		// new CGFshader(this.gl, "shaders/texture3.vert", "shaders/convolution.frag")
-	];
+    this.shaders = [
+        // new CGFshader(this.gl, "shaders/flat.vert", "shaders/flat.frag"),
+        // new CGFshader(this.gl, "shaders/uScale.vert", "shaders/uScale.frag"),
+        new CGFshader(this.gl, "shaders/varying.vert", "shaders/varying.frag"),
+        // new CGFshader(this.gl, "shaders/texture1.vert", "shaders/texture1.frag"),
+        // new CGFshader(this.gl, "shaders/texture2.vert", "shaders/texture2.frag"),
+        // new CGFshader(this.gl, "shaders/texture3.vert", "shaders/texture3.frag"),
+        // new CGFshader(this.gl, "shaders/texture3.vert", "shaders/sepia.frag"),
+        // new CGFshader(this.gl, "shaders/texture3.vert", "shaders/convolution.frag")
+    ];
     /*this.shade = new CGFshader(this.gl,  "../lib/CGF/shaders/picking/vertex.glsl",  "../lib/CGF/shaders/picking/fragment.glsl");
     /*this.shaders=[
         new CGFshader(this.gl, "../lib/CGF/shaders/Gouraud/textured/multiple_light-vertex.glsl",  "../lib/CGF/shaders/Gouraud/textured/Gouraud/textured/fragment.glsl"),
@@ -88,10 +90,38 @@ XMLscene.prototype.initCameras = function(cameras) {
 
 XMLscene.prototype.setDefaultAppearance = function() {
     this.appearance = new CGFappearance(this);
-	this.appearance.setAmbient(0.3, 0.3, 0.3, 1);
-	this.appearance.setDiffuse(0.7, 0.7, 0.7, 1);
-	this.appearance.setSpecular(0.0, 0.0, 0.0, 1);
-	this.appearance.setShininess(120);
+    this.appearance.setAmbient(0.3, 0.3, 0.3, 1);
+    this.appearance.setDiffuse(0.7, 0.7, 0.7, 1);
+    this.appearance.setSpecular(0.0, 0.0, 0.0, 1);
+    this.appearance.setShininess(120);
+};
+
+XMLscene.prototype.update = function(currTime) {
+    //For relative time to the first update
+    if (this.graph.loadedOk) //updating only starts when the XML is parsed!!
+    {
+        if (this.beginTime == -1) {
+            this.beginTime = currTime;
+        } else {
+            this.currTime = currTime - this.beginTime;
+        }
+    }
+
+    for (var id in this.primitives) {
+        if (this.primitives[id].hasOwnProperty("data")) {
+            if (this.primitives[id].data.hasOwnProperty("su") && this.primitives[id].data.hasOwnProperty("sv")) {
+                this.primitives[id].data.su++;
+                if (this.primitives[id].data.su >= this.primitives[id].data.du) {
+                    this.primitives[id].data.su = 0;
+                    this.primitives[id].data.sv++;
+                    if (this.primitives[id].data.sv >= this.primitives[id].data.dv) {
+                        this.primitives[id].data.sv = 0;
+                    }
+                }
+
+            }
+        }
+    }
 };
 
 XMLscene.prototype.display = function() {
@@ -162,16 +192,16 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
     var primitiveArray = comp.children.primitiveref;
     for (var i = 0; i < primitiveArray.length; i++) {
         if (this.primitives[primitiveArray[i]].hasOwnProperty("data") &&
-                    this.primitives[primitiveArray[i]].data.hasOwnProperty("su") &&
-                    this.primitives[primitiveArray[i]].data.hasOwnProperty("sv")) {
+            this.primitives[primitiveArray[i]].data.hasOwnProperty("su") &&
+            this.primitives[primitiveArray[i]].data.hasOwnProperty("sv")) {
 
-                this.applyMaterialTexture(matId, this.primitives[primitiveArray[i]].data.textureref);
-                this.setChessboardShading(this.primitives[primitiveArray[i]].data);
-                this.setActiveShader(this.shaders[this.selectedShader]);
-                this.primitives[primitiveArray[i]].display();
-                this.applyMaterialTexture(matId, texId);
-                this.setActiveShader(this.defaultShader);
-        } else{
+            this.applyMaterialTexture(matId, this.primitives[primitiveArray[i]].data.textureref);
+            this.setChessboardShading(this.primitives[primitiveArray[i]].data);
+            this.setActiveShader(this.shaders[this.selectedShader]);
+            this.primitives[primitiveArray[i]].display();
+            this.applyMaterialTexture(matId, texId);
+            this.setActiveShader(this.defaultShader);
+        } else {
 
             this.primitives[primitiveArray[i]].display();
         }
@@ -183,25 +213,6 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
     }
 
     this.popMatrix();
-};
-
-XMLscene.prototype.update = function(currTime) {
-
-    for (var id in this.primitives) {
-        if (this.primitives[id].hasOwnProperty("data")){
-            if (this.primitives[id].data.hasOwnProperty("su") && this.primitives[id].data.hasOwnProperty("sv")) {
-                this.primitives[id].data.su++;
-                if(this.primitives[id].data.su >= this.primitives[id].data.du){
-                    this.primitives[id].data.su = 0;
-                    this.primitives[id].data.sv++;
-                    if(this.primitives[id].data.sv >= this.primitives[id].data.dv){
-                        this.primitives[id].data.sv = 0;
-                    }
-                }
-
-            }
-        }
-    }
 };
 
 XMLscene.prototype.applyTransformations = function(transformationsArray) {
@@ -278,15 +289,29 @@ XMLscene.prototype.incrementMaterials = function() {
     }
 };
 
-XMLscene.prototype.setChessboardShading = function(data){
-    this.shaders[this.selectedShader].setUniformsValues({du: data.du});
-    this.shaders[this.selectedShader].setUniformsValues({dv: data.dv});
-    this.shaders[this.selectedShader].setUniformsValues({su: data.su});
-    this.shaders[this.selectedShader].setUniformsValues({sv: data.sv});
+XMLscene.prototype.setChessboardShading = function(data) {
+    this.shaders[this.selectedShader].setUniformsValues({
+        du: data.du
+    });
+    this.shaders[this.selectedShader].setUniformsValues({
+        dv: data.dv
+    });
+    this.shaders[this.selectedShader].setUniformsValues({
+        su: data.su
+    });
+    this.shaders[this.selectedShader].setUniformsValues({
+        sv: data.sv
+    });
     var color1 = vec4.fromValues(data.c1.r, data.c1.g, data.c1.b, data.c1.a);
     var color2 = vec4.fromValues(data.c2.r, data.c2.g, data.c2.b, data.c2.a);
     var colorS = vec4.fromValues(data.cs.r, data.cs.g, data.cs.b, data.cs.a);
-    this.shaders[this.selectedShader].setUniformsValues({c1: color1});
-    this.shaders[this.selectedShader].setUniformsValues({c2: color2});
-    this.shaders[this.selectedShader].setUniformsValues({cs: colorS});
+    this.shaders[this.selectedShader].setUniformsValues({
+        c1: color1
+    });
+    this.shaders[this.selectedShader].setUniformsValues({
+        c2: color2
+    });
+    this.shaders[this.selectedShader].setUniformsValues({
+        cs: colorS
+    });
 };
