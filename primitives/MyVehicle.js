@@ -56,91 +56,106 @@ MyVehicle.prototype.createBody = function(){
 
 MyVehicle.prototype.display = function(){
 
-
-    this.wheel.display();
     this.scene.pushMatrix();
-        this.scene.translate(4,0,0);
+        this.scene.rotate(Math.PI, 0, 1, 0);
+
+        // wheels
         this.wheel.display();
         this.scene.pushMatrix();
-            this.scene.translate(0,0,2);
+            this.scene.translate(4, 0, 0);
+            this.wheel.display();
+            this.scene.pushMatrix();
+                this.scene.translate(0, 0, 2);
+                this.wheel.display();
+            this.scene.popMatrix();
+        this.scene.popMatrix();
+        this.scene.pushMatrix();
+            this.scene.translate(0, 0, 2);
             this.wheel.display();
         this.scene.popMatrix();
-    this.scene.popMatrix();
-    this.scene.pushMatrix();
-        this.scene.translate(0,0,2);
-        this.wheel.display();
-    this.scene.popMatrix();
 
-    this.scene.pushMatrix();
-        this.scene.rotate(Math.PI/2, 1,0,0);
-        this.scene.translate(2.1,1,0);
-        this.planeBody.display();
-    this.scene.popMatrix();
-    this.scene.pushMatrix();
-        this.scene.translate(3.3,0.2,1);
-        this.scene.rotate(-Math.PI/2,0,0,1);
-        this.scene.rotate(-Math.PI/2,1,0,0);
-        this.scene.scale(0.4,0.4,0.5);
-        this.backBody.display();
-    this.scene.popMatrix();
+        // lower body
+        this.scene.pushMatrix();
+            this.scene.rotate(Math.PI/2, 1, 0, 0);
+            this.scene.translate(2.1, 1, 0);
+            this.planeBody.display();
+        this.scene.popMatrix();
 
-    this.scene.pushMatrix();
-        this.mainBody.display();
-    this.scene.popMatrix();
+        // back body
+        this.scene.pushMatrix();
+            this.scene.translate(3.3, 0.2, 1);
+            this.scene.rotate(-Math.PI/2, 0, 0, 1);
+            this.scene.rotate(-Math.PI/2, 1, 0, 0);
+            this.scene.scale(0.4, 0.4, 0.5);
+            this.backBody.display();
+        this.scene.popMatrix();
 
-    this.scene.pushMatrix();
-        this.scene.translate(0,0.4,1);
-        this.scene.rotate(-Math.PI/2,0,1,0);
-        this.scene.scale(0.4,0.35,0.3);
-        this.frontBody.display();
-    this.scene.popMatrix();
+        // main body
+        this.scene.pushMatrix();
+            this.mainBody.display();
+        this.scene.popMatrix();
 
-    this.scene.pushMatrix();
-        //this.scene.rotate(Math.PI/2, 1,0,0);
-        this.scene.translate(2,0.55,1.8);
-        this.scene.scale(0.8,0.75,1);
-        this.planeBody.display();
-    this.scene.popMatrix();
-    this.scene.pushMatrix();
-        this.scene.rotate(Math.PI, 1,0,0);
-        this.scene.translate(2,-0.55,-0.2);
-        this.scene.scale(0.8,0.75,1);
-        this.planeBody.display();
-    this.scene.popMatrix();
+        // front body
+        this.scene.pushMatrix();
+            this.scene.translate(0, 0.4, 1);
+            this.scene.rotate(-Math.PI/2, 0, 1, 0);
+            this.scene.scale(0.4, 0.35, 0.3);
+            this.frontBody.display();
+        this.scene.popMatrix();
 
+        // left side body
+        this.scene.pushMatrix();
+            this.scene.translate(2, 0.55, 1.8);
+            this.scene.scale(0.8, 0.75, 1);
+            this.planeBody.display();
+        this.scene.popMatrix();
 
+        // right side body
+        this.scene.pushMatrix();
+            this.scene.rotate(Math.PI, 1, 0, 0);
+            this.scene.translate(2, -0.55, -0.2);
+            this.scene.scale(0.8, 0.75, 1);
+            this.planeBody.display();
+        this.scene.popMatrix();
 
+        // right side upper body
+        this.scene.pushMatrix();
+            this.scene.rotate(Math.PI, 1, 0, 0);
+            this.scene.translate(2.7, -1.55, -0.2);
+            this.scene.scale(0.3, 0.65, 0.1);
+            this.planeBody.display();
+        this.scene.popMatrix();
 
-    this.scene.pushMatrix();
-        this.scene.rotate(Math.PI, 1,0,0);
-        this.scene.translate(2.7,-1.55,-0.2);
-        this.scene.scale(0.3,0.65,0.1);
-        this.planeBody.display();
-    this.scene.popMatrix();
-    this.scene.pushMatrix();
-        this.scene.translate(2.7,1.55,1.8);
-        this.scene.scale(0.3,0.65,0.1);
-        this.planeBody.display();
-    this.scene.popMatrix();
-    this.scene.pushMatrix();
-        this.scene.rotate(Math.PI/2, 0,1,0);
-        this.scene.translate(-1,1.55,3.45);
-        this.scene.scale(0.31,0.65,0.1);
-        this.planeBody.display();
-    this.scene.popMatrix();
-    this.scene.pushMatrix();
-        this.scene.rotate(-Math.PI/2, 0,1,0);
-        this.scene.translate(1,1.55,-2);
-        this.scene.scale(0.31,0.65,0.1);
-        this.planeBody.display();
-    this.scene.popMatrix();
+        // left side upper body
+        this.scene.pushMatrix();
+            this.scene.translate(2.7, 1.55, 1.8);
+            this.scene.scale(0.3, 0.65, 0.1);
+            this.planeBody.display();
+        this.scene.popMatrix();
 
-    this.scene.pushMatrix();
-        this.scene.rotate(-Math.PI/2, 1,0,0);
-        this.scene.translate(2.7,-1.1,2);
-        this.scene.scale(0.31,1,0.5);
-        this.planeBody.display();
-    this.scene.popMatrix();
+        // back upper body
+        this.scene.pushMatrix();
+            this.scene.rotate(Math.PI/2, 0, 1, 0);
+            this.scene.translate(-1, 1.55, 3.45);
+            this.scene.scale(0.31, 0.65, 0.1);
+            this.planeBody.display();
+        this.scene.popMatrix();
 
-    //this.
+        // front upper body
+        this.scene.pushMatrix();
+            this.scene.rotate(-Math.PI/2, 0, 1, 0);
+            this.scene.translate(1, 1.55, -2);
+            this.scene.scale(0.31, 0.65, 0.1);
+            this.planeBody.display();
+        this.scene.popMatrix();
+
+        // top upper body
+        this.scene.pushMatrix();
+            this.scene.rotate(-Math.PI/2, 1, 0, 0);
+            this.scene.translate(2.7, -1.1, 2);
+            this.scene.scale(0.31, 1, 0.5);
+            this.planeBody.display();
+        this.scene.popMatrix();
+
+    this.scene.popMatrix();
 };
