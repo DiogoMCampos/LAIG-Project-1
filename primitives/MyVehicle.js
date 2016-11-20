@@ -52,19 +52,28 @@ MyVehicle.prototype.createBody = function(){
     };
     this.frontBody = new Patch(this.scene, "frontBody", frontBody);
 
-    var wheelCover = {
+    var frontWheelCover = {
         "orderU": 3,
         "orderV": 1,
-        "partsU": 8,
+        "partsU": 20,
         "partsV": 1,
         "controlVertexes":[
             [[-2, -1, -0.5, 1], [-2, 1, -0.5, 1]],
-            [[0, -1, 1.5, 1], [0, 1, 1.5, 1]],
-            [[1, -1, -1.5, 1], [1, 1, -1.5, 1]],
-            [[3, -1, -2, 1], [3, 1, -2, 1]],
+            [[0, -1, 1.4, 1], [0, 1, 1.4, 1]],
+            [[0.5, -1, -1.5, 1], [0.5, 1, -1.5, 1]],
+            [[3.5, -1, -1, 1], [3.5, 1, -1, 1]],
         ]
     };
-    this.wheelCover = new Patch(this.scene, "wheelCover", wheelCover);
+    this.frontWheelCover = new Patch(this.scene, "frontWheelCover", frontWheelCover);
+
+    var backWheelCover = {
+        "orderU":2,
+        "orderV":1,
+        "partsU":20,
+        "partsV":1,
+        "controlVertexes":[[[-2,-2,-0.35,1],[-2,2,-0.35,1]], [[0,-2,3,1],[0,2,3,1]], [[2,-2,0,1], [2,2,0,1]]],
+    };
+    this.backWheelCover = new Patch(this.scene, "backWheelCover", backWheelCover);
 
 };
 
@@ -74,12 +83,30 @@ MyVehicle.prototype.display = function(){
         this.scene.rotate(Math.PI, 0, 1, 0);
 
         this.scene.pushMatrix();
-            this.scene.scale(0.7, 1, 0.4)
             this.scene.translate(0.6, 0.8, 0);
+            this.scene.scale(0.7, 1, 0.4);
             this.scene.rotate(-Math.PI/2, 1, 0, 0);
-            this.wheelCover.display();
+            this.frontWheelCover.display();
+        this.scene.popMatrix();
+        this.scene.pushMatrix();
+            this.scene.translate(0.6, 0.8, 2);
+            this.scene.scale(0.7, 1, 0.4);
+            this.scene.rotate(-Math.PI/2, 1, 0, 0);
+            this.frontWheelCover.display();
         this.scene.popMatrix();
 
+        this.scene.pushMatrix();
+            this.scene.translate(4,0,0);
+            this.scene.scale(0.5, 0.6,0.2);
+            this.scene.rotate(-Math.PI/2, 1,0,0);
+            this.backWheelCover.display();
+        this.scene.popMatrix();
+        this.scene.pushMatrix();
+            this.scene.translate(4,0,2);
+            this.scene.scale(0.5, 0.6,0.2);
+            this.scene.rotate(-Math.PI/2, 1,0,0);
+            this.backWheelCover.display();
+        this.scene.popMatrix();
         // wheels
         this.wheel.display();
         this.scene.pushMatrix();
@@ -157,24 +184,24 @@ MyVehicle.prototype.display = function(){
         // back upper body
         this.scene.pushMatrix();
             this.scene.rotate(Math.PI/2, 0, 1, 0);
-            this.scene.translate(-1, 1.55, 3.45);
-            this.scene.scale(0.31, 0.65, 0.1);
+            this.scene.translate(-1, 1.5, 3.45);
+            this.scene.scale(0.31, 0.7, 0.1);
             this.planeBody.display();
         this.scene.popMatrix();
 
         // front upper body
         this.scene.pushMatrix();
             this.scene.rotate(-Math.PI/2, 0, 1, 0);
-            this.scene.translate(1, 1.55, -2);
-            this.scene.scale(0.31, 0.65, 0.1);
+            this.scene.translate(1, 1.5, -2);
+            this.scene.scale(0.31, 0.7, 0.1);
             this.planeBody.display();
         this.scene.popMatrix();
 
         // top upper body
         this.scene.pushMatrix();
             this.scene.rotate(-Math.PI/2, 1, 0, 0);
-            this.scene.translate(2.7, -1.1, 2);
-            this.scene.scale(0.31, 1, 0.5);
+            this.scene.translate(2.7, -1, 2);
+            this.scene.scale(0.31, 1.1, 0.5);
             this.planeBody.display();
         this.scene.popMatrix();
 
