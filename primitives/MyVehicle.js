@@ -52,12 +52,33 @@ MyVehicle.prototype.createBody = function(){
     };
     this.frontBody = new Patch(this.scene, "frontBody", frontBody);
 
+    var wheelCover = {
+        "orderU": 3,
+        "orderV": 1,
+        "partsU": 8,
+        "partsV": 1,
+        "controlVertexes":[
+            [[-2, -1, -0.5, 1], [-2, 1, -0.5, 1]],
+            [[0, -1, 1.5, 1], [0, 1, 1.5, 1]],
+            [[1, -1, -1.5, 1], [1, 1, -1.5, 1]],
+            [[3, -1, -2, 1], [3, 1, -2, 1]],
+        ]
+    };
+    this.wheelCover = new Patch(this.scene, "wheelCover", wheelCover);
+
 };
 
 MyVehicle.prototype.display = function(){
 
     this.scene.pushMatrix();
         this.scene.rotate(Math.PI, 0, 1, 0);
+
+        this.scene.pushMatrix();
+            this.scene.scale(0.7, 1, 0.4)
+            this.scene.translate(0.6, 0.8, 0);
+            this.scene.rotate(-Math.PI/2, 1, 0, 0);
+            this.wheelCover.display();
+        this.scene.popMatrix();
 
         // wheels
         this.wheel.display();

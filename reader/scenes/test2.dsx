@@ -3,7 +3,7 @@
 
     <views default="front">
         <perspective id="front" near="0.1" far="500" angle="90">
-            <from x="0.5" y="-1.0" z="1"/>
+            <from x="10" y="10" z="10"/>
             <to x="0" y="0" z="0"/>
         </perspective>
 
@@ -68,10 +68,12 @@
     </transformations>
 
     <animations>
-        <animation id="linear" span="2" type="linear">
-            <controlpoint xx="0" yy="1" zz="0" />
-            <controlpoint xx="0" yy="1" zz="1" />
+        <animation id="linear" span="4" type="linear">
+            <controlpoint xx="0" yy="0" zz="0" />
+            <controlpoint xx="0" yy="0" zz="5" />
         </animation>
+        <animation id="circular" span="3" type="circular" centerx="0" centery="0" centerz="0" radius="0" startang="90" rotang="180"/>
+
     </animations>
 
 
@@ -113,8 +115,10 @@
     <components>
         <component id="root">
             <transformation>
-
             </transformation>
+
+            <animation>
+            </animation>
 
             <materials>
                 <material id="default"/>
