@@ -34,15 +34,11 @@ CircularAnimation.prototype.getTransformationMatrix = function(time) {
 
     this.currTime = time;
 
-    console.log(this);
-
     var angle = this.currAng + (this.angVar * timeVar / 1000);
-
-    console.log(timeVar);
 
     var matrix = mat4.create();
     mat4.translate(matrix, matrix, this.center);
-    mat4.rotateY(matrix, matrix, -angle);
+    mat4.rotateY(matrix, matrix, angle);
     mat4.translate(matrix, matrix, vec3.fromValues(this.radius, 0, 0));
 
     this.currAng = angle;
