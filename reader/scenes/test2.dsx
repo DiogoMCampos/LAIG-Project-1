@@ -1,15 +1,15 @@
 <dsx>
-    <scene root="root" axis_length="0"/>
+    <scene root="root" axis_length="10"/>
 
     <views default="front">
         <perspective id="front" near="0.1" far="500" angle="90">
-            <from x="10" y="10" z="10"/>
-            <to x="0" y="0" z="0"/>
+            <from x="15" y="10" z="35"/>
+            <to x="15" y="5" z="0"/>
         </perspective>
 
         <perspective id="insideScene" near="5" far="50" angle="50">
-            <from x="19" y="5" z="5"/>
-            <to x="0" y="0" z="6"/>
+            <from x="40" y="30" z="15"/>
+            <to x="5" y="0" z="15"/>
         </perspective>
     </views>
 
@@ -45,9 +45,8 @@
     <textures>
         <texture id="car" file="../resources/bodyPaint.jpg" length_s="1" length_t="1"/>
         <texture id="windows" file="../resources/windows.jpg" length_s="1" length_t="1"/>
-        <texture id="xp" file="../resources/xp.jpg" length_s="1" length_t="1"/>
+        <texture id="city" file="../resources/city.jpg" length_s="1" length_t="1"/>
         <texture id="wood" file="../resources/wood.jpg" length_s="1" length_t="1"/>
-
     </textures>
 
     <materials>
@@ -59,6 +58,21 @@
             <shininess value="1"/>
         </material>
 
+        <material id="asphalt">
+            <emission r="0.11" g="0.12" b="0.12" a="1"/>
+            <ambient r="0" g="0" b="0" a="1"/>
+            <diffuse r="0.1" g="0.1" b="0.1" a=".1"/>
+            <specular r="0" g="0" b="0" a=".1"/>
+            <shininess value="0"/>
+        </material>
+
+        <material id="pink">
+            <emission r="1" g="0.08" b="0.58" a="1"/>
+            <ambient r="1" g="0.08" b="0.58" a="1"/>
+            <diffuse r="1" g="0.2" b="0.58" a="1"/>
+            <specular r="1" g="1" b="0" a="1"/>
+            <shininess value="1"/>
+        </material>
     </materials>
 
     <transformations>
@@ -68,25 +82,34 @@
     </transformations>
 
     <animations>
-        <animation id="linear" span="4" type="linear">
-            <controlpoint xx="0" yy="0" zz="0" />
-            <controlpoint xx="0" yy="0" zz="5" />
+        <animation id="enteranimation" span="2" type="linear">
+            <controlpoint xx="3" yy="0" zz="-1"/>
+            <controlpoint xx="1" yy="0" zz="4"/>
         </animation>
-        <animation id="circular" span="3" type="circular" centerx="0" centery="0" centerz="0" radius="0" startang="90" rotang="180"/>
-
+        <animation id="rotanimation" span="2" type="circular" centerx="0" centery="0" centerz="0" radius="0" startang="0" rotang="90"/>
+        <animation id="finalanimation" span="6" type="linear">
+            <controlpoint xx="0" yy="0" zz="0"/>
+            <controlpoint xx="9" yy="0" zz="1"/>
+            <controlpoint xx="9" yy="0" zz="1.5"/>
+            <controlpoint xx="9" yy="0" zz="2.5"/>
+            <controlpoint xx="9" yy="0" zz="4"/>
+            <controlpoint xx="9" yy="0" zz="7"/>
+            <controlpoint xx="6" yy="0" zz="7"/>
+            <controlpoint xx="4" yy="0" zz="6"/>
+            <controlpoint xx="4" yy="0" zz="4"/>
+            <controlpoint xx="3" yy="0" zz="-7"/>
+        </animation>
     </animations>
 
-
     <primitives>
-
         <primitive id="patch">
-            <patch orderU="2" orderV="1" partsU="20" partsV="20" >
-                <controlpoint x="-2.0" y="-2.0" z="0.0" />
-                <controlpoint x="-2.0" y="2.0" z="0.0" />
-                <controlpoint x="0.0" y="-2.0" z="3.0" />
-                <controlpoint x="0.0" y="2.0" z="3.0" />
-                <controlpoint x="2.0" y="-2.0" z="0.0" />
-                <controlpoint x="2.0" y="2.0" z="0.0" />
+            <patch orderU="2" orderV="1" partsU="20" partsV="20">
+                <controlpoint x="-2.0" y="-2.0" z="0.0"/>
+                <controlpoint x="-2.0" y="2.0" z="0.0"/>
+                <controlpoint x="0.0" y="-2.0" z="3.0"/>
+                <controlpoint x="0.0" y="2.0" z="3.0"/>
+                <controlpoint x="2.0" y="-2.0" z="0.0"/>
+                <controlpoint x="2.0" y="2.0" z="0.0"/>
             </patch>
         </primitive>
 
@@ -95,15 +118,15 @@
         </primitive>
 
         <primitive id="rectangle">
-            <rectangle x1="0" y1="0" x2="4" y2="4"/>
+            <rectangle x1="0" y1="0" x2="1" y2="1"/>
         </primitive>
 
         <primitive id="chessboard">
             <chessboard du="8" dv="8" textureref="car" su="5" sv="3">
-               <c1 r="0.85" g="0.5" b="0.07" a="1" />
-               <c2 r="0.92" g="0.83" b="0.7" a="1" />
-               <cs r="0.95" g="0" b="0" a="1" />
-              </chessboard>
+                <c1 r="0.85" g="0.5" b="0.07" a="1"/>
+                <c2 r="0.92" g="0.83" b="0.7" a="1"/>
+                <cs r="0.95" g="0" b="0" a="1"/>
+            </chessboard>
         </primitive>
 
         <primitive id="vehicle">
@@ -113,12 +136,132 @@
     </primitives>
 
     <components>
-        <component id="root">
+        <component id="background">
             <transformation>
+                <scale x="30" y="20" z="30"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="city"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+                <componentref id="road"/>
+                <componentref id="leftWall"/>
+                <componentref id="backWall"/>
+                <componentref id="ceiling"/>
+            </children>
+        </component>
+
+        <component id="leftWall">
+            <transformation>
+                <rotate axis="y" angle="90"/>
+                <translate x="-1" y="0" z="0"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="backWall">
+            <transformation>
+                <rotate axis="y" angle="-90"/>
+                <translate x="0" y="0" z="-1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="inherit"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="ceiling">
+            <transformation>
+                <translate x="0" y="1" z="0"/>
+                <rotate axis="x" angle="90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="pink"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="road">
+            <transformation>
+                <translate x="0" y="0" z="0"/>
+                <rotate axis="x" angle="-90"/>
+                <rotate axis="z" angle="-90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="asphalt"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="vehicle">
+            <transformation>
+                <scale x="1.5" y="1.5" z="1.5"/>
+                <translate x="5" y="0.75" z="2.5"/>
             </transformation>
 
             <animation>
+                <animationref id="enteranimation"/>
+                <animationref id="rotanimation"/>
+                <animationref id="finalanimation"/>
             </animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="vehicle"/>
+            </children>
+        </component>
+
+        <component id="root">
+            <transformation></transformation>
+
+            <animation></animation>
 
             <materials>
                 <material id="default"/>
@@ -127,7 +270,8 @@
             <texture id="wood"/>
 
             <children>
-                <primitiveref id="vehicle" />
+                <componentref id="background"/>
+                <componentref id="vehicle"/>
             </children>
         </component>
 
