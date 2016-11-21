@@ -100,7 +100,7 @@ XMLscene.prototype.update = function(currTime) {
     //For relative time to the first update
     if (this.graph.loadedOk) //updating only starts when the XML is parsed!!
     {
-        if (this.beginTime == -1) {
+        if (this.beginTime === -1) {
             this.beginTime = currTime;
         } else {
             this.currTime = currTime - this.beginTime;

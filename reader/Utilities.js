@@ -1,5 +1,5 @@
 var parseRectangle = function(reader, id, xmlNode){
-    coordinates = {};
+    var coordinates = {};
     coordinates.x1 = reader.getFloat(xmlNode, "x1");
     coordinates.y1 = reader.getFloat(xmlNode, "y1");
     coordinates.x2 = reader.getFloat(xmlNode, "x2");
@@ -16,7 +16,7 @@ var parseRectangle = function(reader, id, xmlNode){
 };
 
 var parseTriangle = function(reader, id, xmlNode){
-    coordinates = {};
+    var coordinates = {};
     coordinates.x1 = reader.getFloat(xmlNode, "x1");
     coordinates.y1 = reader.getFloat(xmlNode, "y1");
     coordinates.z1 = reader.getFloat(xmlNode, "z1");

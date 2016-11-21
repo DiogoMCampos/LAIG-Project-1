@@ -111,8 +111,9 @@ LinearAnimation.prototype.getTransformationMatrix = function(time) {
         var x = 0, y = 0, z = 0;
 
         for (var i = 0; i <= this.currMove; i++) {
+            var distPerc;
             if (this.movementDistance[i] === 0) {
-                var distPerc = 1;
+                distPerc = 1;
             } else {
                 distPerc = this.intermediateDistance[i] / this.movementDistance[i];
             }
@@ -122,9 +123,9 @@ LinearAnimation.prototype.getTransformationMatrix = function(time) {
             z += this.movementVectors[i][2] * distPerc;
         }
 
-        var translation = vec3.fromValues(x, y, z);
+        translation = vec3.fromValues(x, y, z);
 
-        var angle = this.movementAngles[this.currMove];
+        angle = this.movementAngles[this.currMove];
     }
 
     mat4.translate(this.matrix, this.matrix, translation);

@@ -80,7 +80,7 @@ MySceneGraph.prototype.createCameras = function(views) {
             camera.id = id;
 
             this.scene.cameras.push(camera);
-            if (views.defaultView == id) {
+            if (views.defaultView === id) {
                 this.scene.camera = camera;
                 this.scene.cameraIndex = this.scene.cameras.length - 1;
             }
@@ -143,8 +143,8 @@ MySceneGraph.prototype.createLights = function(lightNodes) {
             lightsIndex++;
             this.scene.lightsOn.push(def.enabled);
             this.scene.lightsInfo.push({
-                'id': def.id,
-                'type': light.type
+                "id": def.id,
+                "type": light.type
             });
         }
     }
@@ -314,11 +314,12 @@ MySceneGraph.prototype.getAnimationData = function(node) {
 
 MySceneGraph.prototype.getLinearAnimation = function(animation, node) {
     var children = node.children;
+    var id = this.reader.getString(node, "id");
     if (children.length <= 1) {
         throw "less than two control points for animation id: " + id + ". Proceeded without that animation.";
     }
 
-    var controlPoints = []
+    var controlPoints = [];
     for (var i = 0; i < children.length; i++) {
         controlPoints.push(this.getControlPoint(children[i]));
     }
@@ -426,7 +427,7 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
 
             var transformationNodes = transformation[0].children;
             component.transformations = this.getTransformationAttributes(transformationNodes);
-            
+
             var animation = data.getElementsByTagName("animation");
             if (animation.length !== 1) {
                 throw ("Component " + id + " has zero or more than one animation groups");
@@ -458,7 +459,7 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
                     }
 
                 } else {
-                    console.warn("animationref tagname invalid in componentref id: " + id + ". Proceeding without that animation.")
+                    console.warn("animationref tagname invalid in componentref id: " + id + ". Proceeding without that animation.");
                 }
             }
 
