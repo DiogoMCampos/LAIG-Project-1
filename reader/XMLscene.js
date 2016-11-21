@@ -8,7 +8,6 @@ function XMLscene(inter) {
     this.materials = {};
     this.cameraIndex = 0;
     this.interface = inter;
-    this.selectedShader = 0;
     this.appearance = null;
 
     this.PRIMITIVES = {
@@ -63,25 +62,7 @@ XMLscene.prototype.onGraphLoaded = function() {
 
 XMLscene.prototype.initShaders = function() {
 
-    this.shaders = [
-        // new CGFshader(this.gl, "shaders/flat.vert", "shaders/flat.frag"),
-        // new CGFshader(this.gl, "shaders/uScale.vert", "shaders/uScale.frag"),
-        new CGFshader(this.gl, "shaders/varying.vert", "shaders/varying.frag"),
-        // new CGFshader(this.gl, "shaders/texture1.vert", "shaders/texture1.frag"),
-        // new CGFshader(this.gl, "shaders/texture2.vert", "shaders/texture2.frag"),
-        // new CGFshader(this.gl, "shaders/texture3.vert", "shaders/texture3.frag"),
-        // new CGFshader(this.gl, "shaders/texture3.vert", "shaders/sepia.frag"),
-        // new CGFshader(this.gl, "shaders/texture3.vert", "shaders/convolution.frag")
-    ];
-    /*this.shade = new CGFshader(this.gl,  "../lib/CGF/shaders/picking/vertex.glsl",  "../lib/CGF/shaders/picking/fragment.glsl");
-    /*this.shaders=[
-        new CGFshader(this.gl, "../lib/CGF/shaders/Gouraud/textured/multiple_light-vertex.glsl",  "../lib/CGF/shaders/Gouraud/textured/Gouraud/textured/fragment.glsl"),
-        new CGFshader(this.gl, "../lib/CGF/shaders/Gouraud/multiple_light-vertex.glsl", "../lib/CGF/shaders/Gouraud/fragment.glsl"),
-        new CGFshader(this.gl, "../lib/CGF/shaders/Gouraud/lambert-vertex.glsl", "../lib/CGF/shaders/Gouraud/fragment.glsl"),
-        new CGFshader(this.gl, "../lib/CGF/shaders/Phong/multiple_light-vertex.glsl", "../lib/CGF/shaders/Phong/multiple_light-phong-fragment.glsl"),
-        new CGFshader(this.gl, "../lib/CGF/shaders/Phong/phong-vertex.glsl", "../lib/CGF/shaders/Phong/phong-fragment.glsl"),
-        new CGFshader(this.gl,  "../lib/CGF/shaders/picking/vertex.glsl",  "../lib/CGF/shaders/picking/fragment.glsl")
-    ];*/
+    this.shader = new CGFshader(this.gl, "shaders/varying.vert", "shaders/varying.frag");
 };
 
 XMLscene.prototype.initCameras = function(cameras) {
@@ -197,7 +178,7 @@ XMLscene.prototype.recursiveDisplay = function(componentId, predecessorMatID, pr
 
             this.applyMaterialTexture(matId, this.primitives[primitiveArray[i]].data.textureref);
             this.setChessboardShading(this.primitives[primitiveArray[i]].data);
-            this.setActiveShader(this.shaders[this.selectedShader]);
+            this.setActiveShader(this.shader);
             this.primitives[primitiveArray[i]].display();
             this.applyMaterialTexture(matId, texId);
             this.setActiveShader(this.defaultShader);
@@ -290,28 +271,28 @@ XMLscene.prototype.incrementMaterials = function() {
 };
 
 XMLscene.prototype.setChessboardShading = function(data) {
-    this.shaders[this.selectedShader].setUniformsValues({
+    this.shader.setUniformsValues({
         du: data.du
     });
-    this.shaders[this.selectedShader].setUniformsValues({
+    this.shader.setUniformsValues({
         dv: data.dv
     });
-    this.shaders[this.selectedShader].setUniformsValues({
+    this.shader.setUniformsValues({
         su: data.su
     });
-    this.shaders[this.selectedShader].setUniformsValues({
+    this.shader.setUniformsValues({
         sv: data.sv
     });
     var color1 = vec4.fromValues(data.c1.r, data.c1.g, data.c1.b, data.c1.a);
     var color2 = vec4.fromValues(data.c2.r, data.c2.g, data.c2.b, data.c2.a);
     var colorS = vec4.fromValues(data.cs.r, data.cs.g, data.cs.b, data.cs.a);
-    this.shaders[this.selectedShader].setUniformsValues({
+    this.shader.setUniformsValues({
         c1: color1
     });
-    this.shaders[this.selectedShader].setUniformsValues({
+    this.shader.setUniformsValues({
         c2: color2
     });
-    this.shaders[this.selectedShader].setUniformsValues({
+    this.shader.setUniformsValues({
         cs: colorS
     });
 };

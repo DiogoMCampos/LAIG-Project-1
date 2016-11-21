@@ -3,13 +3,6 @@ function MyVehicle(scene, id) {
     this.scene = scene;
     this.id=id;
 
-    var wheels = {
-        "innerRadius": 0.1,
-        "outerRadius" : 0.75,
-        "slices": 50,
-        "loops": 50,
-    };
-    this.wheel = new MyTorus(scene, "wheel", wheels);
     this.createBody();
 }
 
@@ -17,6 +10,15 @@ MyVehicle.prototype = Object.create(CGFobject.prototype);
 MyVehicle.prototype.constructor = MyVehicle;
 
 MyVehicle.prototype.createBody = function(){
+
+    var wheels = {
+        "innerRadius": 0.35,
+        "outerRadius" : 0.75,
+        "slices": 50,
+        "loops": 50,
+    };
+    this.wheel = new MyTorus(this.scene, "wheel", wheels);
+
     var planeBody = {
         "dimX": 5,
         "dimY": 1.45,
@@ -75,6 +77,19 @@ MyVehicle.prototype.createBody = function(){
     };
     this.backWheelCover = new Patch(this.scene, "backWheelCover", backWheelCover);
 
+    this.bodyAppearance =  new CGFappearance(this.scene);
+    this.bodyAppearance.setAmbient(0.1, 0.1, 0.1, 1);
+    this.bodyAppearance.setDiffuse(0.1, 0.1, 0.1, 0.1);
+    this.bodyAppearance.setSpecular(1, 1, 1, 1);
+    this.bodyAppearance.setEmission(0.1, 0.1, 0.1, 0.1);
+
+    this.wheelAppearance =  new CGFappearance(this.scene);
+    this.wheelAppearance.setAmbient(1, 1, 1, 1);
+    this.wheelAppearance.setDiffuse(1, 1, 1, 1);
+    this.wheelAppearance.setSpecular(1, 1, 1, 1);
+    this.wheelAppearance.setEmission(1, 1, 1, 1);
+
+
 };
 
 MyVehicle.prototype.display = function(){
@@ -82,6 +97,23 @@ MyVehicle.prototype.display = function(){
     this.scene.pushMatrix();
         this.scene.rotate(Math.PI, 0, 1, 0);
 
+        // wheels
+        this.wheelAppearance.apply();
+        this.wheel.display();
+        this.scene.pushMatrix();
+            this.scene.translate(4, 0, 0);
+            this.wheel.display();
+            this.scene.pushMatrix();
+                this.scene.translate(0, 0, 2);
+                this.wheel.display();
+            this.scene.popMatrix();
+        this.scene.popMatrix();
+        this.scene.pushMatrix();
+            this.scene.translate(0, 0, 2);
+            this.wheel.display();
+        this.scene.popMatrix();
+
+        this.bodyAppearance.apply();
         this.scene.pushMatrix();
             this.scene.translate(0.55, 0.8, -0.1);
             this.scene.scale(0.7, 1, 0.3);
@@ -106,20 +138,6 @@ MyVehicle.prototype.display = function(){
             this.scene.scale(0.5, 0.6,0.15);
             this.scene.rotate(-Math.PI/2, 1,0,0);
             this.backWheelCover.display();
-        this.scene.popMatrix();
-        // wheels
-        this.wheel.display();
-        this.scene.pushMatrix();
-            this.scene.translate(4, 0, 0);
-            this.wheel.display();
-            this.scene.pushMatrix();
-                this.scene.translate(0, 0, 2);
-                this.wheel.display();
-            this.scene.popMatrix();
-        this.scene.popMatrix();
-        this.scene.pushMatrix();
-            this.scene.translate(0, 0, 2);
-            this.wheel.display();
         this.scene.popMatrix();
 
         // lower body
