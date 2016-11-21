@@ -86,18 +86,14 @@
             <controlpoint xx="3" yy="0" zz="-1"/>
             <controlpoint xx="1" yy="0" zz="4"/>
         </animation>
-        <animation id="rotanimation" span="2" type="circular" centerx="0" centery="0" centerz="0" radius="0" startang="0" rotang="90"/>
+        <animation id="rotanimation" span="2" type="circular" centerx="0" centery="0" centerz="-5" radius="5" startang="-90" rotang="50"/>
         <animation id="finalanimation" span="6" type="linear">
             <controlpoint xx="0" yy="0" zz="0"/>
-            <controlpoint xx="9" yy="0" zz="1"/>
-            <controlpoint xx="9" yy="0" zz="1.5"/>
-            <controlpoint xx="9" yy="0" zz="2.5"/>
-            <controlpoint xx="9" yy="0" zz="4"/>
-            <controlpoint xx="9" yy="0" zz="7"/>
-            <controlpoint xx="6" yy="0" zz="7"/>
-            <controlpoint xx="4" yy="0" zz="6"/>
-            <controlpoint xx="4" yy="0" zz="4"/>
-            <controlpoint xx="3" yy="0" zz="-7"/>
+            <controlpoint xx="5" yy="0" zz="1"/>
+            <controlpoint xx="8" yy="0" zz="0"/>
+            <controlpoint xx="10" yy="0" zz="-2"/>
+            <controlpoint xx="12" yy="0" zz="-8"/>
+            <controlpoint xx="13" yy="0" zz="-11"/>
         </animation>
     </animations>
 
@@ -244,7 +240,7 @@
             <animation>
                 <animationref id="enteranimation"/>
                 <animationref id="rotanimation"/>
-                <animationref id="finalanimation"/>
+                  <animationref id="finalanimation"/>
             </animation>
 
             <materials>

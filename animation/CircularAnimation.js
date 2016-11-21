@@ -7,6 +7,12 @@ function CircularAnimation(animationInfo) {
     this.startAng = animationInfo.startang * Math.PI / 180;
     this.rotAng = animationInfo.rotang * Math.PI / 180;
 
+    if (this.rotAng > 0) {
+      this.direction = Math.PI * 0.5;
+    } else {
+      this.direction = - Math.PI * 0.5;
+    }
+
     this.currAng = this.startAng;
     this.finalAng = this.startAng + this.rotAng;
 
@@ -40,10 +46,11 @@ CircularAnimation.prototype.getTransformationMatrix = function(time) {
     mat4.translate(matrix, matrix, this.center);
     mat4.rotateY(matrix, matrix, angle);
     mat4.translate(matrix, matrix, vec3.fromValues(this.radius, 0, 0));
+    mat4.rotateY(matrix, matrix, this.direction);
 
     this.currAng = angle;
 
-    if (this.currAng >= this.finalAng) {
+    if (this.currAng >= this.finalAng && this.rotAng >= 0 || this.currAngle <= this.finalAng && this.rotAng < 0) {
         this.finished = true;
         this.matrix = matrix;
     }
