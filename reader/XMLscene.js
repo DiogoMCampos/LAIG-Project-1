@@ -115,8 +115,8 @@ XMLscene.prototype.display = function() {
         // Clear image and depth buffer everytime we update the scene
         this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
-        this.gl.enable(this.gl.DEPTH_TEST);
+        //this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
+        //this.gl.enable(this.gl.DEPTH_TEST);
 
         // Initialize Model-View matrix as identity (no transformation
         this.updateProjectionMatrix();

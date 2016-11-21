@@ -77,17 +77,29 @@ MyVehicle.prototype.createBody = function(){
     };
     this.backWheelCover = new Patch(this.scene, "backWheelCover", backWheelCover);
 
+    var rim = {
+        "baseRadius": 0.4,
+        "topRadius": 0.4,
+        "heightCylinder": 0.1,
+        "slices": 20,
+        "stacks": 2,
+    };
+    this.rims = new MyCylinder(this.scene, "rims", rim);
+
     this.bodyAppearance =  new CGFappearance(this.scene);
-    this.bodyAppearance.setAmbient(0.1, 0.1, 0.1, 1);
-    this.bodyAppearance.setDiffuse(0.1, 0.1, 0.1, 0.1);
+    this.bodyAppearance.setAmbient(0, 0, 0, 1);
+    this.bodyAppearance.setDiffuse(0, 0, 0, 0.1);
     this.bodyAppearance.setSpecular(1, 1, 1, 1);
-    this.bodyAppearance.setEmission(0.1, 0.1, 0.1, 0.1);
+    this.bodyAppearance.setEmission(0, 0, 0, 0.1);
 
     this.wheelAppearance =  new CGFappearance(this.scene);
-    this.wheelAppearance.setAmbient(1, 1, 1, 1);
-    this.wheelAppearance.setDiffuse(1, 1, 1, 1);
+    this.wheelAppearance.setAmbient(0.9, 0.9, 0.9, 0.2);
+    this.wheelAppearance.setDiffuse(0.9, 0.9, 0.9, 1);
     this.wheelAppearance.setSpecular(1, 1, 1, 1);
-    this.wheelAppearance.setEmission(1, 1, 1, 1);
+    this.wheelAppearance.setEmission(0.9, 0.9, 0.9, 1);
+
+    this.rimAppearance = new CGFappearance(this.scene);
+    this.rimAppearance.loadTexture("../resources/rim.jpg");
 
 
 };
@@ -97,131 +109,152 @@ MyVehicle.prototype.display = function(){
         this.scene.rotate(Math.PI, 0, 1, 0);
 
         // wheels
-        this.wheelAppearance.apply();
-        this.wheel.display();
         this.scene.pushMatrix();
-            this.scene.translate(4, 0, 0);
+            this.wheelAppearance.apply();
             this.wheel.display();
+            this.scene.pushMatrix();
+                this.scene.translate(4, 0, 0);
+                this.wheel.display();
+                this.scene.pushMatrix();
+                    this.scene.translate(0, 0, 2);
+                    this.wheel.display();
+                this.scene.popMatrix();
+            this.scene.popMatrix();
             this.scene.pushMatrix();
                 this.scene.translate(0, 0, 2);
                 this.wheel.display();
             this.scene.popMatrix();
         this.scene.popMatrix();
-        this.scene.pushMatrix();
-            this.scene.translate(0, 0, 2);
-            this.wheel.display();
-        this.scene.popMatrix();
 
-        this.bodyAppearance.apply();
-
-        // wheel covers
         this.scene.pushMatrix();
-            this.scene.translate(0.45, 0.8, -0.1);
-            this.scene.scale(0.7, 1, 0.3);
-            this.scene.rotate(-Math.PI/2, 1, 0, 0);
-            this.frontWheelCover.display();
-        this.scene.popMatrix();
-        this.scene.pushMatrix();
-            this.scene.translate(0.45, 0.8, 2.1);
-            this.scene.scale(0.7, 1, 0.3);
-            this.scene.rotate(-Math.PI/2, 1, 0, 0);
-            this.frontWheelCover.display();
+            this.rimAppearance.apply();
+            this.scene.pushMatrix();
+                this.scene.translate(4,0,0);
+                this.rims.display();
+            this.scene.popMatrix();
+            this.scene.pushMatrix();
+                this.scene.translate(0,0,2);
+                this.rims.display();
+            this.scene.popMatrix();
+            this.scene.pushMatrix();
+                this.scene.translate(4,0,2);
+                this.rims.display();
+            this.scene.popMatrix();
+            this.rims.display();
         this.scene.popMatrix();
 
         this.scene.pushMatrix();
-            this.scene.translate(3.9,0,-0.1);
-            this.scene.scale(0.5, 0.6,0.15);
-            this.scene.rotate(-Math.PI/2, 1,0,0);
-            this.backWheelCover.display();
-        this.scene.popMatrix();
-        this.scene.pushMatrix();
-            this.scene.translate(3.9,0,2.1);
-            this.scene.scale(0.5, 0.6,0.15);
-            this.scene.rotate(-Math.PI/2, 1,0,0);
-            this.backWheelCover.display();
-        this.scene.popMatrix();
+            this.bodyAppearance.apply();
 
-        // lower body
-        this.scene.pushMatrix();
-            this.scene.rotate(Math.PI/2, 1, 0, 0);
-            this.scene.translate(2.1, 1, 0);
-            this.planeBody.display();
-        this.scene.popMatrix();
+            // wheel covers
+            this.scene.pushMatrix();
+                this.scene.translate(0.45, 0.8, -0.1);
+                this.scene.scale(0.7, 1, 0.3);
+                this.scene.rotate(-Math.PI/2, 1, 0, 0);
+                this.frontWheelCover.display();
+            this.scene.popMatrix();
+            this.scene.pushMatrix();
+                this.scene.translate(0.45, 0.8, 2.1);
+                this.scene.scale(0.7, 1, 0.3);
+                this.scene.rotate(-Math.PI/2, 1, 0, 0);
+                this.frontWheelCover.display();
+            this.scene.popMatrix();
 
-        // back body
-        this.scene.pushMatrix();
-            this.scene.translate(3.3, 0.2, 1);
-            this.scene.rotate(-Math.PI/2, 0, 0, 1);
-            this.scene.rotate(-Math.PI/2, 1, 0, 0);
-            this.scene.scale(0.4, 0.4, 0.5);
-            this.backBody.display();
-        this.scene.popMatrix();
+            this.scene.pushMatrix();
+                this.scene.translate(3.9,0,-0.1);
+                this.scene.scale(0.5, 0.6,0.15);
+                this.scene.rotate(-Math.PI/2, 1,0,0);
+                this.backWheelCover.display();
+            this.scene.popMatrix();
+            this.scene.pushMatrix();
+                this.scene.translate(3.9,0,2.1);
+                this.scene.scale(0.5, 0.6,0.15);
+                this.scene.rotate(-Math.PI/2, 1,0,0);
+                this.backWheelCover.display();
+            this.scene.popMatrix();
 
-        // main body
-        this.scene.pushMatrix();
-            this.mainBody.display();
-        this.scene.popMatrix();
+            // lower body
+            this.scene.pushMatrix();
+                this.scene.rotate(Math.PI/2, 1, 0, 0);
+                this.scene.translate(2.1, 1, 0);
+                this.planeBody.display();
+            this.scene.popMatrix();
 
-        // front body
-        this.scene.pushMatrix();
-            this.scene.translate(0, 0.4, 1);
-            this.scene.rotate(-Math.PI/2, 0, 1, 0);
-            this.scene.scale(0.4, 0.35, 0.3);
-            this.frontBody.display();
-        this.scene.popMatrix();
+            // back body
+            this.scene.pushMatrix();
+                this.scene.translate(3.3, 0.2, 1);
+                this.scene.rotate(-Math.PI/2, 0, 0, 1);
+                this.scene.rotate(-Math.PI/2, 1, 0, 0);
+                this.scene.scale(0.4, 0.4, 0.5);
+                this.backBody.display();
+            this.scene.popMatrix();
 
-        // left side body
-        this.scene.pushMatrix();
-            this.scene.translate(2, 0.55, 1.8);
-            this.scene.scale(0.8, 0.75, 1);
-            this.planeBody.display();
-        this.scene.popMatrix();
+            // main body
+            this.scene.pushMatrix();
+                this.mainBody.display();
+            this.scene.popMatrix();
 
-        // right side body
-        this.scene.pushMatrix();
-            this.scene.rotate(Math.PI, 1, 0, 0);
-            this.scene.translate(2, -0.55, -0.2);
-            this.scene.scale(0.8, 0.75, 1);
-            this.planeBody.display();
-        this.scene.popMatrix();
+            // front body
+            this.scene.pushMatrix();
+                this.scene.translate(0, 0.4, 1);
+                this.scene.rotate(-Math.PI/2, 0, 1, 0);
+                this.scene.scale(0.4, 0.35, 0.3);
+                this.frontBody.display();
+            this.scene.popMatrix();
 
-        // right side upper body
-        this.scene.pushMatrix();
-            this.scene.rotate(Math.PI, 1, 0, 0);
-            this.scene.translate(2.7, -1.55, -0.2);
-            this.scene.scale(0.3, 0.65, 0.1);
-            this.planeBody.display();
-        this.scene.popMatrix();
+            // left side body
+            this.scene.pushMatrix();
+                this.scene.translate(2, 0.55, 1.8);
+                this.scene.scale(0.8, 0.75, 1);
+                this.planeBody.display();
+            this.scene.popMatrix();
 
-        // left side upper body
-        this.scene.pushMatrix();
-            this.scene.translate(2.7, 1.55, 1.8);
-            this.scene.scale(0.3, 0.65, 0.1);
-            this.planeBody.display();
-        this.scene.popMatrix();
+            // right side body
+            this.scene.pushMatrix();
+                this.scene.rotate(Math.PI, 1, 0, 0);
+                this.scene.translate(2, -0.55, -0.2);
+                this.scene.scale(0.8, 0.75, 1);
+                this.planeBody.display();
+            this.scene.popMatrix();
 
-        // back upper body
-        this.scene.pushMatrix();
-            this.scene.rotate(Math.PI/2, 0, 1, 0);
-            this.scene.translate(-1, 1.5, 3.45);
-            this.scene.scale(0.32, 0.7, 0.1);
-            this.planeBody.display();
-        this.scene.popMatrix();
+            // right side upper body
+            this.scene.pushMatrix();
+                this.scene.rotate(Math.PI, 1, 0, 0);
+                this.scene.translate(2.7, -1.55, -0.2);
+                this.scene.scale(0.3, 0.65, 0.1);
+                this.planeBody.display();
+            this.scene.popMatrix();
 
-        // front upper body
-        this.scene.pushMatrix();
-            this.scene.rotate(-Math.PI/2, 0, 1, 0);
-            this.scene.translate(1, 1.5, -2);
-            this.scene.scale(0.32, 0.7, 0.1);
-            this.planeBody.display();
-        this.scene.popMatrix();
+            // left side upper body
+            this.scene.pushMatrix();
+                this.scene.translate(2.7, 1.55, 1.8);
+                this.scene.scale(0.3, 0.65, 0.1);
+                this.planeBody.display();
+            this.scene.popMatrix();
 
-        // top upper body
-        this.scene.pushMatrix();
-            this.scene.rotate(-Math.PI/2, 1, 0, 0);
-            this.scene.translate(2.7, -1, 2);
-            this.scene.scale(0.3, 1.1, 0.5);
-            this.planeBody.display();
+            // back upper body
+            this.scene.pushMatrix();
+                this.scene.rotate(Math.PI/2, 0, 1, 0);
+                this.scene.translate(-1, 1.5, 3.45);
+                this.scene.scale(0.32, 0.7, 0.1);
+                this.planeBody.display();
+            this.scene.popMatrix();
+
+            // front upper body
+            this.scene.pushMatrix();
+                this.scene.rotate(-Math.PI/2, 0, 1, 0);
+                this.scene.translate(1, 1.5, -2);
+                this.scene.scale(0.32, 0.7, 0.1);
+                this.planeBody.display();
+            this.scene.popMatrix();
+
+            // top upper body
+            this.scene.pushMatrix();
+                this.scene.rotate(-Math.PI/2, 1, 0, 0);
+                this.scene.translate(2.7, -1, 2);
+                this.scene.scale(0.3, 1.1, 0.5);
+                this.planeBody.display();
+            this.scene.popMatrix();
         this.scene.popMatrix();
 
     this.scene.popMatrix();
