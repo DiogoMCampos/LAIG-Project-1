@@ -93,7 +93,6 @@ MyVehicle.prototype.createBody = function(){
 };
 
 MyVehicle.prototype.display = function(){
-
     this.scene.pushMatrix();
         this.scene.rotate(Math.PI, 0, 1, 0);
 
@@ -114,27 +113,29 @@ MyVehicle.prototype.display = function(){
         this.scene.popMatrix();
 
         this.bodyAppearance.apply();
+
+        // wheel covers
         this.scene.pushMatrix();
-            this.scene.translate(0.55, 0.8, -0.1);
+            this.scene.translate(0.45, 0.8, -0.1);
             this.scene.scale(0.7, 1, 0.3);
             this.scene.rotate(-Math.PI/2, 1, 0, 0);
             this.frontWheelCover.display();
         this.scene.popMatrix();
         this.scene.pushMatrix();
-            this.scene.translate(0.55, 0.8, 2.1);
+            this.scene.translate(0.45, 0.8, 2.1);
             this.scene.scale(0.7, 1, 0.3);
             this.scene.rotate(-Math.PI/2, 1, 0, 0);
             this.frontWheelCover.display();
         this.scene.popMatrix();
 
         this.scene.pushMatrix();
-            this.scene.translate(4,0,-0.1);
+            this.scene.translate(3.9,0,-0.1);
             this.scene.scale(0.5, 0.6,0.15);
             this.scene.rotate(-Math.PI/2, 1,0,0);
             this.backWheelCover.display();
         this.scene.popMatrix();
         this.scene.pushMatrix();
-            this.scene.translate(4,0,2.1);
+            this.scene.translate(3.9,0,2.1);
             this.scene.scale(0.5, 0.6,0.15);
             this.scene.rotate(-Math.PI/2, 1,0,0);
             this.backWheelCover.display();
@@ -203,7 +204,7 @@ MyVehicle.prototype.display = function(){
         this.scene.pushMatrix();
             this.scene.rotate(Math.PI/2, 0, 1, 0);
             this.scene.translate(-1, 1.5, 3.45);
-            this.scene.scale(0.31, 0.7, 0.1);
+            this.scene.scale(0.32, 0.7, 0.1);
             this.planeBody.display();
         this.scene.popMatrix();
 
@@ -211,7 +212,7 @@ MyVehicle.prototype.display = function(){
         this.scene.pushMatrix();
             this.scene.rotate(-Math.PI/2, 0, 1, 0);
             this.scene.translate(1, 1.5, -2);
-            this.scene.scale(0.31, 0.7, 0.1);
+            this.scene.scale(0.32, 0.7, 0.1);
             this.planeBody.display();
         this.scene.popMatrix();
 
@@ -219,7 +220,7 @@ MyVehicle.prototype.display = function(){
         this.scene.pushMatrix();
             this.scene.rotate(-Math.PI/2, 1, 0, 0);
             this.scene.translate(2.7, -1, 2);
-            this.scene.scale(0.31, 1.1, 0.5);
+            this.scene.scale(0.3, 1.1, 0.5);
             this.planeBody.display();
         this.scene.popMatrix();
 
