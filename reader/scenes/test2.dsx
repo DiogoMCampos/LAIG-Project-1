@@ -96,7 +96,7 @@
         </animation>
         <animation id="frontanimation" span="1" type="linear">
           <controlpoint xx="0" yy="0" zz="0"/>
-          <controlpoint xx="6" yy="0" zz="0"/>
+          <controlpoint xx="8" yy="0" zz="0"/>
       </animation>
     </animations>
 
@@ -121,7 +121,7 @@
         </primitive>
 
         <primitive id="chessboard">
-            <chessboard du="8" dv="8" textureref="car" su="5" sv="3">
+            <chessboard du="8" dv="8" textureref="wood" su="-1" sv="-1">
                 <c1 r="0.85" g="0.5" b="0.07" a="1"/>
                 <c2 r="0.92" g="0.83" b="0.7" a="1"/>
                 <cs r="0.95" g="0" b="0" a="1"/>
@@ -270,8 +270,7 @@
             <texture id="wood"/>
 
             <children>
-                <componentref id="background"/>
-                <componentref id="vehicle"/>
+                <primitiveref id="chessboard"/>
             </children>
         </component>
 

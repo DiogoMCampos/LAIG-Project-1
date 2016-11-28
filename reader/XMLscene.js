@@ -45,6 +45,9 @@ XMLscene.prototype.init = function(application) {
 
     this.beginTime = -1;
     this.setUpdatePeriod(30);
+    this.piece1 = new MyPiece(this, "yolo", 1);
+    this.piece2 = new MyPiece(this, "yolo", 2);
+    this.piece3 = new MyPiece(this, "yolo", 3);
 };
 
 // Handler called when the graph is finally loaded.
@@ -135,12 +138,17 @@ XMLscene.prototype.display = function() {
         }
         // Draw axis
         this.axis.display();
-
+        this.materials.asphalt.apply();
+        this.piece1.display();
+        this.translate(2,2,0);
+        this.piece2.display();
+        this.translate(2,2,0);
+        this.piece3.display();
 
         // ---- END Background, camera and axis setup
         // this.setActiveShader(this.shaders[this.selectedShader]);
         var root = this.components[this.root];
-        this.recursiveDisplay(this.root, root.materials[root.materialsIndex], root.textureID);
+        //this.recursiveDisplay(this.root, root.materials[root.materialsIndex], root.textureID);
         // this.setActiveShader(this.defaultShader);
     }
 };
