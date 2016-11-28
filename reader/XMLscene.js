@@ -45,6 +45,8 @@ XMLscene.prototype.init = function(application) {
 
     this.beginTime = -1;
     this.setUpdatePeriod(30);
+    this.setPickEnabled(true);
+
     this.piece1 = new MyPiece(this, "yolo", 1);
     this.piece2 = new MyPiece(this, "yolo", 2);
     this.piece3 = new MyPiece(this, "yolo", 3);
@@ -125,6 +127,9 @@ XMLscene.prototype.display = function() {
         this.updateProjectionMatrix();
         this.loadIdentity();
 
+        this.logPicking();
+        this.clearPickRegistration();
+
         // Apply transformations corresponding to the camera position relative to the origin
         this.applyViewMatrix();
 
@@ -138,6 +143,22 @@ XMLscene.prototype.display = function() {
         }
         // Draw axis
         this.axis.display();
+
+                var q11 = new MyPlace(this, 1, 1);
+                var q12 = new MyPlace(this, 1, 2);
+
+            this.pushMatrix()
+                this.translate(0,0,0);
+                this.registerForPick(0, q11);
+                q11.display();
+            this.popMatrix();
+
+            this.pushMatrix();
+                this.translate(2,0,0);
+                this.registerForPick(1, q12);
+                q12.display();
+            this.popMatrix();
+
         this.materials.asphalt.apply();
         this.piece1.display();
         this.translate(2,2,0);
@@ -152,7 +173,6 @@ XMLscene.prototype.display = function() {
         // this.setActiveShader(this.defaultShader);
     }
 };
-
 
 /**
  *      Predecessor arguments are the last ID !==inherit
@@ -303,4 +323,19 @@ XMLscene.prototype.setChessboardShading = function(data) {
     this.shader.setUniformsValues({
         cs: colorS
     });
+};
+
+XMLscene.prototype.logPicking = function () {
+	if (this.pickMode == false) {
+		if (this.pickResults != null && this.pickResults.length > 0) {
+			for (var i=0; i< this.pickResults.length; i++) {
+				var obj = this.pickResults[i][0];
+				if (obj)
+				{
+					console.log("Column: " + obj.column + ", Line: " + obj.line);
+				}
+			}
+			this.pickResults.splice(0,this.pickResults.length);
+		}
+	}
 };
