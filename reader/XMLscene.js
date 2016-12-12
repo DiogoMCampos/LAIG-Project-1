@@ -47,9 +47,13 @@ XMLscene.prototype.init = function(application) {
     this.setUpdatePeriod(30);
     this.setPickEnabled(true);
 
+    this.initShaders();
+
     this.piece1 = new MyPiece(this, "yolo", 1);
     this.piece2 = new MyPiece(this, "yolo", 2);
     this.piece3 = new MyPiece(this, "yolo", 3);
+    this.chess = new MyChessboard(this, "yolo", {"du":9, "dv":9, "dimX":5.4, "dimY":5.4});
+    this.z=0;
 };
 
 // Handler called when the graph is finally loaded.
@@ -61,7 +65,6 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.enableTextures(true);
     this.interface.setActiveCamera(this.camera);
     this.interface.addScene(this);
-    this.initShaders();
     this.setDefaultAppearance();
 };
 
@@ -144,26 +147,30 @@ XMLscene.prototype.display = function() {
         // Draw axis
         this.axis.display();
 
-                var q11 = new MyPlace(this, 1, 1);
-                var q12 = new MyPlace(this, 1, 2);
+        var q11 = new MyPlace(this, 1, 1);
+        var q12 = new MyPlace(this, 1, 2);
 
-            this.pushMatrix()
-                this.translate(0,0,0);
-                this.registerForPick(0, q11);
-                q11.display();
-            this.popMatrix();
+        //this.setActiveShader(this.shader);
+        //this.chess.display();
+        //this.setActiveShader(this.defaultShader);
 
-            this.pushMatrix();
-                this.translate(2,0,0);
-                this.registerForPick(1, q12);
-                q12.display();
-            this.popMatrix();
+        this.pushMatrix()
+            this.translate(0, 0, 0);
+            this.registerForPick(0, q11);
+            q11.display();
+        this.popMatrix();
+
+        this.pushMatrix();
+            this.translate(2, 0, 0);
+            this.registerForPick(1, q12);
+            q12.display();
+        this.popMatrix();
 
         this.materials.asphalt.apply();
         this.piece1.display();
-        this.translate(2,2,0);
+        this.translate(2, 0, 2);
         this.piece2.display();
-        this.translate(2,2,0);
+        this.translate(2, 0, 2);
         this.piece3.display();
 
         // ---- END Background, camera and axis setup
@@ -279,11 +286,13 @@ XMLscene.prototype.applyMaterialTexture = function(materialId, textureID) {
 };
 
 XMLscene.prototype.switchPerspective = function() {
-    this.cameraIndex++;
+    this.camera.setPosition(vec3.fromValues(this.z, 0, 0));
+    this.z+=0.01;
+    /*this.cameraIndex++;
     if (this.cameraIndex === this.cameras.length) {
         this.cameraIndex = 0;
     }
-    this.camera = this.cameras[this.cameraIndex];
+    this.camera = this.cameras[this.cameraIndex];*/
 };
 
 XMLscene.prototype.incrementMaterials = function() {
@@ -305,37 +314,26 @@ XMLscene.prototype.setChessboardShading = function(data) {
     this.shader.setUniformsValues({
         dv: data.dv
     });
+
     this.shader.setUniformsValues({
-        su: data.su
+        dimY: data.dimY
     });
     this.shader.setUniformsValues({
-        sv: data.sv
+        dimX: data.dimX
     });
-    var color1 = vec4.fromValues(data.c1.r, data.c1.g, data.c1.b, data.c1.a);
-    var color2 = vec4.fromValues(data.c2.r, data.c2.g, data.c2.b, data.c2.a);
-    var colorS = vec4.fromValues(data.cs.r, data.cs.g, data.cs.b, data.cs.a);
-    this.shader.setUniformsValues({
-        c1: color1
-    });
-    this.shader.setUniformsValues({
-        c2: color2
-    });
-    this.shader.setUniformsValues({
-        cs: colorS
-    });
+
 };
 
-XMLscene.prototype.logPicking = function () {
-	if (this.pickMode == false) {
-		if (this.pickResults != null && this.pickResults.length > 0) {
-			for (var i=0; i< this.pickResults.length; i++) {
-				var obj = this.pickResults[i][0];
-				if (obj)
-				{
-					console.log("Column: " + obj.column + ", Line: " + obj.line);
-				}
-			}
-			this.pickResults.splice(0,this.pickResults.length);
-		}
-	}
+XMLscene.prototype.logPicking = function() {
+    if (this.pickMode == false) {
+        if (this.pickResults != null && this.pickResults.length > 0) {
+            for (var i = 0; i < this.pickResults.length; i++) {
+                var obj = this.pickResults[i][0];
+                if (obj) {
+                    console.log("Column: " + obj.column + ", Line: " + obj.line);
+                }
+            }
+            this.pickResults.splice(0, this.pickResults.length);
+        }
+    }
 };
