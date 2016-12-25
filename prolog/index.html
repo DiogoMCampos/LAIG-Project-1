@@ -8,7 +8,7 @@
 		<h1>Sicstus HTTP Test</h1>
 
 		<div>
-			<input id="query_field" type="Text" value="handshake"/>
+			<input id="query_field" type="Text" value="handshake" style="width:1000px;"/>
 			<br>
 			<button id="send_button" type="button" onclick="makeRequest();"> Send </button>
 		</div>
@@ -40,7 +40,20 @@
 
 			//Handle the Reply
 			function handleReply(data){
-				console.log(typeof data.target.response);
+				// console.log(data);
+				var response = data.target.response;
+				var pos = response.indexOf("[")+1;
+				var slice = response.slice(pos, response.length-1);
+
+				var npos = slice.indexOf("[")+1;
+				var pieces = slice.slice(npos, slice.length-1);
+				var mov = slice.slice(0, npos-2);
+				var movArr = mov.split(",");
+				console.log(movArr);
+				var arr = pieces.split(",");
+				console.log(arr);
+
+				// console.log(slice);
 				console.log(data.target.response);
 				document.querySelector("#query_result").innerHTML=data.target.response;
 			}

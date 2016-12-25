@@ -105,11 +105,17 @@ print_header_line(_).
 % Require your Prolog Files here
 
 parse_input(handshake, handshake).
-parse_input(player(Board,Column,Line), Reply) :-
-	possibleMoves(Board, Column, Line, _, Reply).
-parse_input(computer(Board, Side),Reply) :-
+parse_input(move(Board, Side),Reply) :-
 	getComputerMove(Board, Side, HorMove, VertMove, PiecesToMove),
-	Reply = HorMove-VertMove-PiecesToMove.
+	Reply = [HorMove,VertMove,PiecesToMove].
+parse_input(move(Board,Column,Line), Reply) :-
+	possibleMoves(Board, Column, Line, _, Reply).
+parse_input(move(Board, Column, Line, EndColumn, EndLine),Reply) :-
+	getPiece(Board, Column, Line, Piece),
+    pieceColor(Piece, Color),
+	verifyMove(Board, Column, Line, EndColumn, EndLine, HorMove, VertMove, Color, PiecesToMove),
+	Reply = [HorMove,VertMove,PiecesToMove].
+
 parse_input(quit, goodbye).
 
 
