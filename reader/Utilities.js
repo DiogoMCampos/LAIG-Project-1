@@ -169,6 +169,9 @@ var parseChessboard = function(reader, id, xmlNode){
     data.textureref = reader.getString(xmlNode, "textureref");
     data.su = reader.getInteger(xmlNode, "su");
     data.sv = reader.getInteger(xmlNode, "sv");
+    data.dimX = reader.getFloat(xmlNode, "dimX");
+    data.dimY = reader.getFloat(xmlNode, "dimY");
+
     if(data.du === null || isNaN(data.du) || data.du < 0){
         throw "primitive id: " + data.id + " has du value not recognized";
     }
@@ -185,6 +188,14 @@ var parseChessboard = function(reader, id, xmlNode){
     if(data.sv === null || isNaN(data.sv) || data.sv < 0) {
         data.sv = -1;
         console.warn("primitive id: " + data.id + " has sv value not recognized. Assigning default value -1");
+    }
+    if(data.dimX === null || isNaN(data.dimX) || data.dimX < 0){
+        data.dimX = 1;
+        console.warn("primitive id: " + data.id + " has dimX value not recognized. Assigning default value -1");
+    }
+    if(data.dimY === null || isNaN(data.dimY) || data.dimY < 0) {
+        data.dimY = 1;
+        console.warn("primitive id: " + data.id + " has dimY value not recognized. Assigning default value -1");
     }
     data.c1 = getRGBA(reader, id, xmlNode, "c1");
     data.c2 = getRGBA(reader, id, xmlNode, "c2");

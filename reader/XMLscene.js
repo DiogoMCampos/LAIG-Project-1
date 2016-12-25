@@ -49,10 +49,21 @@ XMLscene.prototype.init = function(application) {
 
     this.initShaders();
 
+    this.cells = [];
+    for (var i = 0; i < 9; i++) {
+        this.cells[i] = [];
+        for (var j = 0; j < 9; j++) {
+            var place = new MyPlace(this, i, j);
+            this.cells[i].push(place);
+        }
+    }
+    console.log(this.cells);
     this.piece1 = new MyPiece(this, "yolo", 1);
     this.piece2 = new MyPiece(this, "yolo", 2);
     this.piece3 = new MyPiece(this, "yolo", 3);
-    this.chess = new MyChessboard(this, "yolo", {"du":9, "dv":9, "dimX":5.4, "dimY":5.4});
+
+    this.rPieces = [];
+    this.wPieces = [];
     this.z=0;
 };
 
@@ -99,6 +110,8 @@ XMLscene.prototype.update = function(currTime) {
     for (var id in this.primitives) {
         if (this.primitives[id].hasOwnProperty("data")) {
             if (this.primitives[id].data.hasOwnProperty("su") && this.primitives[id].data.hasOwnProperty("sv")) {
+
+                console.log(this.primitives[id].data.dimX + "  " + this.primitives[id].data.dimY);
                 this.primitives[id].data.su++;
                 if (this.primitives[id].data.su >= this.primitives[id].data.du) {
                     this.primitives[id].data.su = 0;
@@ -147,36 +160,37 @@ XMLscene.prototype.display = function() {
         // Draw axis
         this.axis.display();
 
-        var q11 = new MyPlace(this, 1, 1);
-        var q12 = new MyPlace(this, 1, 2);
-
-        //this.setActiveShader(this.shader);
-        //this.chess.display();
-        //this.setActiveShader(this.defaultShader);
-
-        this.pushMatrix()
-            this.translate(0, 0, 0);
-            this.registerForPick(0, q11);
-            q11.display();
-        this.popMatrix();
-
-        this.pushMatrix();
-            this.translate(2, 0, 0);
-            this.registerForPick(1, q12);
-            q12.display();
-        this.popMatrix();
-
-        this.materials.asphalt.apply();
+        // //this.setActiveShader(this.shader);
+        // //this.chess.display();
+        // //this.setActiveShader(this.defaultShader);
+        //
+        // this.pushMatrix()
+        //     this.translate(0, 0, 0);
+        //     this.registerForPick(0, q11);
+        //     // this.materials.invisible.apply();
+        //     q11.display();
+        // this.popMatrix();
+        //
+        // this.pushMatrix();
+        //     this.translate(2, 0, 0);
+        //     // this.materials["invisible"].apply();
+        //     this.registerForPick(1, q12);
+        //     q12.display();
+        // this.popMatrix();
+        //
+        this.materials.selected.apply();
         this.piece1.display();
         this.translate(2, 0, 2);
+        this.materials.red.apply();
         this.piece2.display();
         this.translate(2, 0, 2);
+        this.materials.possible.apply();
         this.piece3.display();
 
         // ---- END Background, camera and axis setup
         // this.setActiveShader(this.shaders[this.selectedShader]);
         var root = this.components[this.root];
-        //this.recursiveDisplay(this.root, root.materials[root.materialsIndex], root.textureID);
+        this.recursiveDisplay(this.root, root.materials[root.materialsIndex], root.textureID);
         // this.setActiveShader(this.defaultShader);
     }
 };
@@ -308,18 +322,19 @@ XMLscene.prototype.incrementMaterials = function() {
 };
 
 XMLscene.prototype.setChessboardShading = function(data) {
+    var color1 = vec4.fromValues(data.c1.r, data.c1.g, data.c1.b, data.c1.a);
+    var color2 = vec4.fromValues(data.c2.r, data.c2.g, data.c2.b, data.c2.a);
+    var colorS = vec4.fromValues(data.cs.r, data.cs.g, data.cs.b, data.cs.a);
     this.shader.setUniformsValues({
-        du: data.du
-    });
-    this.shader.setUniformsValues({
-        dv: data.dv
-    });
-
-    this.shader.setUniformsValues({
-        dimY: data.dimY
-    });
-    this.shader.setUniformsValues({
-        dimX: data.dimX
+        du: data.du,
+        dv: data.dv,
+        dimY: data.dimY,
+        dimX: data.dimX,
+        su: data.su,
+        sv: data.sv,
+        c1: color1,
+        c2: color2,
+        cs: colorS
     });
 
 };

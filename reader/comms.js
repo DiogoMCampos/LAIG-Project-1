@@ -35,8 +35,18 @@ function makeRequest(board, row, column, destRow, destColumn){
 
 //Handle the Reply when it wants to get pieces affected by the move
 function handleAffectedReply(data){
-    console.log(data);
-    document.querySelector("#query_result").innerHTML=data.target.response;
+    
+    var response = data.target.response;
+    var pos = response.indexOf("[")+1;
+    var slice = response.slice(pos, response.length-1);
+
+    var npos = slice.indexOf("[")+1;
+    var pieces = slice.slice(npos, slice.length-1);
+    var mov = slice.slice(0, npos-2);
+    var movArr = mov.split(",");
+    console.log(movArr);
+    var arr = pieces.split(",");
+    console.log(arr);
 
 }
 
