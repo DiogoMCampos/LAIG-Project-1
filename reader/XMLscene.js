@@ -416,8 +416,15 @@ XMLscene.prototype.setChessboardShading = function(data) {
 XMLscene.prototype.analyzeProlog = function(){
     if(ready){
         ready = false;
-        for (var i = 0; i < response.length; i++) {
+        for (var i = 0; i < this.cells.length; i++) {
+            for (var j = 0; j < this.cells[i].length; j++) {
+                this.cells[i][j].activate = false;
+            }
+        }
+        console.log(response);
+        for (i = 0; i < response.length; i++) {
             var mov = response[i].split("-");
+            console.log(mov);
             this.cells[mov[2]-1][mov[3]-1].activate = true;
         }
     }
@@ -432,13 +439,13 @@ function getProlog(data){
 }
 
 XMLscene.prototype.logPicking = function() {
-    if (this.pickMode == false) {
-        if (this.pickResults != null && this.pickResults.length > 0) {
+    if (this.pickMode === false) {
+        if (this.pickResults !== null && this.pickResults.length > 0) {
             for (var i = 0; i < this.pickResults.length; i++) {
                 var obj = this.pickResults[i][0];
                 if (obj) {
                     makeRequest(this, obj.col, obj.line);
-                    console.log("Column: " + obj.col + ", Line: " + obj.line);
+                    // console.log("Column: " + obj.col + ", Line: " + obj.line);
                     console.log(obj);
                 }
             }

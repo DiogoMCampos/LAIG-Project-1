@@ -6,6 +6,7 @@ function MyPlace(scene, column, line) {
     CGFplane.call(this, scene);
     this.column = column;
     this.line = line;
+    this.id = "place";
     this.active = false;
 }
 
