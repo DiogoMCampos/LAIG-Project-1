@@ -12,6 +12,16 @@ function XMLscene(inter) {
     this.interface = inter;
     this.appearance = null;
     this.affect = true;
+    this.log = [];
+    this.undo = function(){
+        if(this.log.length > 0){
+            this.undoMovement(this.log[this.log.length-1], this.log.length);
+            this.log.pop();
+        } else{
+            alert("Can't go back anymore");
+        }
+    };
+
 
     this.PRIMITIVES = {
         RECTANGLE: "rectangle",
@@ -178,45 +188,12 @@ XMLscene.prototype.display = function() {
             this.lights[j].update();
         }
         // Draw axis
-        this.axis.display();
+        // this.axis.display();
 
-        // //this.setActiveShader(this.shader);
-        // //this.chess.display();
-        // //this.setActiveShader(this.defaultShader);
-        //
-        // this.pushMatrix()
-        //     this.translate(0, 0, 0);
-        //     this.registerForPick(0, q11);
-        //     // this.materials.invisible.apply();
-        //     q11.display();
-        // this.popMatrix();
-        //
-        // this.pushMatrix();
-        //     this.translate(2, 0, 0);
-        //     // this.materials["invisible"].apply();
-        //     this.registerForPick(1, q12);
-        //     q12.display();
-        // this.popMatrix();
-        //
-        // this.pushMatrix();
-        //     this.translate(-0.83333*4, 0.2, 0.83333*4); //put on col1 line1
-        //     this.materials.black.apply();
-        //     this.piece1.display();
-        //     this.translate(0.83333, 0.2, -0.8333);
-        //     this.materials.red.apply();
-        //     this.piece2.display();
-        //     this.translate(0.83333*5, 0.2, -0.83333*2);
-        //     this.materials.possible.apply();
-        //     this.piece3.display();
-        // this.popMatrix();
-        // this.pushMatrix();
-        // this.translate(0,0.2,0);
-        // this.piece1.display();
 
         this.displayPieces();
         this.analyzeProlog();
         this.displayPlaces();
-        // this.popMatrix();
 
         // ---- END Background, camera and axis setup
         // this.setActiveShader(this.shaders[this.selectedShader]);
@@ -234,7 +211,10 @@ XMLscene.prototype.displayPieces = function(){
             this.materials.black.apply();
             this.translate(-0.83333*4, 0.2, 0.83333*4);
             this.translate(0.83333*(piece.col-1), (piece.numFloors-1)*0.2, -0.83333*(piece.line-1));
-            this.registerForPick(i, piece);
+            if (this.affect) {
+                this.registerForPick(i, piece);
+                console.log('si');
+            }
             piece.display();
         this.popMatrix();
     }
@@ -245,7 +225,9 @@ XMLscene.prototype.displayPieces = function(){
             this.materials.black.apply();
             this.translate(-0.83333*4, 0.2, 0.83333*4);
             this.translate(0.83333*(piece.col-1), (piece.numFloors-1)*0.2, -0.83333*(piece.line-1));
-            this.registerForPick(i+j, piece);
+            if (this.affect) {
+                this.registerForPick(9+j, piece);
+            }
             piece.display();
         this.popMatrix();
     }
@@ -269,6 +251,37 @@ XMLscene.prototype.displayPlaces = function(){
     }
 };
 
+XMLscene.prototype.undoMovement = function(entry, entryNumber){
+    var i,j;
+    //desactivte other cells
+    for (i = 0; i < this.cells.length; i++) {
+        for ( j = 0; j < this.cells[i].length; j++) {
+            this.cells[i][j].activate = false;
+        }
+    }
+    var direction = entry[0];
+    for (i = 0; i < entry[1].length; i++) {
+        var mov = entry[1][i].split("-");
+        var pieces;
+        if(mov[2] === "w"){
+            pieces = this.wPieces;
+        } else{
+            pieces = this.rPieces;
+        }
+        var colMov = Number(direction[0])*Number(mov[3]);
+        var linMov = Number(direction[1])*Number(mov[3]);
+        for (j = 0; j < pieces.length; j++) {
+            if(mov[0] == (pieces[j].col - colMov) && mov[1] == (pieces[j].line - linMov)){
+                if(!withinBoard(pieces[j]) && pieces[j].time !== entryNumber){
+                    continue;
+                }
+                pieces[j].col -= Number(direction[0])*Number(mov[3]);
+                pieces[j].line -= Number(direction[1])*Number(mov[3]);
+                break;
+            }
+        }
+    }
+};
 
 /**
  *      Predecessor arguments are the last ID !==inherit
@@ -457,9 +470,15 @@ XMLscene.prototype.readMove = function(){
             if(mov[0] == pieces[j].col && mov[1] == pieces[j].line){
                 pieces[j].col += Number(direction[0])*Number(mov[3]);
                 pieces[j].line += Number(direction[1])*Number(mov[3]);
+
+                if(!withinBoard(pieces[j])){
+                    pieces[j].time = this.log.length+1;
+                }
+                break;
             }
         }
     }
+    this.log.push(response);
     this.affect = true;
 };
 
@@ -491,11 +510,15 @@ XMLscene.prototype.logPicking = function() {
             for (var i = 0; i < this.pickResults.length; i++) {
                 var obj = this.pickResults[i][0];
                 if (obj) {
-                    if(obj.id === "r" || obj.id === "w"){
+                    console.log(obj);
+                    if(this.affect){
                         this.selected = obj;
                         makeRequest(this, obj.col, obj.line);
                     } else{
-                        makeRequest(this, this.selected.col, this.selected.line, obj.column+1, obj.line+1);
+                        if(obj === this.selected){
+
+                        } else if(obj.id === "place")
+                            makeRequest(this, this.selected.col, this.selected.line, obj.column+1, obj.line+1);
                     }
                 }
             }

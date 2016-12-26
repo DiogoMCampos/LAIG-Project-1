@@ -44,11 +44,13 @@ function createBoard(scene){
     }
     for (l = 0; l < scene.rPieces.length; l++) {
         cell = scene.rPieces[l];
-        board[cell.line-1][cell.col-1] = cell;
+        if(withinBoard(cell))
+            board[cell.line-1][cell.col-1] = cell;
     }
     for (l = 0; l < scene.wPieces.length; l++) {
         cell = scene.wPieces[l];
-        board[cell.line-1][cell.col-1] = cell;
+        if(withinBoard(cell))
+            board[cell.line-1][cell.col-1] = cell;
     }
     return board;
 }

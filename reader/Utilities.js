@@ -258,3 +258,7 @@ var getXYZ = function(reader, node, id){
     }
     return dest;
 };
+
+function withinBoard(piece){
+    return piece.col < 10 & piece.col > 0 && piece.line < 10 && piece.line > 0;
+}
