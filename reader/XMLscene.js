@@ -192,7 +192,8 @@ XMLscene.prototype.display = function() {
         this.updateLights();
         // Draw axis
         // this.axis.display();
-
+        if(!this.end)
+            this.finishGame();
         this.displayPieces();
         this.analyzeProlog();
         this.displayPlaces();
@@ -426,6 +427,27 @@ XMLscene.prototype.analyzeProlog = function(){
             this.readPossible();
         } else{
             this.readMove();
+        }
+    }
+};
+
+XMLscene.prototype.finishGame = function(){
+    for (var j = 0; j < 2; j++) {
+        var array, points = 0;
+        if(j === 0){
+            array = this.rPieces;
+        }else{
+            array = this.wPieces;
+        }
+        for (var i = 0; i < array.length; i++) {
+            var piece = array[i];
+            if(!withinBoard(piece)){
+                points += piece.numFloors;
+                if(points >= 7){
+                    alert("Congratulations you won");
+                    this.end = true;
+                }
+            }
         }
     }
 };
