@@ -1,3 +1,5 @@
+var response, ready = false;
+
 function XMLscene(inter) {
     CGFscene.call(this);
     this.primitives = {};
@@ -50,8 +52,10 @@ XMLscene.prototype.init = function(application) {
     this.initShaders();
 
     this.cells = [];
+    this.board = [];
     for (var i = 0; i < 9; i++) {
         this.cells[i] = [];
+        this.board[i] = [];
         for (var j = 0; j < 9; j++) {
             var place = new MyPlace(this, i, j);
             this.cells[i].push(place);
@@ -209,6 +213,8 @@ XMLscene.prototype.display = function() {
         // this.piece1.display();
 
         this.displayPieces();
+        this.analyzeProlog();
+        this.displayPlaces();
         // this.popMatrix();
 
         // ---- END Background, camera and axis setup
@@ -243,6 +249,25 @@ XMLscene.prototype.displayPieces = function(){
         this.popMatrix();
     }
 };
+
+XMLscene.prototype.displayPlaces = function(){
+    var o = 0;
+    for (var j = 0; j < this.cells.length; j++) {
+        for (var i = 0; i < this.cells[j].length; i++) {
+            var cell = this.cells[i][j];
+            if(cell.activate){
+                this.pushMatrix();
+                    this.materials.possible.apply();
+                    this.translate(-0.83333*4, 0.2, 0.83333*4);
+                    this.translate(0.83333*i, 0, -0.83333*j);
+                    this.registerForPick(o++, cell);
+                    cell.display();
+                this.popMatrix();
+            }
+        }
+    }
+};
+
 
 /**
  *      Predecessor arguments are the last ID !==inherit
@@ -388,12 +413,31 @@ XMLscene.prototype.setChessboardShading = function(data) {
 
 };
 
+XMLscene.prototype.analyzeProlog = function(){
+    if(ready){
+        ready = false;
+        for (var i = 0; i < response.length; i++) {
+            var mov = response[i].split("-");
+            this.cells[mov[2]-1][mov[3]-1].activate = true;
+        }
+    }
+};
+
+function getProlog(data){
+    var resp = data.target.response;
+    resp = resp.slice(1, resp.length-1);
+    var arr = resp.split(",");
+    response = arr;
+    ready = true;
+}
+
 XMLscene.prototype.logPicking = function() {
     if (this.pickMode == false) {
         if (this.pickResults != null && this.pickResults.length > 0) {
             for (var i = 0; i < this.pickResults.length; i++) {
                 var obj = this.pickResults[i][0];
                 if (obj) {
+                    makeRequest(this, obj.col, obj.line);
                     console.log("Column: " + obj.col + ", Line: " + obj.line);
                     console.log(obj);
                 }
