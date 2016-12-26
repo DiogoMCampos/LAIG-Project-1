@@ -262,3 +262,11 @@ var getXYZ = function(reader, node, id){
 function withinBoard(piece){
     return piece.col < 10 & piece.col > 0 && piece.line < 10 && piece.line > 0;
 }
+
+function clearCells(cells){
+    for (i = 0; i < cells.length; i++) {
+        for ( j = 0; j < cells[i].length; j++) {
+            cells[i][j].activate = false;
+        }
+    }
+}

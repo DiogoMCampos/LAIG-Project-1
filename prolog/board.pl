@@ -4,7 +4,7 @@
 :-include('utilities.pl').
 :-include('movement.pl').
 
-test:-boardStart(X), possibleMoves(X, 1, 1, _, Moves), write(Moves),nl.
+test:-boardStart(X), possibleMoves(X, 5, 3, _, Moves), write(Moves),nl.
 
 boardStartIndex(1).
 
@@ -75,44 +75,47 @@ verifyMove(Board,InC, InL, DeC, DeL, HorMove, VertMove, Player, PiecesAffected) 
         true
     ;   pushOpponents(PiecesAffected, Player)).
 
-listPossible(Column, Line, HorMove, VertMove, Amount, [Move|Rest]) :-
-    Amount > 0 ->
-        NewAmount is Amount-1,
+listPossible(Column, Line, HorMove, VertMove, Amount, Move) :-
+
         DestCol is Column + HorMove * Amount,
         DestLin is Line + VertMove * Amount,
-        returnResult(Column-Line-DestCol-DestLin, Move),
-        listPossible(Column, Line, HorMove, VertMove, NewAmount, Rest)
-    ;   true.
+        returnResult(Column-Line-DestCol-DestLin, Move).
 
-getPossibleDirection(_, _, _, _, _, 0,_, Total, Moves) :- Total is 0, returnResult(Moves, []).
-getPossibleDirection(Board, Column, Line, HorMove, VertMove, Amount, PieceColor, Total, Moves) :-
-    DestCol is Column + (HorMove * Amount),
-    DestLin is Line + (VertMove * Amount),
-    NewAmount is Amount - 1,
-    (verifyMove(Board,Column,Line, DestCol, DestLin, _,_, PieceColor,_) ->
-        Total is Amount,
-        listPossible(Column, Line, HorMove, VertMove, Amount, Moves)
-    ;   getPossibleDirection(Board, Column, Line, HorMove, VertMove, NewAmount,PieceColor, Total, Moves)).
+getPossibleDirection(Board, Column, Line, HorMove, VertMove, Amount, PieceColor, [Moves|Rest]) :-
+    Amount > 0 ->
+        DestCol is Column + (HorMove * Amount),
+        DestLin is Line + (VertMove * Amount),
+        NewAmount is Amount - 1,
+        (verifyMove(Board,Column,Line, DestCol, DestLin, _,_, PieceColor,_) ->
+            listPossible(Column, Line, HorMove, VertMove, Amount, Moves),
+            getPossibleDirection(Board, Column, Line, HorMove, VertMove, NewAmount,PieceColor, Rest)
+        ;   getPossibleDirection(Board, Column, Line, HorMove, VertMove, NewAmount,PieceColor, [Moves|Rest]))
+    ;   true.
 
 possibleMoves(Board, Column, Line, Total, Possible) :-
     getPiece(Board, Column, Line, Piece),
     pieceHeight(Piece, Height),
     pieceColor(Piece, Color),
-    getPossibleDirection(Board, Column, Line, -1,  0, Height, Color, Total1, Inverted1),
-    getPossibleDirection(Board, Column, Line,  1,  0, Height, Color, Total2, Inverted2),
-    getPossibleDirection(Board, Column, Line,  0, -1, Height, Color, Total3, Inverted3),
-    getPossibleDirection(Board, Column, Line,  0,  1, Height, Color, Total4, Inverted4),
-    Total is Total1 + Total2 + Total3 + Total4,
-    (Total1 > 0 ->
+    getPossibleDirection(Board, Column, Line, -1,  0, Height, Color, Inverted1),write(Inverted1),nl,
+    getPossibleDirection(Board, Column, Line,  1,  0, Height, Color, Inverted2),write(Inverted2),nl,
+    getPossibleDirection(Board, Column, Line,  0, -1, Height, Color, Inverted3),write(Inverted3),nl,
+    getPossibleDirection(Board, Column, Line,  0,  1, Height, Color, Inverted4),write(Inverted4),nl,
+    length(Inverted1, Total1),write(Total1),nl,
+    length(Inverted2, Total2),write(Total2),nl,
+    length(Inverted3, Total3),write(Total3),nl,
+    length(Inverted4, Total4),write(Total4),nl,
+
+    Total is Total1 + Total2 + Total3 + Total4 - 4,
+    (Total1 - 1 > 0 ->
         reverse(Inverted1, [_|Moves1])
     ;   returnResult(Moves1,[])),
-    (Total2 > 0 ->
+    (Total2 - 1 > 0 ->
         reverse(Inverted2, [_|Moves2])
     ;   returnResult(Moves2,[])),
-    (Total3 > 0 ->
+    (Total3 - 1 > 0 ->
         reverse(Inverted3, [_|Moves3])
     ;   returnResult(Moves3,[])),
-    (Total4 > 0 ->
+    (Total4 - 1 > 0 ->
         reverse(Inverted4, [_|Moves4])
     ;   returnResult(Moves4,[])),
     append(Moves1, Moves2, SumMoves1),

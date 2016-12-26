@@ -213,7 +213,6 @@ XMLscene.prototype.displayPieces = function(){
             this.translate(0.83333*(piece.col-1), (piece.numFloors-1)*0.2, -0.83333*(piece.line-1));
             if (this.affect) {
                 this.registerForPick(i, piece);
-                console.log('si');
             }
             piece.display();
         this.popMatrix();
@@ -252,17 +251,11 @@ XMLscene.prototype.displayPlaces = function(){
 };
 
 XMLscene.prototype.undoMovement = function(entry, entryNumber){
-    var i,j;
-    //desactivte other cells
-    for (i = 0; i < this.cells.length; i++) {
-        for ( j = 0; j < this.cells[i].length; j++) {
-            this.cells[i][j].activate = false;
-        }
-    }
+    var i,j, pieces;
+    clearCells(this.cells);
     var direction = entry[0];
     for (i = 0; i < entry[1].length; i++) {
         var mov = entry[1][i].split("-");
-        var pieces;
         if(mov[2] === "w"){
             pieces = this.wPieces;
         } else{
@@ -430,12 +423,8 @@ XMLscene.prototype.setChessboardShading = function(data) {
 XMLscene.prototype.analyzeProlog = function(){
     if(ready){
         ready = false;
-        //desactivte other cells
-        for (var i = 0; i < this.cells.length; i++) {
-            for (var j = 0; j < this.cells[i].length; j++) {
-                this.cells[i][j].activate = false;
-            }
-        }
+        clearCells(this.cells);
+
         //read response acoording to the situation
         if(this.affect){
             this.readPossible();
@@ -446,10 +435,8 @@ XMLscene.prototype.analyzeProlog = function(){
 };
 
 XMLscene.prototype.readPossible = function(){
-    console.log(response);
     for (i = 0; i < response.length; i++) {
         var mov = response[i].split("-");
-        console.log(mov);
         this.cells[mov[2]-1][mov[3]-1].activate = true;
     }
     this.affect = false;
@@ -510,16 +497,19 @@ XMLscene.prototype.logPicking = function() {
             for (var i = 0; i < this.pickResults.length; i++) {
                 var obj = this.pickResults[i][0];
                 if (obj) {
-                    console.log(obj);
                     if(this.affect){
                         this.selected = obj;
                         makeRequest(this, obj.col, obj.line);
                     } else{
                         if(obj === this.selected){
-
+                            this.affect = true;
+                            clearCells(this.cells);
                         } else if(obj.id === "place")
                             makeRequest(this, this.selected.col, this.selected.line, obj.column+1, obj.line+1);
                     }
+                } else{
+                    this.affect = true;
+                    clearCells(this.cells);
                 }
             }
             this.pickResults.splice(0, this.pickResults.length);
