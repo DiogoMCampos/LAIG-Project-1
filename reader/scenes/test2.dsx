@@ -3,8 +3,8 @@
 
     <views default="front">
         <perspective id="front" near="0.1" far="500" angle="90">
-            <from x="15" y="10" z="35"/>
-            <to x="15" y="5" z="0"/>
+            <from x="0" y="4" z="5"/>
+            <to x="0" y="0" z="0"/>
         </perspective>
 
         <perspective id="insideScene" near="5" far="50" angle="50">
@@ -58,7 +58,14 @@
             <shininess value="1"/>
         </material>
 
-        <material id="asphalt">
+        <material id="white">
+            <emission r="0.84" g="0.89" b="0.78" a="1"/>
+            <ambient r="0.84" g="0.89" b="0.78" a="1"/>
+            <diffuse r="0.84" g="0.89" b="0.78" a=".1"/>
+            <specular r="0.84" g="0.89" b="0.78" a=".1"/>
+            <shininess value="0"/>
+        </material>
+        <material id="black">
             <emission r="0.11" g="0.12" b="0.12" a="1"/>
             <ambient r="0" g="0" b="0" a="1"/>
             <diffuse r="0.1" g="0.1" b="0.1" a=".1"/>
@@ -66,11 +73,27 @@
             <shininess value="0"/>
         </material>
 
-        <material id="pink">
-            <emission r="1" g="0.08" b="0.58" a="1"/>
-            <ambient r="1" g="0.08" b="0.58" a="1"/>
-            <diffuse r="1" g="0.2" b="0.58" a="1"/>
+        <material id="red">
+            <emission r="1" g="0" b="0" a=".1"/>
+            <ambient r="1" g="0" b="0" a=".1"/>
+            <diffuse r="1" g="0" b="0" a=".1"/>
+            <specular r="1" g="0" b="0" a=".1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="selected">
+            <emission r="1" g="1" b="0" a="1"/>
+            <ambient r="1" g="1" b="0" a="1"/>
+            <diffuse r="1" g="1" b="0" a="1"/>
             <specular r="1" g="1" b="0" a="1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="possible">
+            <emission r="0" g="0" b="1" a="1"/>
+            <ambient r="0" g="0" b="1" a="1"/>
+            <diffuse r="0" g="0" b="1" a="1"/>
+            <specular r="0" g="0" b="0.99" a="1"/>
             <shininess value="1"/>
         </material>
     </materials>
@@ -121,7 +144,7 @@
         </primitive>
 
         <primitive id="chessboard">
-            <chessboard du="8" dv="8" textureref="wood" su="-1" sv="-1">
+            <chessboard du="9" dv="9" dimX="7.5" dimY="7.5" textureref="wood" su="-1" sv="1">
                 <c1 r="0.85" g="0.5" b="0.07" a="1"/>
                 <c2 r="0.92" g="0.83" b="0.7" a="1"/>
                 <cs r="0.95" g="0" b="0" a="1"/>
@@ -135,131 +158,11 @@
     </primitives>
 
     <components>
-        <component id="background">
-            <transformation>
-                <scale x="30" y="20" z="30"/>
-            </transformation>
-
-            <animation></animation>
-
-            <materials>
-                <material id="inherit"/>
-            </materials>
-
-            <texture id="city"/>
-
-            <children>
-                <primitiveref id="rectangle"/>
-                <componentref id="road"/>
-                <componentref id="leftWall"/>
-                <componentref id="backWall"/>
-                <componentref id="ceiling"/>
-            </children>
-        </component>
-
-        <component id="leftWall">
-            <transformation>
-                <rotate axis="y" angle="90"/>
-                <translate x="-1" y="0" z="0"/>
-            </transformation>
-
-            <animation></animation>
-
-            <materials>
-                <material id="inherit"/>
-            </materials>
-
-            <texture id="inherit"/>
-
-            <children>
-                <primitiveref id="rectangle"/>
-            </children>
-        </component>
-
-        <component id="backWall">
-            <transformation>
-                <rotate axis="y" angle="-90"/>
-                <translate x="0" y="0" z="-1"/>
-            </transformation>
-
-            <animation></animation>
-
-            <materials>
-                <material id="inherit"/>
-            </materials>
-
-            <texture id="inherit"/>
-
-            <children>
-                <primitiveref id="rectangle"/>
-            </children>
-        </component>
-
-        <component id="ceiling">
-            <transformation>
-                <translate x="0" y="1" z="0"/>
-                <rotate axis="x" angle="90"/>
-            </transformation>
-
-            <animation></animation>
-
-            <materials>
-                <material id="pink"/>
-            </materials>
-
-            <texture id="none"/>
-
-            <children>
-                <primitiveref id="rectangle"/>
-            </children>
-        </component>
-
-        <component id="road">
-            <transformation>
-                <translate x="0" y="0" z="0"/>
-                <rotate axis="x" angle="-90"/>
-                <rotate axis="z" angle="-90"/>
-            </transformation>
-
-            <animation></animation>
-
-            <materials>
-                <material id="asphalt"/>
-            </materials>
-
-            <texture id="none"/>
-
-            <children>
-                <primitiveref id="rectangle"/>
-            </children>
-        </component>
-
-        <component id="vehicle">
-            <transformation>
-                <scale x="1.5" y="1.5" z="1.5"/>
-                <translate x="5" y="0.75" z="2.5"/>
-            </transformation>
-
-            <animation>
-                <animationref id="enteranimation"/>
-                <animationref id="rotanimation"/>
-                <animationref id="finalanimation"/>
-                <animationref id="frontanimation"/>
-            </animation>
-
-            <materials>
-                <material id="default"/>
-            </materials>
-
-            <texture id="none"/>
-
-            <children>
-                <primitiveref id="vehicle"/>
-            </children>
-        </component>
 
         <component id="root">
-            <transformation></transformation>
+            <transformation>
+                <rotate axis="x" angle="-90"/>
+            </transformation>
 
             <animation></animation>
 

@@ -1,14 +1,13 @@
-function MyPiece(scene, id, floors){
+function MyPiece(scene, id, floors, side, col, line){
     CGFobject.call(this, scene);
     this.scene = scene;
     this.id=id;
     this.numFloors = floors;
     this.taken = false;
+    this.col = col;
+    this.line = line;
 
-    this.SIDE = {
-        RED:1,
-        WHITE:0
-    };
+    this.side = side;
 
 
     this.initBuffers();
@@ -72,21 +71,25 @@ MyPiece.prototype.display = function (){
         this.scene.rotate(-Math.PI/2, 1,0,0);
         this.scene.pushMatrix();
             this.scene.translate(0,0,0.21);
+            this.scene.materials[this.side].apply();
             this.blink.display();
         this.scene.popMatrix();
         this.scene.pushMatrix();
             this.scene.translate(0,0,0.2);
             this.scene.rotate(Math.PI/4, 0,0,1);
             this.scene.rotate(Math.PI, 0,1,0);
+            this.scene.materials.black.apply();
             this.top.display();
         this.scene.popMatrix();
         for (var i = 0; i < this.floors.length; i += 2) {
             this.scene.pushMatrix();
                 this.scene.rotate(Math.PI/4, 0,0,1);
                 this.scene.rotate(Math.PI, 0,1,0);
+                this.scene.materials.black.apply();
                 this.floors[i].display();
             this.scene.popMatrix();
             this.scene.pushMatrix();
+                this.scene.materials[this.side].apply();
                 this.floors[i+1].display();
                 this.scene.rotate(Math.PI, 1,0,0);
                 this.floors[i+1].display();
@@ -94,6 +97,7 @@ MyPiece.prototype.display = function (){
             this.scene.translate(0,0,-0.2);
         }
         this.scene.rotate(Math.PI/4, 0,0,1);
+        this.scene.materials[this.side].apply();
         this.base.display();
 
     this.scene.popMatrix();

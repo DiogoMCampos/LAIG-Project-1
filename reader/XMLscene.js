@@ -57,13 +57,29 @@ XMLscene.prototype.init = function(application) {
             this.cells[i].push(place);
         }
     }
-    console.log(this.cells);
-    this.piece1 = new MyPiece(this, "yolo", 1);
-    this.piece2 = new MyPiece(this, "yolo", 2);
-    this.piece3 = new MyPiece(this, "yolo", 3);
+    this.piece1 = new MyPiece(this, "yolo", 1, "red");
+    this.piece2 = new MyPiece(this, "yolo", 2, "white");
+    this.piece3 = new MyPiece(this, "yolo", 3, "red", 1, 1);
 
     this.rPieces = [];
+    this.rPieces.push(new MyPiece(this, "r", 3, "red", 1, 1));
+    this.rPieces.push(new MyPiece(this, "r", 3, "red", 9, 1));
+    this.rPieces.push(new MyPiece(this, "r", 2, "red", 3, 2));
+    this.rPieces.push(new MyPiece(this, "r", 2, "red", 7, 2));
+    this.rPieces.push(new MyPiece(this, "r", 1, "red", 4, 2));
+    this.rPieces.push(new MyPiece(this, "r", 1, "red", 5, 2));
+    this.rPieces.push(new MyPiece(this, "r", 1, "red", 6, 2));
+    this.rPieces.push(new MyPiece(this, "r", 1, "red", 5, 3));
+
     this.wPieces = [];
+    this.wPieces.push(new MyPiece(this, "w", 3, "white", 1, 9));
+    this.wPieces.push(new MyPiece(this, "w", 3, "white", 9, 9));
+    this.wPieces.push(new MyPiece(this, "w", 2, "white", 3, 8));
+    this.wPieces.push(new MyPiece(this, "w", 2, "white", 7, 8));
+    this.wPieces.push(new MyPiece(this, "w", 1, "white", 4, 8));
+    this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 8));
+    this.wPieces.push(new MyPiece(this, "w", 1, "white", 6, 8));
+    this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 7));
     this.z=0;
 };
 
@@ -111,7 +127,6 @@ XMLscene.prototype.update = function(currTime) {
         if (this.primitives[id].hasOwnProperty("data")) {
             if (this.primitives[id].data.hasOwnProperty("su") && this.primitives[id].data.hasOwnProperty("sv")) {
 
-                console.log(this.primitives[id].data.dimX + "  " + this.primitives[id].data.dimY);
                 this.primitives[id].data.su++;
                 if (this.primitives[id].data.su >= this.primitives[id].data.du) {
                     this.primitives[id].data.su = 0;
@@ -178,20 +193,54 @@ XMLscene.prototype.display = function() {
         //     q12.display();
         // this.popMatrix();
         //
-        this.materials.selected.apply();
-        this.piece1.display();
-        this.translate(2, 0, 2);
-        this.materials.red.apply();
-        this.piece2.display();
-        this.translate(2, 0, 2);
-        this.materials.possible.apply();
-        this.piece3.display();
+        // this.pushMatrix();
+        //     this.translate(-0.83333*4, 0.2, 0.83333*4); //put on col1 line1
+        //     this.materials.black.apply();
+        //     this.piece1.display();
+        //     this.translate(0.83333, 0.2, -0.8333);
+        //     this.materials.red.apply();
+        //     this.piece2.display();
+        //     this.translate(0.83333*5, 0.2, -0.83333*2);
+        //     this.materials.possible.apply();
+        //     this.piece3.display();
+        // this.popMatrix();
+        // this.pushMatrix();
+        // this.translate(0,0.2,0);
+        // this.piece1.display();
+
+        this.displayPieces();
+        // this.popMatrix();
 
         // ---- END Background, camera and axis setup
         // this.setActiveShader(this.shaders[this.selectedShader]);
         var root = this.components[this.root];
         this.recursiveDisplay(this.root, root.materials[root.materialsIndex], root.textureID);
         // this.setActiveShader(this.defaultShader);
+    }
+};
+
+XMLscene.prototype.displayPieces = function(){
+    var piece;
+    for (var i = 0; i < this.rPieces.length; i++) {
+        piece = this.rPieces[i];
+        this.pushMatrix();
+            this.materials.black.apply();
+            this.translate(-0.83333*4, 0.2, 0.83333*4);
+            this.translate(0.83333*(piece.col-1), (piece.numFloors-1)*0.2, -0.83333*(piece.line-1));
+            this.registerForPick(i, piece);
+            piece.display();
+        this.popMatrix();
+    }
+
+    for (var j = 0; j < this.wPieces.length; j++) {
+        piece = this.wPieces[j];
+        this.pushMatrix();
+            this.materials.black.apply();
+            this.translate(-0.83333*4, 0.2, 0.83333*4);
+            this.translate(0.83333*(piece.col-1), (piece.numFloors-1)*0.2, -0.83333*(piece.line-1));
+            this.registerForPick(i+j, piece);
+            piece.display();
+        this.popMatrix();
     }
 };
 
@@ -345,7 +394,8 @@ XMLscene.prototype.logPicking = function() {
             for (var i = 0; i < this.pickResults.length; i++) {
                 var obj = this.pickResults[i][0];
                 if (obj) {
-                    console.log("Column: " + obj.column + ", Line: " + obj.line);
+                    console.log("Column: " + obj.col + ", Line: " + obj.line);
+                    console.log(obj);
                 }
             }
             this.pickResults.splice(0, this.pickResults.length);

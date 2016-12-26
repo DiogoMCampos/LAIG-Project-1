@@ -105,6 +105,14 @@
             <specular r="0" g="0" b="0" a=".1"/>
             <shininess value="0"/>
         </material>
+
+        <material id="invisible">
+            <emission r="0" g="1" b="1" a="0"/>
+            <ambient r="0" g="0" b="0" a="0"/>
+            <diffuse r="0.1" g="0.1" b="0.1" a="0"/>
+            <specular r="0" g="0" b="0" a="0"/>
+            <shininess value="0"/>
+        </material>
     </materials>
 
     <transformations>
