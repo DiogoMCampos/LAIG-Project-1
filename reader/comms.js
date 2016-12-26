@@ -27,9 +27,9 @@ function makeRequest(scene, row, column, destRow, destColumn){
     requestString += ")";
 
     if(scene.affect){
-        getPrologRequest(requestString, getProlog);
+        getPrologRequest(requestString, scene.getProlog);
     } else {
-        getPrologRequest(requestString, getPrologMove);
+        getPrologRequest(requestString, scene.getPrologMove);
     }
 }
 

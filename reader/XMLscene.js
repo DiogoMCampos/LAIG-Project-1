@@ -22,6 +22,7 @@ function XMLscene(inter) {
         }
     };
 
+    this.HOUSE_SPACING = 0.8333333;
 
     this.PRIMITIVES = {
         RECTANGLE: "rectangle",
@@ -156,6 +157,17 @@ XMLscene.prototype.update = function(currTime) {
     }
 };
 
+XMLscene.prototype.updateLights = function(){
+    for (var j = 0; j < this.lightsOn.length; j++) {
+        if (!this.lightsOn[j]) {
+            this.lights[j].enabled = false;
+        } else {
+            this.lights[j].enabled = true;
+        }
+        this.lights[j].update();
+    }
+};
+
 XMLscene.prototype.display = function() {
     // it is important that things depending on the proper loading of the graph
     // only get executed after the graph has loaded correctly.
@@ -166,8 +178,6 @@ XMLscene.prototype.display = function() {
         // Clear image and depth buffer everytime we update the scene
         this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        //this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
-        //this.gl.enable(this.gl.DEPTH_TEST);
 
         // Initialize Model-View matrix as identity (no transformation
         this.updateProjectionMatrix();
@@ -179,17 +189,9 @@ XMLscene.prototype.display = function() {
         // Apply transformations corresponding to the camera position relative to the origin
         this.applyViewMatrix();
 
-        for (var j = 0; j < this.lightsOn.length; j++) {
-            if (!this.lightsOn[j]) {
-                this.lights[j].enabled = false;
-            } else {
-                this.lights[j].enabled = true;
-            }
-            this.lights[j].update();
-        }
+        this.updateLights();
         // Draw axis
         // this.axis.display();
-
 
         this.displayPieces();
         this.analyzeProlog();
@@ -204,31 +206,25 @@ XMLscene.prototype.display = function() {
 };
 
 XMLscene.prototype.displayPieces = function(){
-    var piece;
-    for (var i = 0; i < this.rPieces.length; i++) {
-        piece = this.rPieces[i];
-        this.pushMatrix();
-            this.materials.black.apply();
-            this.translate(-0.83333*4, 0.2, 0.83333*4);
-            this.translate(0.83333*(piece.col-1), (piece.numFloors-1)*0.2, -0.83333*(piece.line-1));
-            if (this.affect) {
-                this.registerForPick(i, piece);
-            }
-            piece.display();
-        this.popMatrix();
-    }
-
-    for (var j = 0; j < this.wPieces.length; j++) {
-        piece = this.wPieces[j];
-        this.pushMatrix();
-            this.materials.black.apply();
-            this.translate(-0.83333*4, 0.2, 0.83333*4);
-            this.translate(0.83333*(piece.col-1), (piece.numFloors-1)*0.2, -0.83333*(piece.line-1));
-            if (this.affect) {
-                this.registerForPick(9+j, piece);
-            }
-            piece.display();
-        this.popMatrix();
+    for (var j = 0; j < 2; j++) {
+        var array;
+        if(j === 0){
+            array = this.rPieces;
+        }else{
+            array = this.wPieces;
+        }
+        for (var i = 0; i < array.length; i++) {
+            var piece = array[i];
+            this.pushMatrix();
+                this.materials.black.apply();
+                this.translate(-this.HOUSE_SPACING*4, 0.2, this.HOUSE_SPACING*4);
+                this.translate(this.HOUSE_SPACING*(piece.col-1), (piece.numFloors-1)*0.2, -this.HOUSE_SPACING*(piece.line-1));
+                if (this.affect) {
+                    this.registerForPick(i + 9*j, piece);
+                }
+                piece.display();
+            this.popMatrix();
+        }
     }
 };
 
@@ -240,8 +236,8 @@ XMLscene.prototype.displayPlaces = function(){
             if(cell.activate){
                 this.pushMatrix();
                     this.materials.possible.apply();
-                    this.translate(-0.83333*4, 0.2, 0.83333*4);
-                    this.translate(0.83333*i, 0, -0.83333*j);
+                    this.translate(-this.HOUSE_SPACING*4, 0.2, this.HOUSE_SPACING*4);
+                    this.translate(this.HOUSE_SPACING*i, 0, -this.HOUSE_SPACING*j);
                     this.registerForPick(o++, cell);
                     cell.display();
                 this.popMatrix();
@@ -251,11 +247,11 @@ XMLscene.prototype.displayPlaces = function(){
 };
 
 XMLscene.prototype.undoMovement = function(entry, entryNumber){
-    var i,j, pieces;
     clearCells(this.cells);
     var direction = entry[0];
-    for (i = 0; i < entry[1].length; i++) {
+    for (var i = entry[1].length -1; i >= 0; i--) {
         var mov = entry[1][i].split("-");
+        var pieces;
         if(mov[2] === "w"){
             pieces = this.wPieces;
         } else{
@@ -263,13 +259,13 @@ XMLscene.prototype.undoMovement = function(entry, entryNumber){
         }
         var colMov = Number(direction[0])*Number(mov[3]);
         var linMov = Number(direction[1])*Number(mov[3]);
-        for (j = 0; j < pieces.length; j++) {
+        for (var j = 0; j < pieces.length; j++) {
             if(mov[0] == (pieces[j].col - colMov) && mov[1] == (pieces[j].line - linMov)){
                 if(!withinBoard(pieces[j]) && pieces[j].time !== entryNumber){
                     continue;
                 }
-                pieces[j].col -= Number(direction[0])*Number(mov[3]);
-                pieces[j].line -= Number(direction[1])*Number(mov[3]);
+                pieces[j].col = Number(mov[0]);
+                pieces[j].line = Number(mov[1]);
                 break;
             }
         }
@@ -469,15 +465,15 @@ XMLscene.prototype.readMove = function(){
     this.affect = true;
 };
 
-function getProlog(data){
+XMLscene.prototype.getProlog = function(data){
     var resp = data.target.response;
     resp = resp.slice(1, resp.length-1);
     var arr = resp.split(",");
     response = arr;
     ready = true;
-}
+};
 
-function getPrologMove(data){
+XMLscene.prototype.getPrologMove = function(data){
     var resp = data.target.response;
     var pos = resp.indexOf("[")+1;
     var slice = resp.slice(pos, resp.length-1);
@@ -488,8 +484,7 @@ function getPrologMove(data){
     var arr = pieces.split(",");
     response = [movArr, arr];
     ready = true;
-}
-
+};
 
 XMLscene.prototype.logPicking = function() {
     if (this.pickMode === false) {
