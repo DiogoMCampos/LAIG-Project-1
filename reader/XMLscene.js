@@ -11,6 +11,7 @@ function XMLscene(inter) {
     this.cameraIndex = 0;
     this.interface = inter;
     this.appearance = null;
+    this.affect = true;
 
     this.PRIMITIVES = {
         RECTANGLE: "rectangle",
@@ -251,7 +252,7 @@ XMLscene.prototype.displayPieces = function(){
 };
 
 XMLscene.prototype.displayPlaces = function(){
-    var o = 0;
+    var o = 5000;
     for (var j = 0; j < this.cells.length; j++) {
         for (var i = 0; i < this.cells[j].length; i++) {
             var cell = this.cells[i][j];
@@ -416,18 +417,50 @@ XMLscene.prototype.setChessboardShading = function(data) {
 XMLscene.prototype.analyzeProlog = function(){
     if(ready){
         ready = false;
+        //desactivte other cells
         for (var i = 0; i < this.cells.length; i++) {
             for (var j = 0; j < this.cells[i].length; j++) {
                 this.cells[i][j].activate = false;
             }
         }
-        console.log(response);
-        for (i = 0; i < response.length; i++) {
-            var mov = response[i].split("-");
-            console.log(mov);
-            this.cells[mov[2]-1][mov[3]-1].activate = true;
+        //read response acoording to the situation
+        if(this.affect){
+            this.readPossible();
+        } else{
+            this.readMove();
         }
     }
+};
+
+XMLscene.prototype.readPossible = function(){
+    console.log(response);
+    for (i = 0; i < response.length; i++) {
+        var mov = response[i].split("-");
+        console.log(mov);
+        this.cells[mov[2]-1][mov[3]-1].activate = true;
+    }
+    this.affect = false;
+};
+
+XMLscene.prototype.readMove = function(){
+    var direction = response[0];
+    for (i = 0; i < response[1].length; i++) {
+        var mov = response[1][i].split("-");
+        var pieces;
+        if(mov[2] === "w"){
+            pieces = this.wPieces;
+        } else{
+            pieces = this.rPieces;
+        }
+
+        for (var j = 0; j < pieces.length; j++) {
+            if(mov[0] == pieces[j].col && mov[1] == pieces[j].line){
+                pieces[j].col += Number(direction[0])*Number(mov[3]);
+                pieces[j].line += Number(direction[1])*Number(mov[3]);
+            }
+        }
+    }
+    this.affect = true;
 };
 
 function getProlog(data){
@@ -438,15 +471,32 @@ function getProlog(data){
     ready = true;
 }
 
+function getPrologMove(data){
+    var resp = data.target.response;
+    var pos = resp.indexOf("[")+1;
+    var slice = resp.slice(pos, resp.length-1);
+    var npos = slice.indexOf("[")+1;
+    var pieces = slice.slice(npos, slice.length-1);
+    var mov = slice.slice(0, npos-2);
+    var movArr = mov.split(",");
+    var arr = pieces.split(",");
+    response = [movArr, arr];
+    ready = true;
+}
+
+
 XMLscene.prototype.logPicking = function() {
     if (this.pickMode === false) {
         if (this.pickResults !== null && this.pickResults.length > 0) {
             for (var i = 0; i < this.pickResults.length; i++) {
                 var obj = this.pickResults[i][0];
                 if (obj) {
-                    makeRequest(this, obj.col, obj.line);
-                    // console.log("Column: " + obj.col + ", Line: " + obj.line);
-                    console.log(obj);
+                    if(obj.id === "r" || obj.id === "w"){
+                        this.selected = obj;
+                        makeRequest(this, obj.col, obj.line);
+                    } else{
+                        makeRequest(this, this.selected.col, this.selected.line, obj.column+1, obj.line+1);
+                    }
                 }
             }
             this.pickResults.splice(0, this.pickResults.length);

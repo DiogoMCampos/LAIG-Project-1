@@ -15,9 +15,7 @@ MyPlace.prototype.constructor = MyPlace;
 
 MyPlace.prototype.display = function() {
     this.scene.pushMatrix();
-    this.scene.scale(0.833333, 0, 0.833333);
-    if (this.scene.pickMode) {
+        this.scene.scale(0.833333, 0, 0.833333);
         CGFplane.prototype.display.call(this);
-    }
     this.scene.popMatrix();
 };

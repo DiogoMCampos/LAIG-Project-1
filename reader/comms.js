@@ -26,37 +26,11 @@ function makeRequest(scene, row, column, destRow, destColumn){
     }
     requestString += ")";
 
-    getPrologRequest(requestString, getProlog);
-
-    // if(affect){
-    //     getPrologRequest(requestString, handleAffectedReply);
-    // } else {
-    //     getPrologRequest(requestString, handlePossibleReply);
-    // }
-}
-
-//Handle the Reply when it wants to get pieces affected by the move
-function handleAffectedReply(data){
-
-    var response = data.target.response;
-    var pos = response.indexOf("[")+1;
-    var slice = response.slice(pos, response.length-1);
-
-    var npos = slice.indexOf("[")+1;
-    var pieces = slice.slice(npos, slice.length-1);
-    var mov = slice.slice(0, npos-2);
-    var movArr = mov.split(",");
-    console.log(movArr);
-    var arr = pieces.split(",");
-    console.log(arr);
-
-}
-
-//Handle the Reply when it wants to get possible movements of the piece
-function handlePossibleReply(data){
-    console.log(data);
-    document.querySelector("#query_result").innerHTML=data.target.response;
-
+    if(scene.affect){
+        getPrologRequest(requestString, getProlog);
+    } else {
+        getPrologRequest(requestString, getPrologMove);
+    }
 }
 
 function createBoard(scene){
@@ -83,7 +57,7 @@ function stringBoard(board){
     var cell,l,i,j;
 
     var string = "[";
-    for (i = 0; i < board.length; i++) {
+    for (i = board.length-1; i >= 0; i--) {
         var b = board[i];
         string += "[";
         for (j = 0; j < b.length; j++) {
@@ -97,7 +71,7 @@ function stringBoard(board){
             }
         }
         string += "]";
-        if(i < board.length-1){
+        if(i !== 0){
             string += ",";
         }
     }
