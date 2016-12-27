@@ -50,7 +50,9 @@ XMLscene.prototype.constructor = XMLscene;
 
 XMLscene.prototype.init = function(application) {
     CGFscene.prototype.init.call(this, application);
-
+    this.wTime = 300;
+    this.rTime = 300;
+    this.time = this.rTime;
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     this.gl.clearDepth(10000.0);
@@ -59,7 +61,9 @@ XMLscene.prototype.init = function(application) {
     this.gl.depthFunc(this.gl.LEQUAL);
 
     this.beginTime = -1;
-    this.setUpdatePeriod(30);
+    this.UPDATE_PERIOD = 20;
+    this.updateCounter = 0;
+    this.setUpdatePeriod(this.UPDATE_PERIOD);
     this.setPickEnabled(true);
 
     this.initShaders();
@@ -131,6 +135,15 @@ XMLscene.prototype.setDefaultAppearance = function() {
 
 XMLscene.prototype.update = function(currTime) {
     //For relative time to the first update
+    this.updateCounter += this.UPDATE_PERIOD *8/5;
+    if(this.updateCounter >= 1000){
+        this.time--;
+        if(this.time === 0){
+            alert("you lost");
+        }
+        this.updateCounter = 0;
+    }
+
     if (this.graph.loadedOk) //updating only starts when the XML is parsed!!
     {
         if (this.beginTime === -1) {
@@ -223,14 +236,11 @@ XMLscene.prototype.displayPieces = function(){
                 this.materials.black.apply();
                 this.translate(-this.HOUSE_SPACING*4, 0.2, this.HOUSE_SPACING*4);
                 this.translate(this.HOUSE_SPACING*(piece.col-1), (piece.numFloors-1)*0.2, -this.HOUSE_SPACING*(piece.line-1));
-                if (this.affect && side === this.turn) {
-                    this.registerForPick(i + 20*j, piece);
-                }
+                this.registerForPick(i + 10*j, piece);
                 piece.display();
             this.popMatrix();
         }
     }
-    console.log('acolaaskdaksdwcikweincd    ' + this.turn);
 };
 
 XMLscene.prototype.displayPlaces = function(){
@@ -449,11 +459,17 @@ XMLscene.prototype.finishGame = function(){
             if(!withinBoard(piece)){
                 points += piece.numFloors;
                 if(points >= 7){
-                    alert("Congratulations you won");
+                    this.undoAll();
                     this.end = true;
                 }
             }
         }
+    }
+};
+
+XMLscene.prototype.undoAll = function(){
+    for (var i = this.log.length - 1; i >= 0; i--) {
+        this.undoMovement(this.log[i], i + 1);
     }
 };
 
@@ -545,7 +561,11 @@ XMLscene.prototype.logPicking = function() {
 XMLscene.prototype.switchTurn = function(){
     if(this.turn === "r"){
         this.turn = "w";
+        this.rTime = this.time;
+        this.time = this.wTime;
     } else {
         this.turn = "r";
+        this.wTime = this.rTime;
+        this.time = this.wTime;
     }
 };

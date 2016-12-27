@@ -36,6 +36,7 @@ MyInterface.prototype.init = function(application) {
     this.spotGroup.open();
 
     this.gui.add(this.scene, "undo");
+    this.gui.add(this.scene, "time").listen();
 
     return true;
 };
