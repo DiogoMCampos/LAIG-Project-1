@@ -22,6 +22,7 @@ function XMLscene(inter) {
         }
     };
 
+    this.turn = "r";
     this.HOUSE_SPACING = 0.8333333;
 
     this.PRIMITIVES = {
@@ -208,11 +209,13 @@ XMLscene.prototype.display = function() {
 
 XMLscene.prototype.displayPieces = function(){
     for (var j = 0; j < 2; j++) {
-        var array;
+        var array, side;
         if(j === 0){
             array = this.rPieces;
+            side = "r";
         }else{
             array = this.wPieces;
+            side = "w";
         }
         for (var i = 0; i < array.length; i++) {
             var piece = array[i];
@@ -220,13 +223,14 @@ XMLscene.prototype.displayPieces = function(){
                 this.materials.black.apply();
                 this.translate(-this.HOUSE_SPACING*4, 0.2, this.HOUSE_SPACING*4);
                 this.translate(this.HOUSE_SPACING*(piece.col-1), (piece.numFloors-1)*0.2, -this.HOUSE_SPACING*(piece.line-1));
-                if (this.affect) {
-                    this.registerForPick(i + 9*j, piece);
+                if (this.affect && side === this.turn) {
+                    this.registerForPick(i + 20*j, piece);
                 }
                 piece.display();
             this.popMatrix();
         }
     }
+    console.log('acolaaskdaksdwcikweincd    ' + this.turn);
 };
 
 XMLscene.prototype.displayPlaces = function(){
@@ -271,6 +275,7 @@ XMLscene.prototype.undoMovement = function(entry, entryNumber){
             }
         }
     }
+    this.switchTurn();
 };
 
 /**
@@ -483,6 +488,7 @@ XMLscene.prototype.readMove = function(){
             }
         }
     }
+    this.switchTurn();
     this.log.push(response);
     this.affect = true;
 };
@@ -515,8 +521,10 @@ XMLscene.prototype.logPicking = function() {
                 var obj = this.pickResults[i][0];
                 if (obj) {
                     if(this.affect){
-                        this.selected = obj;
-                        makeRequest(this, obj.col, obj.line);
+                        if(this.turn === obj.id){
+                            this.selected = obj;
+                            makeRequest(this, this.turn, obj.col, obj.line);
+                        }
                     } else{
                         if(obj === this.selected){
                             this.affect = true;
@@ -531,5 +539,13 @@ XMLscene.prototype.logPicking = function() {
             }
             this.pickResults.splice(0, this.pickResults.length);
         }
+    }
+};
+
+XMLscene.prototype.switchTurn = function(){
+    if(this.turn === "r"){
+        this.turn = "w";
+    } else {
+        this.turn = "r";
     }
 };

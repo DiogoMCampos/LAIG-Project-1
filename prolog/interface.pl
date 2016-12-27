@@ -8,9 +8,25 @@ board([[o, o, o, o, o, o, o, o, o],
     [o, o, o, o, o, o, o, o, o],
     [o, o, o, o, o, o, o, o, o]]).
 
-boardStart([[piece(r,3),o,o,o,o,o,o,o,piece(r,3)],[o,o,piece(r,2),piece(r,1),piece(r,1),piece(r,1),piece(r,2),o,o],[o,o,o,o,piece(r,1),o,o,o,o],[o,o,o,o,o,o,o,o,o],[o,o,o,o,o,o,o,o,o],[o,o,o,o,o,o,o,o,o],[o,o,o,o,piece(w,1),o,o,o,o],[o,o,piece(w,2),piece(w,1),piece(w,1),piece(w,1),piece(w,2),o,o],[piece(w,3),o,o,o,o,o,o,o,piece(w,3)]]).
+boardStart([[piece(r, 3),o, o, o, o, o, o, o, piece(r, 3)],
+            [o, o, piece(r, 2), piece(r, 1), piece(r, 1), piece(r, 1), piece(r, 2), o, o],
+            [o, o, o, o, piece(r, 1), o, o, o, o],
+            [o, o, o, o, o, o, o, o, o],
+            [o, o, o, o, o, o, o, o, o],
+            [o, o, o, o, o, o, o, o, o],
+            [o, o, o, o, piece(w, 1), o, o, o, o],
+            [o, o, piece(w, 2), piece(w, 1), piece(w, 1), piece(w, 1), piece(w, 2), o, o],
+            [piece(w, 3), o, o, o, o, o, o, o, piece(w, 3)]]).
 
-boardMidGame([[o,o,o,o,o,o,o,o,o],[o,piece(r,1),o,o,o,o,o,o,o],[o,o,o,o,piece(r,1),o,o,o,o],[o,o,o,piece(r,3),o,o,o,o,o],[o,o,o,o,o,o,piece(w,2),o,o],[o,o,o,piece(w,3),o,piece(r,1),o,o,o],[o,o,piece(r,3),o,o,o,o,o,o],[o,o,o,o,o,piece(w,3),piece(w,1),piece(r,2),piece(r,2)],[o,o,piece(w,1),piece(w,1),o,o,o,o,piece(w,2)]]).
+boardMidGame([[o, o, o, o, o, o, o, o, o],
+              [o, piece(r, 1), o, o, o, o, o, o, o],
+              [o, o, o, o, piece(r, 1), o, o, o, o],
+              [o, o, o, piece(r, 3), o, o, o, o, o],
+              [o, o, o, o, o, o, piece(w, 2), o, o],
+              [o, o, o, piece(w, 3), o, piece(r, 1), o, o, o],
+              [o, o, piece(r, 3), o, o, o, o, o, o],
+              [o, o, o, o, o, piece(w, 3), piece(w, 1), piece(r, 2), piece(r, 2)],
+              [o, o, piece(w, 1), piece(w, 1), o, o, o, o, piece(w, 2)]]).
 
 boardEndGame([[o, o, o, o, o, o, o, o, o],
     [o, o, o, o, o, o, o, o, o],

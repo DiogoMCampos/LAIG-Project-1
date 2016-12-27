@@ -4,7 +4,7 @@
 :-include('utilities.pl').
 :-include('movement.pl').
 
-test:-boardStart(X), possibleMoves(X, 5, 3, _, Moves), write(Moves),nl.
+test:-boardMidGame(X), hardMoves(X, 3, 3, _, Moves), write(Moves),nl.
 
 boardStartIndex(1).
 
@@ -75,19 +75,13 @@ verifyMove(Board,InC, InL, DeC, DeL, HorMove, VertMove, Player, PiecesAffected) 
         true
     ;   pushOpponents(PiecesAffected, Player)).
 
-listPossible(Column, Line, HorMove, VertMove, Amount, Move) :-
-
-        DestCol is Column + HorMove * Amount,
-        DestLin is Line + VertMove * Amount,
-        returnResult(Column-Line-DestCol-DestLin, Move).
-
 getPossibleDirection(Board, Column, Line, HorMove, VertMove, Amount, PieceColor, [Moves|Rest]) :-
     Amount > 0 ->
         DestCol is Column + (HorMove * Amount),
         DestLin is Line + (VertMove * Amount),
         NewAmount is Amount - 1,
         (verifyMove(Board,Column,Line, DestCol, DestLin, _,_, PieceColor,_) ->
-            listPossible(Column, Line, HorMove, VertMove, Amount, Moves),
+            Moves = Column-Line-DestCol-DestLin,
             getPossibleDirection(Board, Column, Line, HorMove, VertMove, NewAmount,PieceColor, Rest)
         ;   getPossibleDirection(Board, Column, Line, HorMove, VertMove, NewAmount,PieceColor, [Moves|Rest]))
     ;   true.
@@ -96,15 +90,10 @@ possibleMoves(Board, Column, Line, Total, Possible) :-
     getPiece(Board, Column, Line, Piece),
     pieceHeight(Piece, Height),
     pieceColor(Piece, Color),
-    getPossibleDirection(Board, Column, Line, -1,  0, Height, Color, Inverted1),write(Inverted1),nl,
-    getPossibleDirection(Board, Column, Line,  1,  0, Height, Color, Inverted2),write(Inverted2),nl,
-    getPossibleDirection(Board, Column, Line,  0, -1, Height, Color, Inverted3),write(Inverted3),nl,
-    getPossibleDirection(Board, Column, Line,  0,  1, Height, Color, Inverted4),write(Inverted4),nl,
-    length(Inverted1, Total1),write(Total1),nl,
-    length(Inverted2, Total2),write(Total2),nl,
-    length(Inverted3, Total3),write(Total3),nl,
-    length(Inverted4, Total4),write(Total4),nl,
-
+    getPossibleDirection(Board, Column, Line, -1,  0, Height, Color, Inverted1),length(Inverted1, Total1),
+    getPossibleDirection(Board, Column, Line,  1,  0, Height, Color, Inverted2),length(Inverted2, Total2),
+    getPossibleDirection(Board, Column, Line,  0, -1, Height, Color, Inverted3),length(Inverted3, Total3),
+    getPossibleDirection(Board, Column, Line,  0,  1, Height, Color, Inverted4),length(Inverted4, Total4),
     Total is Total1 + Total2 + Total3 + Total4 - 4,
     (Total1 - 1 > 0 ->
         reverse(Inverted1, [_|Moves1])
@@ -122,27 +111,59 @@ possibleMoves(Board, Column, Line, Total, Possible) :-
     append(Moves3, Moves4, SumMoves2),
     append(SumMoves1, SumMoves2, Possible).
 
-listAllMoves(_, [], TotalMoves, TotalMoves, Moves, Moves).
-listAllMoves(Board, [Column-Line-_|Rest], NumTotal, TotalMoves, Moves, AllMoves) :-
-    possibleMoves(Board, Column, Line, NumPossible, Possible),!,
+getHardDirection(_, _, _, _, _, 0, _, NumAffected, Moves, Moves, NumAffected).
+getHardDirection(Board, Column, Line, HorMove, VertMove, Amount, PieceColor, NumAffected, Moves, Total, NumAffectedTotal) :-
+    DestCol is Column + (HorMove * Amount),
+    DestLin is Line + (VertMove * Amount),
+    NewAmount is Amount - 1,
+    (verifyMove(Board,Column,Line, DestCol, DestLin, _,_, PieceColor,Aff),
+        length(Aff, Num),
+        (Num > NumAffected,
+            NewMove = Column-Line-DestCol-DestLin,
+            NewNumAffected is Num,
+            getHardDirection(Board, Column, Line, HorMove, VertMove, NewAmount, PieceColor, NewNumAffected, [NewMove], Total, NumAffectedTotal)
+        ;Num == NumAffected,
+            NewMove = Column-Line-DestCol-DestLin,
+            append(Moves, [NewMove], NewMoves),
+            getHardDirection(Board, Column, Line, HorMove, VertMove, NewAmount, PieceColor, NumAffected, NewMoves, Total, NumAffectedTotal)
+        ;getHardDirection(Board, Column, Line, HorMove, VertMove, NewAmount, PieceColor, NumAffected, Moves, Total, NumAffectedTotal))
+    ;   getHardDirection(Board, Column, Line, HorMove, VertMove, NewAmount, PieceColor, NumAffected, Moves, Total, NumAffectedTotal)).
+
+hardMoves(Board, Column, Line, NumPossible, Possible):-
+    getPiece(Board, Column, Line, Piece),
+    pieceHeight(Piece, Height),
+    pieceColor(Piece, Color),
+    getHardDirection(Board, Column, Line, -1,  0, Height, Color, 0, [], Moves, NumAffected),
+    getHardDirection(Board, Column, Line,  1,  0, Height, Color, NumAffected, Moves, Moves2, NumAffected2),
+    getHardDirection(Board, Column, Line,  0, -1, Height, Color, NumAffected2, Moves2, Moves3, NumAffected3),
+    getHardDirection(Board, Column, Line,  0,  1, Height, Color, NumAffected3, Moves3, Moves4, _),
+    length(Moves4, NumPossible),
+    Possible = Moves4.
+
+listAllMoves(_, [], TotalMoves, TotalMoves, Moves, Moves, _).
+listAllMoves(Board, [Column-Line-_|Rest], NumTotal, TotalMoves, Moves, AllMoves, Difficulty) :-
+    (Difficulty == 1,
+        hardMoves(Board, Column, Line, NumPossible, Possible)
+    ;possibleMoves(Board, Column, Line, NumPossible, Possible)),!,
     (NumPossible > 0 ->
         NewTotal is NumTotal + NumPossible,
         append(Moves, Possible, NewMoves),
-        listAllMoves(Board, Rest, NewTotal, TotalMoves, NewMoves, AllMoves)
-    ;   listAllMoves(Board, Rest, NumTotal, TotalMoves, NewMoves, AllMoves)).
+        listAllMoves(Board, Rest, NewTotal, TotalMoves, NewMoves, AllMoves, Difficulty)
+    ;   listAllMoves(Board, Rest, NumTotal, TotalMoves, NewMoves, AllMoves, Difficulty)).
 
-allPossibleMoves(Board, Side, Total, Moves) :-
+allPossibleMoves(Board, Side, Total, Moves, Difficulty) :-
     getPiecesCoordinates(Board, 1, 1, Side, Over, 0, _),
     reverse(Over, [_|Coords]),
-    listAllMoves(Board, Coords, 0, Total, [], Moves).
+    listAllMoves(Board, Coords, 0, Total, [], Moves, Difficulty).
 
-generateRandomMove(Board, Side, InC, InL, DeC, DeL) :-
-    allPossibleMoves(Board, Side, NumMoves, AllMoves),
+generateRandomMove(Board, Side, InC, InL, DeC, DeL, Difficulty) :-
+    allPossibleMoves(Board, Side, NumMoves, AllMoves, Difficulty),
+    write(AllMoves),nl,
     random(0, NumMoves, Option),!,
     getListElement(Option, AllMoves, 0, InC-InL-DeC-DeL).
 
-getComputerMove(Board, Color, HorMove, VertMove, PiecesToMove):-
-    generateRandomMove(Board, Color, InC, InL, DeC, DeL),
+getComputerMove(Board, Color, HorMove, VertMove, PiecesToMove, Difficulty):-
+    generateRandomMove(Board, Color, InC, InL, DeC, DeL, Difficulty),
     isOrthogonal(InC, InL, DeC, DeL, HorMove, VertMove, Amount),
     getPiece(Board, InC, InL, Piece),
     pieceHeight(Piece, Height),

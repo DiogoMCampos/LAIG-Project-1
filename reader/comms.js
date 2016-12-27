@@ -13,13 +13,13 @@ function getPrologRequest(requestString, onSuccess, onError, port){
 function makeRequest(scene, row, column, destRow, destColumn){
     var board = createBoard(scene);
     var boardStr = stringBoard(board);
-    var requestString = "move(" + boardStr + "," + row;
+    var requestString = "move(" + boardStr + "," + row + "," + column;
     var affect = true;
 
-    if(column !== undefined){
-        requestString += "," + column;
-        if(destRow !== undefined){
-            requestString += "," + destRow + "," + destColumn;
+    if(destRow !== undefined){
+        requestString += "," + destRow;
+        if(destColumn !== undefined){
+            requestString += "," + destColumn;
         } else {
             affect = false;
         }
