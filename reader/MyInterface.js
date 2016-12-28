@@ -75,7 +75,6 @@ MyInterface.prototype.processKeyboard = function(event) {
         case (86):
         case (118):
             this.scene.switchPerspective();
-            this.setActiveCamera(this.scene.camera);
             break;
         case (77):
         case (109):

@@ -11,6 +11,7 @@ function XMLscene(inter) {
     this.cameraIndex = 0;
     this.interface = inter;
     this.appearance = null;
+    this.cameraAnimation = new CameraAnimation();
     this.affect = true;
     this.log = [];
     this.undo = function(){
@@ -111,6 +112,7 @@ XMLscene.prototype.onGraphLoaded = function() {
 
     this.axis = new CGFaxis(this, this.axisLength);
     this.enableTextures(true);
+    this.setCamera();
     this.interface.setActiveCamera(this.camera);
     this.interface.addScene(this);
     this.setDefaultAppearance();
@@ -121,8 +123,11 @@ XMLscene.prototype.initShaders = function() {
     this.shader = new CGFshader(this.gl, "shaders/varying.vert", "shaders/varying.frag");
 };
 
-XMLscene.prototype.initCameras = function(cameras) {
-
+XMLscene.prototype.setCamera = function() {
+    var startingVec = this.cameraAnimation.currPosition;
+    var toVec = vec3.fromValues(0, 0, 0);
+    var camera = new CGFcamera(Math.PI / 2, 0.1, 500, startingVec, toVec);
+    this.camera = camera;
 };
 
 XMLscene.prototype.setDefaultAppearance = function() {
@@ -169,6 +174,8 @@ XMLscene.prototype.update = function(currTime) {
             }
         }
     }
+
+    this.rotateCamera(currTime);
 };
 
 XMLscene.prototype.updateLights = function(){
@@ -567,5 +574,14 @@ XMLscene.prototype.switchTurn = function(){
         this.turn = "r";
         this.wTime = this.rTime;
         this.time = this.wTime;
+    }
+
+    this.cameraAnimation.on = true;
+};
+
+XMLscene.prototype.rotateCamera = function(currTime) {
+    if (this.cameraAnimation.on) {
+        var position = this.cameraAnimation.getPosition(currTime);
+        this.camera.setPosition(position);
     }
 };
