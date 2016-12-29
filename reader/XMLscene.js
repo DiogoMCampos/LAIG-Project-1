@@ -280,16 +280,23 @@ XMLscene.prototype.undoMovement = function(entry, entryNumber){
         } else{
             pieces = this.rPieces;
         }
-        var colMov = Number(direction[0])*Number(mov[3]);
-        var linMov = Number(direction[1])*Number(mov[3]);
+
+        var horMov = Number(direction[0]);
+        var verMov = Number(direction[1]);
+        var quantity = Number(mov[3]);
+        var colMov = horMov * quantity;
+        var linMov = verMov * quantity;
+
         for (var j = 0; j < pieces.length; j++) {
-            if(mov[0] == (pieces[j].col - colMov) && mov[1] == (pieces[j].line - linMov)){
-                if(!withinBoard(pieces[j]) && pieces[j].time !== entryNumber){
+            var currPiece = pieces[j];
+            if(mov[0] == (currPiece.col - colMov) && mov[1] == (currPiece.line - linMov)){
+                if(!withinBoard(currPiece) && currPiece.time !== entryNumber){
                     continue;
                 }
+
                 var animation = new LinearAnimation(
-                        pieces[j].animations.length,
-                        Number(mov[3]) / 2,
+                        currPiece.animations.length,
+                        quantity / 2,
                         [
                             {x: 0, y: 0, z: 0},
                             {x: -colMov * this.HOUSE_SPACING, y: 0, z: linMov * this.HOUSE_SPACING}
@@ -297,11 +304,10 @@ XMLscene.prototype.undoMovement = function(entry, entryNumber){
                         true
                 );
 
-                pieces[j].animations.push(animation);
+                currPiece.animations.push(animation);
 
-                console.log(pieces[j].animations);
-                pieces[j].col = Number(mov[0]);
-                pieces[j].line = Number(mov[1]);
+                currPiece.col = Number(mov[0]);
+                currPiece.line = Number(mov[1]);
                 break;
             }
         }
@@ -514,10 +520,9 @@ XMLscene.prototype.readMove = function(){
         for (var j = 0; j < pieces.length; j++) {
             var currPiece = pieces[j];
 
-            if(mov[0] == pieces[j].col && mov[1] == pieces[j].line){
+            if(mov[0] == pieces[j].col && mov[1] == pieces[j].line) {
                 var horMov = Number(direction[0]);
                 var verMov = Number(direction[1]);
-                var side = mov[2] === "w" ? 1 : -1;
                 var quantity = Number(mov[3]);
                 var animation = new LinearAnimation(
                     currPiece.animations.length,
