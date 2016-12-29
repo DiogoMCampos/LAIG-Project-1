@@ -113,7 +113,7 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.axis = new CGFaxis(this, this.axisLength);
     this.enableTextures(true);
     this.setCamera();
-    this.interface.setActiveCamera(this.camera);
+    //this.interface.setActiveCamera(this.camera);
     this.interface.addScene(this);
     this.setDefaultAppearance();
 };
@@ -242,7 +242,8 @@ XMLscene.prototype.displayPieces = function(){
             this.pushMatrix();
                 this.materials.black.apply();
                 this.translate(-this.HOUSE_SPACING*4, 0.2, this.HOUSE_SPACING*4);
-                this.translate(this.HOUSE_SPACING*(piece.col-1), (piece.numFloors-1)*0.2, -this.HOUSE_SPACING*(piece.line-1));
+                this.translate(this.HOUSE_SPACING*(piece.originalCol-1), (piece.numFloors-1)*0.2, -this.HOUSE_SPACING*(piece.originalLine-1));
+                this.applyAnimations(piece.animations);
                 this.registerForPick(i + 10*j, piece);
                 piece.display();
             this.popMatrix();
@@ -286,6 +287,19 @@ XMLscene.prototype.undoMovement = function(entry, entryNumber){
                 if(!withinBoard(pieces[j]) && pieces[j].time !== entryNumber){
                     continue;
                 }
+                var animation = new LinearAnimation(
+                        pieces[j].animations.length,
+                        Number(mov[3]) / 2,
+                        [
+                            {x: 0, y: 0, z: 0},
+                            {x: -colMov * this.HOUSE_SPACING, y: 0, z: linMov * this.HOUSE_SPACING}
+                        ],
+                        true
+                );
+
+                pieces[j].animations.push(animation);
+
+                console.log(pieces[j].animations);
                 pieces[j].col = Number(mov[0]);
                 pieces[j].line = Number(mov[1]);
                 break;
@@ -400,13 +414,11 @@ XMLscene.prototype.applyMaterialTexture = function(materialId, textureID) {
 };
 
 XMLscene.prototype.switchPerspective = function() {
-    this.camera.setPosition(vec3.fromValues(this.z, 0, 0));
-    this.z+=0.01;
-    /*this.cameraIndex++;
+    this.cameraIndex++;
     if (this.cameraIndex === this.cameras.length) {
         this.cameraIndex = 0;
     }
-    this.camera = this.cameras[this.cameraIndex];*/
+    this.camera = this.cameras[this.cameraIndex];
 };
 
 XMLscene.prototype.incrementMaterials = function() {
@@ -500,13 +512,32 @@ XMLscene.prototype.readMove = function(){
         }
 
         for (var j = 0; j < pieces.length; j++) {
-            if(mov[0] == pieces[j].col && mov[1] == pieces[j].line){
-                pieces[j].col += Number(direction[0])*Number(mov[3]);
-                pieces[j].line += Number(direction[1])*Number(mov[3]);
+            var currPiece = pieces[j];
 
-                if(!withinBoard(pieces[j])){
-                    pieces[j].time = this.log.length+1;
+            if(mov[0] == pieces[j].col && mov[1] == pieces[j].line){
+                var horMov = Number(direction[0]);
+                var verMov = Number(direction[1]);
+                var side = mov[2] === "w" ? 1 : -1;
+                var quantity = Number(mov[3]);
+                var animation = new LinearAnimation(
+                    currPiece.animations.length,
+                    quantity / 2,
+                    [
+                        {x: 0, y: 0, z: 0},
+                        {x: horMov * this.HOUSE_SPACING * quantity, y: 0, z: verMov * this.HOUSE_SPACING * -quantity}
+                    ],
+                    true
+                );
+
+                currPiece.animations.push(animation);
+
+                currPiece.col += horMov * quantity;
+                currPiece.line += verMov * quantity;
+
+                if(!withinBoard(currPiece)){
+                    currPiece.time = this.log.length+1;
                 }
+
                 break;
             }
         }

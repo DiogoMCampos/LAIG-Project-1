@@ -26,7 +26,7 @@ MySceneGraph.prototype.onXMLReady = function() {
     try {
         var dsxInfo = new DSXParser(rootElement, this.reader);
         this.createScene(dsxInfo.scene, dsxInfo.components);
-        this.createCameras(dsxInfo.views);
+        //this.createCameras(dsxInfo.views);
         this.createIllumination(dsxInfo.illumination);
         this.createLights(dsxInfo.lights);
         this.createTextures(dsxInfo.textures);

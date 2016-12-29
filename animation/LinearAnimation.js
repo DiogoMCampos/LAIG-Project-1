@@ -1,9 +1,15 @@
-function LinearAnimation(id, duration, controlPoints) {
+function LinearAnimation(id, duration, controlPoints, rotateFlag) {
     Animation.call(this, id, duration);
     this.controlPoints = controlPoints;
     this.currTime = -1;
     this.finished = false;
     this.matrix = mat4.create();
+
+    if (rotateFlag !== undefined && rotateFlag) {
+        this.rotateFlag = true;
+    } else {
+        this.rotateFlag = false;
+    }
 
     this.calculateDistance();
 }
@@ -86,7 +92,7 @@ LinearAnimation.prototype.getTransformationMatrix = function(time) {
 
     this.intermediateDistance[this.currMove] += dist;
 
-    if (this.intermediateDistance[this.currMove] >= this.movementDistance[this.currMove]) {
+    if (Math.abs(this.intermediateDistance[this.currMove]) >= Math.abs(this.movementDistance[this.currMove])) {
         this.intermediateDistance[this.currMove] = this.movementDistance[this.currMove];
         this.currMove++;
     }
@@ -129,8 +135,10 @@ LinearAnimation.prototype.getTransformationMatrix = function(time) {
     }
 
     mat4.translate(this.matrix, this.matrix, translation);
-    mat4.rotateY(this.matrix, this.matrix, -angle);
 
+    if (!this.rotateFlag) {
+        mat4.rotateY(this.matrix, this.matrix, -angle);
+    }
 
     return this.matrix;
 };

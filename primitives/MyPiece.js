@@ -9,6 +9,9 @@ function MyPiece(scene, id, floors, side, col, line){
 
     this.side = side;
 
+    this.animations = [];
+    this.originalCol = col;
+    this.originalLine = line;
 
     this.initBuffers();
 }
