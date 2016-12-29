@@ -1,4 +1,7 @@
-function CameraAnimation() {
+function CameraAnimation(distance, height) {
+    this.distance = distance;
+    this.height = height;
+
     this.on = false;
 
     this.startAngle = Math.PI / 2;
@@ -9,7 +12,7 @@ function CameraAnimation() {
     this.currTime = -1;
     this.currAngle = this.startAngle;
 
-    this.currPosition = vec3.fromValues(0, 4, 5);
+    this.currPosition = vec3.fromValues(0, this.height, this.distance);
 
     this.duration = 3000; // in ms
     this.angleSpeed = this.finalAngle / this.duration;
@@ -36,15 +39,15 @@ CameraAnimation.prototype.getPosition = function(time) {
     if (this.currAngle >= this.finalAngle) {
         this.currTime = -1;
         this.on = false;
+        
         this.startAngle = this.finalAngle;
         this.finalAngle += this.distance;
         this.currAngle = this.startAngle;
 
-        this.currPosition = vec3.fromValues(0, 4, 5 * Math.sin(this.currAngle));
-        this.on = false;
+        this.currPosition = vec3.fromValues(0, this.height, this.distance * Math.sin(this.currAngle));
     } else {
         var angle = this.currAngle;
-        this.currPosition = vec3.fromValues(5 * Math.cos(angle), 4, 5 * Math.sin(angle));
+        this.currPosition = vec3.fromValues(this.distance * Math.cos(angle), this.height, this.distance * Math.sin(angle));
     }
 
     return this.currPosition;
