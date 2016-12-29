@@ -29,32 +29,41 @@ MyInterface.prototype.init = function(application) {
     // the identifier 'doSomething' must be a function declared as part of that object (i.e. a member of the scene class)
     // e.g. LightingScene.prototype.doSomething = function () { console.log("Doing something..."); };
 
-    this.omniGroup = this.gui.addFolder("Omni Lights");
-    this.omniGroup.open();
+    this.lights = this.gui.addFolder("Lights");
 
-    this.spotGroup = this.gui.addFolder("Spot Lights");
-    this.spotGroup.open();
-
-    this.gui.add(this.scene, "undo");
-    this.gui.add(this.scene, "time").listen();
 
     return true;
+};
+
+MyInterface.prototype.addSettings = function(){
+    var settings = this.gui.addFolder("Settings");
+    settings.open();
+    settings.add(this.scene.cameraAnimation, "rotationSpeed", 1, 400);
+    settings.add(this.scene, "scenes", ["beach", "msg", "room", "tournament", "street"]);
+
+
+    this.gui.add(this.scene, "newGame");
+
+    this.gui.add(this.scene, "fixedCamera");
+    this.gui.add(this.scene, "undo");
+    this.gui.add(this.scene, "Points for white win").listen();
+    this.gui.add(this.scene, "Points for red win").listen();
+    this.gui.add(this.scene, "time").listen();
+    this.gui.add(this.scene, "rules");
 };
 
 MyInterface.prototype.addScene = function(scene) {
     this.scene = scene;
     this.addLights();
+    this.addSettings();
+
+
 };
 
 MyInterface.prototype.addLights = function() {
     for (var i = 0; i < this.scene.lightsOn.length; i++) {
         var info = this.scene.lightsInfo[i];
-
-        if (info.type === "omni") {
-            this.omniGroup.add(this.scene.lightsOn, i, this.scene.lightsOn[i]).name(info.id);
-        } else {
-            this.spotGroup.add(this.scene.lightsOn, i, this.scene.lightsOn[i]).name(info.id);
-        }
+        this.lights.add(this.scene.lightsOn, i, this.scene.lightsOn[i]).name(info.id);
     }
 };
 

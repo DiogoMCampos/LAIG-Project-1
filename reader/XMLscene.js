@@ -13,7 +13,6 @@ function XMLscene(inter) {
     this.appearance = null;
     this.cameraAnimation = new CameraAnimation();
     this.affect = true;
-    this.log = [];
     this.undo = function(){
         if(this.log.length > 0){
             this.undoMovement(this.log[this.log.length-1], this.log.length);
@@ -23,7 +22,6 @@ function XMLscene(inter) {
         }
     };
 
-    this.turn = "r";
     this.HOUSE_SPACING = 0.8333333;
 
     this.PRIMITIVES = {
@@ -38,6 +36,25 @@ function XMLscene(inter) {
         VEHICLE: "vehicle",
     };
 
+    this.fixedCamera = true;
+
+    this.rules = function(){
+        alert("MOVING \n\nMove one piece per turn."+
+
+"Pieces move orthogonally (forward, backward, left or right) never diagonally and only in one direction each turn.\n" +
+
+"When you move one of your pieces, you cannot end its move in the same space it occupied at the beginning of your previous turn.\n\n"+
+
+"1 floor pieces moves 1 space.\n"+
+"2 floor pieces moves up to 2 spaces.\n"+
+"3 floor pieces moves up to 3 spaces.\n\n"+
+
+"WINNING\n\n"+
+"A player wins as soon as he or she has claimed 7 or more points' worth of his or her opponent's game pieces.\n");
+    };
+
+    this.scenes = "beach";
+
     this.TRANSFORMATIONS = {
         ROTATE: "rotate",
         TRANSLATE: "translate",
@@ -51,9 +68,6 @@ XMLscene.prototype.constructor = XMLscene;
 
 XMLscene.prototype.init = function(application) {
     CGFscene.prototype.init.call(this, application);
-    this.wTime = 300;
-    this.rTime = 300;
-    this.time = this.rTime;
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     this.gl.clearDepth(10000.0);
@@ -83,25 +97,9 @@ XMLscene.prototype.init = function(application) {
     this.piece2 = new MyPiece(this, "yolo", 2, "white");
     this.piece3 = new MyPiece(this, "yolo", 3, "red", 1, 1);
 
-    this.rPieces = [];
-    this.rPieces.push(new MyPiece(this, "r", 3, "red", 1, 1));
-    this.rPieces.push(new MyPiece(this, "r", 3, "red", 9, 1));
-    this.rPieces.push(new MyPiece(this, "r", 2, "red", 3, 2));
-    this.rPieces.push(new MyPiece(this, "r", 2, "red", 7, 2));
-    this.rPieces.push(new MyPiece(this, "r", 1, "red", 4, 2));
-    this.rPieces.push(new MyPiece(this, "r", 1, "red", 5, 2));
-    this.rPieces.push(new MyPiece(this, "r", 1, "red", 6, 2));
-    this.rPieces.push(new MyPiece(this, "r", 1, "red", 5, 3));
-
-    this.wPieces = [];
-    this.wPieces.push(new MyPiece(this, "w", 3, "white", 1, 9));
-    this.wPieces.push(new MyPiece(this, "w", 3, "white", 9, 9));
-    this.wPieces.push(new MyPiece(this, "w", 2, "white", 3, 8));
-    this.wPieces.push(new MyPiece(this, "w", 2, "white", 7, 8));
-    this.wPieces.push(new MyPiece(this, "w", 1, "white", 4, 8));
-    this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 8));
-    this.wPieces.push(new MyPiece(this, "w", 1, "white", 6, 8));
-    this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 7));
+    this["Points for red win"] = 7;
+    this["Points for white win"] = 7;
+    this.newGame();
     this.z=0;
 };
 
@@ -140,15 +138,17 @@ XMLscene.prototype.setDefaultAppearance = function() {
 
 XMLscene.prototype.update = function(currTime) {
     //For relative time to the first update
-    this.updateCounter += this.UPDATE_PERIOD *8/5;
-    if(this.updateCounter >= 1000){
-        this.time--;
-        if(this.time === 0){
-            alert("you lost");
+    if(!this.end){
+        this.updateCounter += this.UPDATE_PERIOD *8/5;
+        if(this.updateCounter >= 1000){
+            this.time--;
+            if(this.time === 0){
+                alert("you lost");
+                this.end = true;
+            }
+            this.updateCounter = 0;
         }
-        this.updateCounter = 0;
     }
-
     if (this.graph.loadedOk) //updating only starts when the XML is parsed!!
     {
         if (this.beginTime === -1) {
@@ -473,16 +473,19 @@ XMLscene.prototype.analyzeProlog = function(){
 
 XMLscene.prototype.finishGame = function(){
     for (var j = 0; j < 2; j++) {
-        var array, points = 0;
+        var array, points = 0, p;
         if(j === 0){
             array = this.rPieces;
+            p = this["Points for white win"];
         }else{
             array = this.wPieces;
+            p = this["Points for red win"];
         }
         for (var i = 0; i < array.length; i++) {
             var piece = array[i];
             if(!withinBoard(piece)){
                 points += piece.numFloors;
+                p = 7 - points;
                 if(points >= 7){
                     this.undoAll();
                     this.end = true;
@@ -599,6 +602,45 @@ XMLscene.prototype.logPicking = function() {
             this.pickResults.splice(0, this.pickResults.length);
         }
     }
+};
+
+XMLscene.prototype.newGame = function(){
+
+    if(this.log !== undefined){
+        if(this.log.length !== 0 && !this.end){
+            if(!confirm("Are you sure? This game will be erased.")){
+                return;
+            }
+        }
+    }
+    this.log = [];
+    this.turn = "r";
+    this.rPieces = [];
+    this.resetTimer();
+    this.rPieces.push(new MyPiece(this, "r", 3, "red", 1, 1));
+    this.rPieces.push(new MyPiece(this, "r", 3, "red", 9, 1));
+    this.rPieces.push(new MyPiece(this, "r", 2, "red", 3, 2));
+    this.rPieces.push(new MyPiece(this, "r", 2, "red", 7, 2));
+    this.rPieces.push(new MyPiece(this, "r", 1, "red", 4, 2));
+    this.rPieces.push(new MyPiece(this, "r", 1, "red", 5, 2));
+    this.rPieces.push(new MyPiece(this, "r", 1, "red", 6, 2));
+    this.rPieces.push(new MyPiece(this, "r", 1, "red", 5, 3));
+
+    this.wPieces = [];
+    this.wPieces.push(new MyPiece(this, "w", 3, "white", 1, 9));
+    this.wPieces.push(new MyPiece(this, "w", 3, "white", 9, 9));
+    this.wPieces.push(new MyPiece(this, "w", 2, "white", 3, 8));
+    this.wPieces.push(new MyPiece(this, "w", 2, "white", 7, 8));
+    this.wPieces.push(new MyPiece(this, "w", 1, "white", 4, 8));
+    this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 8));
+    this.wPieces.push(new MyPiece(this, "w", 1, "white", 6, 8));
+    this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 7));
+};
+
+XMLscene.prototype.resetTimer = function(){
+    this.wTime = 300;
+    this.rTime = 300;
+    this.time = this.rTime;
 };
 
 XMLscene.prototype.switchTurn = function(){

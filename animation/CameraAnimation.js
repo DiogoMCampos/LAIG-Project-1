@@ -10,7 +10,7 @@ function CameraAnimation() {
     this.currAngle = this.startAngle;
 
     this.currPosition = vec3.fromValues(0, 4, 5);
-
+    this.rotationSpeed = 100;
     this.duration = 3000; // in ms
     this.angleSpeed = this.finalAngle / this.duration;
 }
@@ -30,7 +30,7 @@ CameraAnimation.prototype.getPosition = function(time) {
 
     this.currTime = time;
 
-    var angleDiff = timeVar * this.angleSpeed;
+    var angleDiff = timeVar * this.angleSpeed * (this.rotationSpeed/100);
     this.currAngle += angleDiff;
 
     if (this.currAngle >= this.finalAngle) {
