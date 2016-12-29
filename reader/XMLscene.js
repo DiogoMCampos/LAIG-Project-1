@@ -123,22 +123,24 @@ XMLscene.prototype.initShaders = function() {
     this.shader = new CGFshader(this.gl, "shaders/varying.vert", "shaders/varying.frag");
 };
 
+
 XMLscene.prototype.setCameras = function() {
     var toVec = vec3.fromValues(0, 0, 0);
 
-    var cameraAnimation1 = new CameraAnimation(5, 4);
-    var startingVec1 = cameraAnimation1.currPosition;
-    var camera1 = new CGFcamera(Math.PI / 2, 0.1, 500, startingVec1, toVec);
-    this.cameras.push(camera1);
-    this.cameraAnimations.push(cameraAnimation1);
+    var cameraList = [
+        {distance: 5, height: 4},
+        {distance: 3, height: 7}
+    ];
 
-    var cameraAnimation2 = new CameraAnimation(3, 8);
-    var startingVec2 = cameraAnimation2.currPosition;
-    var camera2 = new CGFcamera(Math.PI / 2, 0.1, 500, startingVec2, toVec);
-    this.cameras.push(camera2);
-    this.cameraAnimations.push(cameraAnimation2);
+    for (var i = 0; i < cameraList.length; i++) {
+        var cameraAnimation = new CameraAnimation(cameraList[i].distance, cameraList[i].height);
+        var startingVec = cameraAnimation.currPosition;
+        var camera = new CGFcamera(Math.PI / 2, 0.1, 500, startingVec, toVec);
+        this.cameras.push(camera);
+        this.cameraAnimations.push(cameraAnimation);
+    }
 
-    this.camera = camera1;
+    this.camera = this.cameras[this.cameraIndex];
 };
 
 XMLscene.prototype.setDefaultAppearance = function() {
