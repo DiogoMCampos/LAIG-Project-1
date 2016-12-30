@@ -310,7 +310,7 @@ XMLscene.prototype.undoMovement = function(entry, entryNumber) {
         for (var j = 0; j < pieces.length; j++) {
             var currPiece = pieces[j];
             if (mov[0] == (currPiece.col - colMov) && mov[1] == (currPiece.line - linMov)) {
-                if (!withinBoard(currPiece) && currPiece.time !== entryNumber) {
+                if (!withinBoard(currPiece) && currPiece.id !== mov[2] && currPiece.time !== entryNumber) {
                     continue;
                 }
 
@@ -511,14 +511,22 @@ XMLscene.prototype.finishGame = function() {
                 points += piece.numFloors;
                 p = 7 - points;
                 if(points >= 7){
+
                     this.undoAll();
                     this.end = true;
+                    return;
                 }
             }
         }
         if(j === 0){
+            if(this.end){
+                alert("Congratulations to white!");
+            }
             this["Points for white win"] = p;
         }else{
+            if(this.end){
+                alert("Congratulations to red!");
+            }
             this["Points for red win"] = p;
         }
     }
@@ -532,7 +540,7 @@ XMLscene.prototype.undoAll = function() {
 
 XMLscene.prototype.showAllMoves = function(){
 
-    if(!this.animationFinished){
+    if(!this.animationFinished()){
         return;
     }
     if(this.iterator < this.log.length){
@@ -602,6 +610,8 @@ XMLscene.prototype.readMove = function() {
         } else if(this.mode === this.MODES.P1){
             if(this.comNext){
                 makeRequest(this, "w", this.difficulty);
+            } else{
+                this.affect = true;
             }
             this.comNext = false;
         } else{
@@ -609,6 +619,7 @@ XMLscene.prototype.readMove = function() {
             this.switchTurn();
         }
         this.log.push(response);
+        console.log(this.log.length);
     }
 };
 
@@ -675,7 +686,7 @@ XMLscene.prototype.newGame = function(){
     }
 
 
-
+    clearCells(this.cells);
     switch (this.createGame.difficulty) {
         case "easy":
             this.difficulty = 0;
@@ -688,9 +699,31 @@ XMLscene.prototype.newGame = function(){
     this.time = this.createGame.timeAvailable;
     this.log = [];
     this.turn = "r";
+    this.end = false;
+    this.affect = true;
 
-    this.rPieces = [];
     this.resetTimer();
+
+    this.setPieces();
+
+    switch (this.createGame.mode) {
+        case "P1 VS P2":
+            this.mode = this.MODES.P2;
+            break;
+        case "P1 VS COM":
+            this.mode = this.MODES.P1;
+            break;
+        case "COM VS COM":
+            this.mode = this.MODES.P0;
+            this.affect = false;
+            makeRequest(this, this.turn, this.difficulty);
+            this.switchTurn();
+            break;
+    }
+};
+
+XMLscene.prototype.setPieces = function(){
+    this.rPieces = [];
     this.rPieces.push(new MyPiece(this, "r", 3, "red", 1, 1));
     this.rPieces.push(new MyPiece(this, "r", 3, "red", 9, 1));
     this.rPieces.push(new MyPiece(this, "r", 2, "red", 3, 2));
@@ -709,22 +742,6 @@ XMLscene.prototype.newGame = function(){
     this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 8));
     this.wPieces.push(new MyPiece(this, "w", 1, "white", 6, 8));
     this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 7));
-
-    switch (this.createGame.mode) {
-        case "P1 VS P2":
-            this.mode = this.MODES.P2;
-            break;
-        case "P1 VS COM":
-            this.mode = this.MODES.P1;
-            this.affect = true;
-            break;
-        case "COM VS COM":
-            this.mode = this.MODES.P0;
-            this.affect = false;
-            makeRequest(this, this.turn, this.difficulty);
-            this.switchTurn();
-            break;
-    }
 };
 
 XMLscene.prototype.resetTimer = function(){
