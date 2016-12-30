@@ -37,19 +37,18 @@ MyInterface.prototype.init = function(application) {
 
 MyInterface.prototype.addSettings = function(){
     var settings = this.gui.addFolder("Settings");
-    settings.open();
     settings.add(this.scene.cameraAnimations[this.scene.cameraIndex], "rotationSpeed", 1, 400);
     settings.add(this.scene, "scenes", ["beach", "msg", "room", "tournament", "street"]);
+    settings.add(this.scene, "fixedCamera");
 
 
     this.newGame = this.gui.addFolder("New Game");
-    this.newGame.add(this.scene, "mode", ["P1 VS P2", "P1 VS COM", "COM VS COM"]);
-    this.newGame.add(this.scene, "difficulty", ["easy", "normal"]);
-    this.newGame.add(this.scene, "timeAvailable", 60, 600, 30);
+    this.newGame.add(this.scene.createGame, "mode", ["P1 VS P2", "P1 VS COM", "COM VS COM"]);
+    this.newGame.add(this.scene.createGame, "difficulty", ["easy", "normal"]);
+    this.newGame.add(this.scene.createGame, "timeAvailable", 60, 600);
     this.newGame.add(this.scene, "newGame");
 
 
-    this.gui.add(this.scene, "fixedCamera");
     this.gui.add(this.scene, "undo");
     this.gui.add(this.scene, "Points for white win").listen();
     this.gui.add(this.scene, "Points for red win").listen();
@@ -60,6 +59,7 @@ MyInterface.prototype.addSettings = function(){
 MyInterface.prototype.addScene = function(scene) {
     this.scene = scene;
     this.addLights();
+
     this.addSettings();
 
 

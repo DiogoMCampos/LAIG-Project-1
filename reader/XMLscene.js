@@ -14,7 +14,7 @@ function XMLscene(inter) {
     this.cameraAnimations = [];
     this.affect = true;
 
-    this.timeAvailable = 300;
+    this.time = 300;
     this.log = [];
     this.undo = function() {
         if (this.log.length > 0) {
@@ -40,21 +40,35 @@ function XMLscene(inter) {
         VEHICLE: "vehicle",
     };
 
+    this.createGame = {
+        difficulty: "easy",
+        mode: "P1 VS P2",
+        timeAvailable: 300,
+    };
+
+    this.MODES = {
+        P1: 1,
+        P2: 2,
+        P0: 0,
+    };
+
+
+
     this.fixedCamera = true;
 
     this.rules = function(){
         alert("MOVING \n\nMove one piece per turn."+
 
-"Pieces move orthogonally (forward, backward, left or right) never diagonally and only in one direction each turn.\n" +
+        "Pieces move orthogonally (forward, backward, left or right) never diagonally and only in one direction each turn.\n" +
 
-"When you move one of your pieces, you cannot end its move in the same space it occupied at the beginning of your previous turn.\n\n"+
+        "When you move one of your pieces, you cannot end its move in the same space it occupied at the beginning of your previous turn.\n\n"+
 
-"1 floor pieces moves 1 space.\n"+
-"2 floor pieces moves up to 2 spaces.\n"+
-"3 floor pieces moves up to 3 spaces.\n\n"+
+        "1 floor pieces moves 1 space.\n"+
+        "2 floor pieces moves up to 2 spaces.\n"+
+        "3 floor pieces moves up to 3 spaces.\n\n"+
 
-"WINNING\n\n"+
-"A player wins as soon as he or she has claimed 7 or more points' worth of his or her opponent's game pieces.\n");
+        "WINNING\n\n"+
+        "A player wins as soon as he or she has claimed 7 or more points' worth of his or her opponent's game pieces.\n");
     };
 
     this.scenes = "beach";
@@ -105,6 +119,7 @@ XMLscene.prototype.init = function(application) {
     this["Points for white win"] = 7;
     this.mode = "P1 VS P2";
     this.difficulty = "easy";
+    this.time = 300;
     this.newGame();
     this.z=0;
 };
@@ -467,7 +482,7 @@ XMLscene.prototype.setChessboardShading = function(data) {
 };
 
 XMLscene.prototype.analyzeProlog = function() {
-    if (ready) {
+    if (ready && this.animationFinished()) {
         ready = false;
         clearCells(this.cells);
 
@@ -501,6 +516,11 @@ XMLscene.prototype.finishGame = function() {
                 }
             }
         }
+        if(j === 0){
+            this["Points for white win"] = p;
+        }else{
+            this["Points for red win"] = p;
+        }
     }
 };
 
@@ -511,24 +531,9 @@ XMLscene.prototype.undoAll = function() {
 };
 
 XMLscene.prototype.showAllMoves = function(){
-    for (var j = 0; j < 2; j++) {
-        var array, side;
-        if (j === 0) {
-            array = this.rPieces;
-            side = "r";
-        } else {
-            array = this.wPieces;
-            side = "w";
-        }
-        for (var i = 0; i < array.length; i++) {
-            for (var l = 0; l < array[i].animations.length; l++) {
-                var anim = array[i].animations[l];
-                if(!anim.finished){
-                    return;
-                }
-            }
-        }
 
+    if(!this.animationFinished){
+        return;
     }
     if(this.iterator < this.log.length){
         response = this.log[this.iterator++];
@@ -542,6 +547,7 @@ XMLscene.prototype.readPossible = function() {
         this.cells[mov[2] - 1][mov[3] - 1].activate = true;
     }
     this.affect = false;
+    this.comNext = true;
 };
 
 XMLscene.prototype.readMove = function() {
@@ -590,9 +596,19 @@ XMLscene.prototype.readMove = function() {
         }
     }
     if(!this.end){
-        this.switchTurn();
+        if (this.mode === this.MODES.P2) {
+            this.switchTurn();
+            this.affect = true;
+        } else if(this.mode === this.MODES.P1){
+            if(this.comNext){
+                makeRequest(this, "w", this.difficulty);
+            }
+            this.comNext = false;
+        } else{
+            makeRequest(this, this.turn, this.difficulty);
+            this.switchTurn();
+        }
         this.log.push(response);
-        this.affect = true;
     }
 };
 
@@ -657,6 +673,19 @@ XMLscene.prototype.newGame = function(){
     if(this.turn === "w"){
         this.switchTurn();
     }
+
+
+
+    switch (this.createGame.difficulty) {
+        case "easy":
+            this.difficulty = 0;
+            break;
+        case "normal":
+            this.difficulty = 1;
+            break;
+    }
+
+    this.time = this.createGame.timeAvailable;
     this.log = [];
     this.turn = "r";
 
@@ -680,11 +709,27 @@ XMLscene.prototype.newGame = function(){
     this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 8));
     this.wPieces.push(new MyPiece(this, "w", 1, "white", 6, 8));
     this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 7));
+
+    switch (this.createGame.mode) {
+        case "P1 VS P2":
+            this.mode = this.MODES.P2;
+            break;
+        case "P1 VS COM":
+            this.mode = this.MODES.P1;
+            this.affect = true;
+            break;
+        case "COM VS COM":
+            this.mode = this.MODES.P0;
+            this.affect = false;
+            makeRequest(this, this.turn, this.difficulty);
+            this.switchTurn();
+            break;
+    }
 };
 
 XMLscene.prototype.resetTimer = function(){
-    this.wTime = this.timeAvailable;
-    this.rTime = this.timeAvailable;
+    this.wTime = this.createGame.timeAvailable;
+    this.rTime = this.createGame.timeAvailable;
     this.time = this.rTime;
 };
 
@@ -699,9 +744,34 @@ XMLscene.prototype.switchTurn = function(){
         this.time = this.wTime;
     }
 
-    for (var i = 0; i < this.cameraAnimations.length; i++) {
-        this.cameraAnimations[i].on = true;
+    if(this.mode === this.MODES.P2){
+        for (var i = 0; i < this.cameraAnimations.length; i++) {
+            this.cameraAnimations[i].on = true;
+        }
     }
+};
+
+XMLscene.prototype.animationFinished = function(){
+    for (var j = 0; j < 2; j++) {
+        var array, side;
+        if (j === 0) {
+            array = this.rPieces;
+            side = "r";
+        } else {
+            array = this.wPieces;
+            side = "w";
+        }
+        for (var i = 0; i < array.length; i++) {
+            for (var l = 0; l < array[i].animations.length; l++) {
+                var anim = array[i].animations[l];
+                if(!anim.finished){
+                    return false;
+                }
+            }
+        }
+
+    }
+    return true;
 };
 
 XMLscene.prototype.rotateCamera = function(currTime) {
