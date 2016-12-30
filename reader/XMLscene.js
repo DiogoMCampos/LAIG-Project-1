@@ -101,6 +101,8 @@ XMLscene.prototype.init = function(application) {
 
     this["Points for red win"] = 7;
     this["Points for white win"] = 7;
+    this.mode = "P1 VS P2";
+    this.difficulty = "easy";
     this.newGame();
     this.z=0;
 };
