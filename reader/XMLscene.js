@@ -14,6 +14,7 @@ function XMLscene(inter) {
     this.cameraAnimations = [];
     this.affect = true;
 
+    this.timeAvailable = 300;
     this.log = [];
     this.undo = function() {
         if (this.log.length > 0) {
@@ -23,6 +24,7 @@ function XMLscene(inter) {
             alert("Can't go back anymore");
         }
     };
+    this.iterator = 0;
 
     this.HOUSE_SPACING = 0.8333333;
 
@@ -175,23 +177,6 @@ XMLscene.prototype.update = function(currTime) {
         }
     }
 
-    for (var id in this.primitives) {
-        if (this.primitives[id].hasOwnProperty("data")) {
-            if (this.primitives[id].data.hasOwnProperty("su") && this.primitives[id].data.hasOwnProperty("sv")) {
-
-                this.primitives[id].data.su++;
-                if (this.primitives[id].data.su >= this.primitives[id].data.du) {
-                    this.primitives[id].data.su = 0;
-                    this.primitives[id].data.sv++;
-                    if (this.primitives[id].data.sv >= this.primitives[id].data.dv) {
-                        this.primitives[id].data.sv = 0;
-                    }
-                }
-
-            }
-        }
-    }
-
     this.rotateCamera(currTime);
 };
 
@@ -230,8 +215,11 @@ XMLscene.prototype.display = function() {
         this.updateLights();
         // Draw axis
         // this.axis.display();
-        if (!this.end)
+        if (!this.end){
             this.finishGame();
+        } else{
+            this.showAllMoves();
+        }
         this.displayPieces();
         this.analyzeProlog();
         this.displayPlaces();
@@ -522,6 +510,32 @@ XMLscene.prototype.undoAll = function() {
     }
 };
 
+XMLscene.prototype.showAllMoves = function(){
+    for (var j = 0; j < 2; j++) {
+        var array, side;
+        if (j === 0) {
+            array = this.rPieces;
+            side = "r";
+        } else {
+            array = this.wPieces;
+            side = "w";
+        }
+        for (var i = 0; i < array.length; i++) {
+            for (var l = 0; l < array[i].animations.length; l++) {
+                var anim = array[i].animations[l];
+                if(!anim.finished){
+                    return;
+                }
+            }
+        }
+
+    }
+    if(this.iterator < this.log.length){
+        response = this.log[this.iterator++];
+        this.readMove();
+    }
+};
+
 XMLscene.prototype.readPossible = function() {
     for (i = 0; i < response.length; i++) {
         var mov = response[i].split("-");
@@ -575,9 +589,11 @@ XMLscene.prototype.readMove = function() {
             }
         }
     }
-    this.switchTurn();
-    this.log.push(response);
-    this.affect = true;
+    if(!this.end){
+        this.switchTurn();
+        this.log.push(response);
+        this.affect = true;
+    }
 };
 
 XMLscene.prototype.getProlog = function(data) {
@@ -638,8 +654,12 @@ XMLscene.prototype.newGame = function(){
             }
         }
     }
+    if(this.turn === "w"){
+        this.switchTurn();
+    }
     this.log = [];
     this.turn = "r";
+
     this.rPieces = [];
     this.resetTimer();
     this.rPieces.push(new MyPiece(this, "r", 3, "red", 1, 1));
@@ -663,8 +683,8 @@ XMLscene.prototype.newGame = function(){
 };
 
 XMLscene.prototype.resetTimer = function(){
-    this.wTime = 300;
-    this.rTime = 300;
+    this.wTime = this.timeAvailable;
+    this.rTime = this.timeAvailable;
     this.time = this.rTime;
 };
 

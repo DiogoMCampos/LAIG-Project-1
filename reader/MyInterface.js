@@ -45,7 +45,7 @@ MyInterface.prototype.addSettings = function(){
     this.newGame = this.gui.addFolder("New Game");
     this.newGame.add(this.scene, "mode", ["P1 VS P2", "P1 VS COM", "COM VS COM"]);
     this.newGame.add(this.scene, "difficulty", ["easy", "normal"]);
-    this.newGame.add(this.scene, "time", 60, 600, 30);
+    this.newGame.add(this.scene, "timeAvailable", 60, 600, 30);
     this.newGame.add(this.scene, "newGame");
 
 
