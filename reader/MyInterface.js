@@ -41,7 +41,7 @@ MyInterface.prototype.addSettings = function(){
     settings.add(this.scene, "animationSpeed", 1, 400);
 
     var scene = this.scene;
-    settings.add(this.scene, "scenes", ["beach", "table", "room", "tournament", "street"]).onChange(function(newValue){
+    settings.add(this.scene, "scenes", ["beach", "table", "fenway"]).onChange(function(newValue){
         var filename = getUrlVars()["file"] || newValue + ".dsx";
         var graph = new MySceneGraph(filename, scene);
     });
