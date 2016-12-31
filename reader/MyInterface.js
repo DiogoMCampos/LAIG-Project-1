@@ -39,7 +39,13 @@ MyInterface.prototype.addSettings = function(){
     var settings = this.gui.addFolder("Settings");
     settings.add(this.scene.cameraAnimations[this.scene.cameraIndex], "rotationSpeed", 1, 400);
     settings.add(this.scene, "animationSpeed", 1, 400);
-    settings.add(this.scene, "scenes", ["beach", "msg", "room", "tournament", "street"]);
+
+    var scene = this.scene;
+    settings.add(this.scene, "scenes", ["beach", "table", "room", "tournament", "street"]).onChange(function(newValue){
+        var filename = getUrlVars()["file"] || newValue + ".dsx";
+        var graph = new MySceneGraph(filename, scene);
+    });
+
     settings.add(this.scene, "fixedCamera");
 
 

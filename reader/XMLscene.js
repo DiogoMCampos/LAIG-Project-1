@@ -272,6 +272,13 @@ XMLscene.prototype.display = function() {
         this.updateLights();
         // Draw axis
         // this.axis.display();
+        // ---- END Background, camera and axis setup
+        // this.setActiveShader(this.shaders[this.selectedShader]);
+        var root = this.components[this.root];
+        this.registerForPick(10000, root);
+        this.recursiveDisplay(this.root, root.materials[root.materialsIndex], root.textureID);
+        // this.setActiveShader(this.defaultShader);
+
         if (!this.end){
             this.finishGame();
         } else{
@@ -281,11 +288,6 @@ XMLscene.prototype.display = function() {
         this.analyzeProlog();
         this.displayPlaces();
         this.displayTaken();
-        // ---- END Background, camera and axis setup
-        // this.setActiveShader(this.shaders[this.selectedShader]);
-        var root = this.components[this.root];
-        this.recursiveDisplay(this.root, root.materials[root.materialsIndex], root.textureID);
-        // this.setActiveShader(this.defaultShader);
     }
 };
 
