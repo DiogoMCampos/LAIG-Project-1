@@ -18,6 +18,7 @@ function CameraAnimation(distance, height) {
     this.angleSpeed = this.finalAngle / this.duration;
 }
 
+// Gets current camera position, given the current time
 CameraAnimation.prototype.getPosition = function(time) {
     if (!this.on) {
         return this.currPosition;
