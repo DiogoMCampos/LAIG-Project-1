@@ -200,8 +200,42 @@ XMLscene.prototype.update = function(currTime) {
             this.currTime = currTime - this.beginTime;
         }
     }
+    if (this.fixedCamera) {
+        if(this.tempCamera){
+            var temp = this.tempCamera;
+            this.camera = new CGFcamera(temp.fov, temp.near, temp.far, temp.position, temp.target);
+            this.cameras[this.cameraIndex] = this.camera;
+            // this.camera.setPosition(this.tempPosition);
+            // this.camera.setTarget(this.tempTarget);
+            this.interface.setActiveCamera(undefined);
+            this.tempCamera = undefined;
+        }
+    } else {
+        if(!this.tempCamera){
+            this.cloneCamera();
+            this.interface.setActiveCamera(this.camera);
+        }
+    }
 
     this.rotateCamera(currTime);
+};
+
+XMLscene.prototype.cloneCamera = function(){
+    this.tempCamera = {};
+    var temp = this.tempCamera;
+
+    temp.position = [];
+    var i;
+    for (i = 0; i < this.camera.position.length; i++) {
+        temp.position.push(this.camera.position[i]);
+    }
+    temp.target = [];
+    for (i = 0; i < this.camera.target.length; i++) {
+        temp.target.push(this.camera.target[i]);
+    }
+    temp.fov = this.camera.fov;
+    temp.near = this.camera.near;
+    temp.far = this.camera.far;
 };
 
 XMLscene.prototype.updateLights = function() {
