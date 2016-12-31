@@ -143,6 +143,10 @@
             <rectangle x1="0" y1="0" x2="1" y2="1"/>
         </primitive>
 
+        <primitive id="cube">
+            <cylinder base="1" top="1" height="1" slices="4" stacks="2"/>
+        </primitive>
+
         <primitive id="chessboard">
             <chessboard du="9" dv="9" dimX="7.5" dimY="7.5" textureref="wood" su="-1" sv="1">
                 <c1 r="0.85" g="0.5" b="0.07" a="1"/>
@@ -159,6 +163,138 @@
 
     <components>
 
+        <component id="tableLegShape">
+            <transformation>
+                <scale x="1" y="10" z="1"/>
+                <rotate axis="z" angle="45"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="wood"/>
+
+            <children>
+                <primitiveref id="cube"/>
+            </children>
+        </component>
+
+        <component id="tableLeg1">
+            <transformation>
+                <translate x="6" y="-5" z="7"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="wood"/>
+
+            <children>
+                <componentref id="tableLegShape"/>
+            </children>
+        </component>
+
+        <component id="tableLeg2">
+            <transformation>
+                <translate x="6" y="-5" z="-7"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="wood"/>
+
+            <children>
+                <componentref id="tableLegShape"/>
+            </children>
+        </component>
+
+        <component id="tableLeg3">
+            <transformation>
+                <translate x="-6" y="-5" z="7"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="wood"/>
+
+            <children>
+                <componentref id="tableLegShape"/>
+            </children>
+        </component>
+
+        <component id="tableLeg4">
+            <transformation>
+                <translate x="-6" y="-5" z="-7"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="wood"/>
+
+            <children>
+                <componentref id="tableLegShape"/>
+            </children>
+        </component>
+
+        <component id="tableTop">
+            <transformation>
+                <translate x="-0.5" y="1.5" z="-9.5" />
+                <scale x="15" y="1" z="20"/>
+                <rotate axis="z" angle="45"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="wood"/>
+
+            <children>
+                <primitiveref id="cube"/>
+            </children>
+        </component>
+
+        <component id="table">
+            <transformation>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="wood"/>
+
+            <children>
+                <componentref id="tableLeg1"/>
+                <componentref id="tableLeg2"/>
+                <componentref id="tableLeg3"/>
+                <componentref id="tableLeg4"/>
+                <componentref id="tableTop"/>
+            </children>
+        </component>
+
         <component id="root">
             <transformation>
                 <rotate axis="x" angle="-90"/>
@@ -173,7 +309,7 @@
             <texture id="wood"/>
 
             <children>
-                <primitiveref id="chessboard"/>
+                <componentref id="table"/>
             </children>
         </component>
 
