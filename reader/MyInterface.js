@@ -68,8 +68,6 @@ MyInterface.prototype.addScene = function(scene) {
     this.addLights();
 
     this.addSettings();
-
-
 };
 
 MyInterface.prototype.addLights = function() {

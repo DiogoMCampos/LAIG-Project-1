@@ -123,8 +123,6 @@ XMLscene.prototype.init = function(application) {
         }
     }
 
-    this["Points for red win"] = 7;
-    this["Points for white win"] = 7;
     this.mode = "P1 VS P2";
     this.difficulty = "easy";
     this.time = 300;
@@ -360,7 +358,7 @@ XMLscene.prototype.undoMovement = function(entry, entryNumber) {
             break;
         }
     }
-    for (var i = entry[1].length - 1; i >= 0; i--) {
+    for (var i = 0; i < entry[1].length; i++) {
         var mov = entry[1][i].split("-");
         var pieces;
         if (mov[2] === "w") {
@@ -631,7 +629,7 @@ XMLscene.prototype.readPossible = function() {
 
 XMLscene.prototype.readMove = function() {
     var direction = response[0];
-    for (i = 0; i < response[1].length; i++) {
+    for (var i = response[1].length - 1; i >= 0; i--) {
         var mov = response[1][i].split("-");
         var pieces;
         if (mov[2] === "w") {
@@ -782,6 +780,9 @@ XMLscene.prototype.newGame = function(){
     this.affect = true;
 
     this.resetTimer();
+
+    this["Points for red win"] = 7;
+    this["Points for white win"] = 7;
 
     this.setPieces();
 
