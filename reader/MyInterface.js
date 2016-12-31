@@ -38,6 +38,7 @@ MyInterface.prototype.init = function(application) {
 MyInterface.prototype.addSettings = function(){
     var settings = this.gui.addFolder("Settings");
     settings.add(this.scene.cameraAnimations[this.scene.cameraIndex], "rotationSpeed", 1, 400);
+    settings.add(this.scene, "animationSpeed", 1, 400);
     settings.add(this.scene, "scenes", ["beach", "msg", "room", "tournament", "street"]);
     settings.add(this.scene, "fixedCamera");
 

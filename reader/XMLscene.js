@@ -13,6 +13,7 @@ function XMLscene(inter) {
     this.appearance = null;
     this.cameraAnimations = [];
     this.affect = true;
+    this.animationSpeed = 100;
 
     this.time = 300;
     this.log = [];
@@ -63,8 +64,6 @@ function XMLscene(inter) {
         P2: 2,
         P0: 0,
     };
-
-
 
     this.fixedCamera = true;
 
@@ -380,6 +379,7 @@ XMLscene.prototype.undoMovement = function(entry, entryNumber) {
                 }
 
                 var animation = new LinearAnimation(
+                    this,
                     currPiece.animations.length,
                     quantity / 2, [{
                         x: 0,
@@ -644,6 +644,7 @@ XMLscene.prototype.readMove = function() {
                 var verMov = Number(direction[1]);
                 var quantity = Number(mov[3]);
                 var animation = new LinearAnimation(
+                    this,
                     currPiece.animations.length,
                     quantity / 2, [{
                         x: 0,

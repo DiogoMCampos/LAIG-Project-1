@@ -1,5 +1,8 @@
-function LinearAnimation(id, duration, controlPoints, rotateFlag) {
+function LinearAnimation(scene, id, duration, controlPoints, rotateFlag) {
     Animation.call(this, id, duration);
+    
+    this.scene = scene;
+
     this.controlPoints = controlPoints;
     this.currTime = -1;
     this.finished = false;
@@ -88,7 +91,7 @@ LinearAnimation.prototype.getTransformationMatrix = function(time) {
 
     timeVar = time - this.currTime;
 
-    var dist = timeVar / 1000 * this.speed;
+    var dist = timeVar / 1000 * this.speed * (this.scene.animationSpeed / 100);
 
     this.intermediateDistance[this.currMove] += dist;
 
