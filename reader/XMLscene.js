@@ -143,12 +143,17 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.setDefaultAppearance();
 };
 
+/**
+ * Create shader file
+ */
 XMLscene.prototype.initShaders = function() {
 
     this.shader = new CGFshader(this.gl, "shaders/varying.vert", "shaders/varying.frag");
 };
 
-
+/**
+ * Creates cameras from dsx file and initializes animations for cameras
+ */
 XMLscene.prototype.setCameras = function() {
     var toVec = vec3.fromValues(0, 0, 0);
 
@@ -170,6 +175,9 @@ XMLscene.prototype.setCameras = function() {
     this.camera = this.cameras[this.cameraIndex];
 };
 
+/**
+ * Creates a default appearance
+ */
 XMLscene.prototype.setDefaultAppearance = function() {
     this.appearance = new CGFappearance(this);
     this.appearance.setAmbient(0.3, 0.3, 0.3, 1);
@@ -178,6 +186,9 @@ XMLscene.prototype.setDefaultAppearance = function() {
     this.appearance.setShininess(120);
 };
 
+/**
+ * Function called every this.UPDATE_PERIOD in miliseconds
+ */
 XMLscene.prototype.update = function(currTime) {
     //For relative time to the first update
     if(!this.end){
@@ -217,6 +228,9 @@ XMLscene.prototype.update = function(currTime) {
     this.rotateCamera(currTime);
 };
 
+/**
+ * Copies values of current camera to a new object
+ */
 XMLscene.prototype.cloneCamera = function(){
     this.tempCamera = {};
     var temp = this.tempCamera;
@@ -235,6 +249,9 @@ XMLscene.prototype.cloneCamera = function(){
     temp.far = this.camera.far;
 };
 
+/**
+ * Updates bool for interface
+ */
 XMLscene.prototype.updateLights = function() {
     for (var j = 0; j < this.lightsOn.length; j++) {
         if (!this.lightsOn[j]) {
@@ -289,6 +306,9 @@ XMLscene.prototype.display = function() {
     }
 };
 
+/**
+ * Displays pieces currently on board and registerForPick
+ */
 XMLscene.prototype.displayPieces = function() {
     this.block = false;
     for (var j = 0; j < 2; j++) {
@@ -316,6 +336,9 @@ XMLscene.prototype.displayPieces = function() {
     }
 };
 
+/**
+ * Shows cells of possible places to move the piece
+ */
 XMLscene.prototype.displayPlaces = function() {
     var o = 5000;
     for (var j = 0; j < this.cells.length; j++) {
@@ -334,6 +357,9 @@ XMLscene.prototype.displayPlaces = function() {
     }
 };
 
+/**
+ * Shows pieces that were pushed off the board
+ */
 XMLscene.prototype.displayTaken = function(){
     this.pushMatrix();
         this.translate(6, 0, -4.5);
@@ -347,6 +373,9 @@ XMLscene.prototype.displayTaken = function(){
     this.popMatrix();
 };
 
+/**
+ * Cancels the last move made by a person. Doesn't work for computer side
+ */
 XMLscene.prototype.undoMovement = function(entry, entryNumber) {
     clearCells(this.cells);
     var direction = entry[0];
@@ -482,6 +511,9 @@ XMLscene.prototype.applyTransformations = function(transformationsArray) {
     }
 };
 
+/**
+ * Applies animations for translating pieces
+ */
 XMLscene.prototype.applyAnimations = function(animationArray) {
     var matrix = mat4.create();
 
@@ -501,6 +533,9 @@ XMLscene.prototype.applyAnimations = function(animationArray) {
     this.multMatrix(matrix);
 };
 
+/**
+ * Applies textures and appearances
+ */
 XMLscene.prototype.applyMaterialTexture = function(materialId, textureID) {
     var material = this.materials[materialId];
     if (textureID === "none") {
@@ -512,6 +547,9 @@ XMLscene.prototype.applyMaterialTexture = function(materialId, textureID) {
     material.apply();
 };
 
+/**
+ * Changes views to a camera defined in dsx file
+ */
 XMLscene.prototype.switchPerspective = function() {
     this.cameraIndex++;
     if (this.cameraIndex === this.cameras.length) {
@@ -520,6 +558,9 @@ XMLscene.prototype.switchPerspective = function() {
     this.camera = this.cameras[this.cameraIndex];
 };
 
+/**
+ * Shows alternate material of component defined in dsx file
+ */
 XMLscene.prototype.incrementMaterials = function() {
     for (var comp in this.components) {
         if (this.components.hasOwnProperty(comp)) {
@@ -532,6 +573,9 @@ XMLscene.prototype.incrementMaterials = function() {
     }
 };
 
+/**
+ * Passes the information necessary for shader to analyze chessboard
+ */
 XMLscene.prototype.setChessboardShading = function(data) {
     var color1 = vec4.fromValues(data.c1.r, data.c1.g, data.c1.b, data.c1.a);
     var color2 = vec4.fromValues(data.c2.r, data.c2.g, data.c2.b, data.c2.a);
@@ -550,6 +594,9 @@ XMLscene.prototype.setChessboardShading = function(data) {
 
 };
 
+/**
+ * Analyzes response from prolog side
+ */
 XMLscene.prototype.analyzeProlog = function() {
     if (ready && this.animationFinished()) {
         ready = false;
@@ -564,6 +611,9 @@ XMLscene.prototype.analyzeProlog = function() {
     }
 };
 
+/**
+ * Checks if game has reached the final condition
+ */
 XMLscene.prototype.finishGame = function() {
     for (var j = 0; j < 2; j++) {
         var array, points = 0, p;
@@ -601,12 +651,18 @@ XMLscene.prototype.finishGame = function() {
     }
 };
 
+/**
+ * After a game is over, returns the game to the beginning to show the game movie
+ */
 XMLscene.prototype.undoAll = function() {
     for (var i = this.log.length - 1; i >= 0; i--) {
         this.undoMovement(this.log[i], i + 1);
     }
 };
 
+/**
+ * displays game movie
+ */
 XMLscene.prototype.showAllMoves = function(){
 
     if(!this.animationFinished()){
@@ -618,6 +674,9 @@ XMLscene.prototype.showAllMoves = function(){
     }
 };
 
+/**
+ * Analyze response from prolog where it shows the possible moves to be made by the selected piece
+ */
 XMLscene.prototype.readPossible = function() {
     for (i = 0; i < response.length; i++) {
         var mov = response[i].split("-");
@@ -627,6 +686,9 @@ XMLscene.prototype.readPossible = function() {
     this.comNext = true;
 };
 
+/**
+ * Moves the piece and all others affected indicated by prolog server side
+ */
 XMLscene.prototype.readMove = function() {
     var direction = response[0];
     for (var i = response[1].length - 1; i >= 0; i--) {
@@ -693,6 +755,9 @@ XMLscene.prototype.readMove = function() {
     }
 };
 
+/**
+ * Parses response from prolog for more an easier analysis
+ */
 XMLscene.prototype.getProlog = function(data) {
     var resp = data.target.response;
     resp = resp.slice(1, resp.length - 1);
@@ -701,6 +766,9 @@ XMLscene.prototype.getProlog = function(data) {
     ready = true;
 };
 
+/**
+ * Parses response from prolog for more an easier analysis
+ */
 XMLscene.prototype.getPrologMove = function(data) {
     var resp = data.target.response;
     var pos = resp.indexOf("[") + 1;
@@ -714,6 +782,9 @@ XMLscene.prototype.getPrologMove = function(data) {
     ready = true;
 };
 
+/**
+ * Analyzes objects clicked
+ */
 XMLscene.prototype.logPicking = function() {
 
     if (this.pickMode === false) {
@@ -746,6 +817,9 @@ XMLscene.prototype.logPicking = function() {
     }
 };
 
+/**
+ * Creates a new game using information from the interface settings
+ */
 XMLscene.prototype.newGame = function(){
     if (this.cameraAnimations.length !== 0 && this.cameraAnimations[0].on){
         alert("Wait until the camera rotation is complete");
@@ -802,6 +876,9 @@ XMLscene.prototype.newGame = function(){
     }
 };
 
+/**
+ * initializes the pieces to its starting positions
+ */
 XMLscene.prototype.setPieces = function(){
     this.rPieces = [];
     this.rPieces.push(new MyPiece(this, "r", 3, "red", 1, 1));
@@ -826,12 +903,18 @@ XMLscene.prototype.setPieces = function(){
     this.taken = [];
 };
 
+/**
+ * Sets timer to starting value defined in interface
+ */
 XMLscene.prototype.resetTimer = function(){
     this.wTime = this.createGame.timeAvailable;
     this.rTime = this.createGame.timeAvailable;
     this.time = this.rTime;
 };
 
+/**
+ * Switches the turn of the player
+ */
 XMLscene.prototype.switchTurn = function(){
     if(this.turn === "r"){
         this.turn = "w";
@@ -850,6 +933,9 @@ XMLscene.prototype.switchTurn = function(){
     }
 };
 
+/**
+ * Returns true if all pieces have finished all movements animations
+ */
 XMLscene.prototype.animationFinished = function(){
     for (var j = 0; j < 2; j++) {
         var array, side;
@@ -873,6 +959,9 @@ XMLscene.prototype.animationFinished = function(){
     return true;
 };
 
+/**
+ * Rotates camera after a move in a game between two players only
+ */
 XMLscene.prototype.rotateCamera = function(currTime) {
     if (this.cameraAnimations.length != 0 && this.cameraAnimations[0].on) {
         for (var i = 0; i < this.cameraAnimations.length; i++) {
