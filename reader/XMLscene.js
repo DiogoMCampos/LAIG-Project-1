@@ -205,8 +205,6 @@ XMLscene.prototype.update = function(currTime) {
             var temp = this.tempCamera;
             this.camera = new CGFcamera(temp.fov, temp.near, temp.far, temp.position, temp.target);
             this.cameras[this.cameraIndex] = this.camera;
-            // this.camera.setPosition(this.tempPosition);
-            // this.camera.setTarget(this.tempTarget);
             this.interface.setActiveCamera(undefined);
             this.tempCamera = undefined;
         }
@@ -281,7 +279,7 @@ XMLscene.prototype.display = function() {
         this.displayPieces();
         this.analyzeProlog();
         this.displayPlaces();
-
+        this.displayTaken();
         // ---- END Background, camera and axis setup
         // this.setActiveShader(this.shaders[this.selectedShader]);
         var root = this.components[this.root];
@@ -309,7 +307,9 @@ XMLscene.prototype.displayPieces = function() {
                 this.translate(this.HOUSE_SPACING * (piece.originalCol - 1), (piece.numFloors - 1) * 0.2, -this.HOUSE_SPACING * (piece.originalLine - 1));
                 this.applyAnimations(piece.animations);
                 this.registerForPick(i + 10 * j, piece);
-                piece.display();
+                if(withinBoard(piece)){
+                    piece.display();
+                }
             this.popMatrix();
         }
     }
@@ -333,9 +333,30 @@ XMLscene.prototype.displayPlaces = function() {
     }
 };
 
+XMLscene.prototype.displayTaken = function(){
+    this.pushMatrix();
+        this.translate(6, 0.2, -3.25);
+        for (var i = 0; i < this.taken.length; i++) {
+            this.pushMatrix();
+                this.registerForPick(10000, this.taken[i]);
+                this.translate(0, 0.2*this.taken[i].numFloors, i);
+                this.taken[i].display();
+            this.popMatrix();
+        }
+    this.popMatrix();
+};
+
 XMLscene.prototype.undoMovement = function(entry, entryNumber) {
     clearCells(this.cells);
     var direction = entry[0];
+
+    for (var m = this.taken.length-1; m >= 0; m--) {
+        if(this.taken[m].time === entryNumber){
+            this.taken.pop();
+        } else{
+            break;
+        }
+    }
     for (var i = entry[1].length - 1; i >= 0; i--) {
         var mov = entry[1][i].split("-");
         var pieces;
@@ -643,6 +664,7 @@ XMLscene.prototype.readMove = function() {
 
                 if (!withinBoard(currPiece)) {
                     currPiece.time = this.log.length + 1;
+                    this.taken.push(currPiece);
                 }
 
                 break;
@@ -699,7 +721,7 @@ XMLscene.prototype.logPicking = function() {
                     if (obj) {
 
                         if (this.affect) {
-                            if (this.turn === obj.id) {
+                            if (this.turn === obj.id && withinBoard(obj)) {
                                 this.selected = obj;
                                 makeRequest(this, this.turn, obj.col, obj.line);
                             }
@@ -794,6 +816,8 @@ XMLscene.prototype.setPieces = function(){
     this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 8));
     this.wPieces.push(new MyPiece(this, "w", 1, "white", 6, 8));
     this.wPieces.push(new MyPiece(this, "w", 1, "white", 5, 7));
+
+    this.taken = [];
 };
 
 XMLscene.prototype.resetTimer = function(){
@@ -813,7 +837,7 @@ XMLscene.prototype.switchTurn = function(){
         this.time = this.rTime;
     }
 
-    if(this.mode === this.MODES.P2){
+    if(this.mode === this.MODES.P2 && this.fixedCamera){
         for (var i = 0; i < this.cameraAnimations.length; i++) {
             this.cameraAnimations[i].on = true;
         }
