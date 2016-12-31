@@ -156,7 +156,9 @@ XMLscene.prototype.setCameras = function() {
 
     var cameraList = [
         {distance: 5, height: 4},
-        {distance: 3, height: 7}
+        {distance: 3, height: 7},
+        {distance: 8, height: 8},
+        {distance: 12, height: 12}
     ];
 
     for (var i = 0; i < cameraList.length; i++) {
