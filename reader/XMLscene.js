@@ -17,9 +17,21 @@ function XMLscene(inter) {
     this.time = 300;
     this.log = [];
     this.undo = function() {
+        if(this.end || this.mode === this.MODES.P0){
+            return;
+        }
+        if (this.cameraAnimations.length !== 0 && this.cameraAnimations[0].on){
+            alert("Wait until he rotation is complete");
+            return;
+        }
         if (this.log.length > 0) {
             this.undoMovement(this.log[this.log.length - 1], this.log.length);
             this.log.pop();
+            this.affect = true;
+            if(this.mode === this.MODES.P1){
+                this.undoMovement(this.log[this.log.length - 1], this.log.length);
+                this.log.pop();
+            }
         } else {
             alert("Can't go back anymore");
         }
@@ -111,9 +123,6 @@ XMLscene.prototype.init = function(application) {
             this.cells[i].push(place);
         }
     }
-    this.piece1 = new MyPiece(this, "yolo", 1, "red");
-    this.piece2 = new MyPiece(this, "yolo", 2, "white");
-    this.piece3 = new MyPiece(this, "yolo", 3, "red", 1, 1);
 
     this["Points for red win"] = 7;
     this["Points for white win"] = 7;
@@ -248,6 +257,7 @@ XMLscene.prototype.display = function() {
 };
 
 XMLscene.prototype.displayPieces = function() {
+    this.block = false;
     for (var j = 0; j < 2; j++) {
         var array, side;
         if (j === 0) {
@@ -260,12 +270,12 @@ XMLscene.prototype.displayPieces = function() {
         for (var i = 0; i < array.length; i++) {
             var piece = array[i];
             this.pushMatrix();
-            this.materials.black.apply();
-            this.translate(-this.HOUSE_SPACING * 4, 0.2, this.HOUSE_SPACING * 4);
-            this.translate(this.HOUSE_SPACING * (piece.originalCol - 1), (piece.numFloors - 1) * 0.2, -this.HOUSE_SPACING * (piece.originalLine - 1));
-            this.applyAnimations(piece.animations);
-            this.registerForPick(i + 10 * j, piece);
-            piece.display();
+                this.materials.black.apply();
+                this.translate(-this.HOUSE_SPACING * 4, 0.2, this.HOUSE_SPACING * 4);
+                this.translate(this.HOUSE_SPACING * (piece.originalCol - 1), (piece.numFloors - 1) * 0.2, -this.HOUSE_SPACING * (piece.originalLine - 1));
+                this.applyAnimations(piece.animations);
+                this.registerForPick(i + 10 * j, piece);
+                piece.display();
             this.popMatrix();
         }
     }
@@ -425,8 +435,10 @@ XMLscene.prototype.applyAnimations = function(animationArray) {
         mat4.multiply(matrix, matrix, animMatrix);
 
         if (!animation.finished) {
+            this.block = true;
             break;
         }
+
     }
 
     this.multMatrix(matrix);
@@ -619,7 +631,6 @@ XMLscene.prototype.readMove = function() {
             this.switchTurn();
         }
         this.log.push(response);
-        console.log(this.log.length);
     }
 };
 
@@ -645,35 +656,42 @@ XMLscene.prototype.getPrologMove = function(data) {
 };
 
 XMLscene.prototype.logPicking = function() {
+
     if (this.pickMode === false) {
         if (this.pickResults !== null && this.pickResults.length > 0) {
-            for (var i = 0; i < this.pickResults.length; i++) {
-                var obj = this.pickResults[i][0];
-                if (obj) {
-                    if (this.affect) {
-                        if (this.turn === obj.id) {
-                            this.selected = obj;
-                            makeRequest(this, this.turn, obj.col, obj.line);
+            if (!(this.cameraAnimations.length !== 0 && this.cameraAnimations[0].on && !this.block)){
+                for (var i = 0; i < this.pickResults.length; i++) {
+                    var obj = this.pickResults[i][0];
+                    if (obj) {
+
+                        if (this.affect) {
+                            if (this.turn === obj.id) {
+                                this.selected = obj;
+                                makeRequest(this, this.turn, obj.col, obj.line);
+                            }
+                        } else {
+                            if (obj === this.selected) {
+                                this.affect = true;
+                                clearCells(this.cells);
+                            } else if (obj.id === "place")
+                                makeRequest(this, this.selected.col, this.selected.line, obj.column + 1, obj.line + 1);
                         }
                     } else {
-                        if (obj === this.selected) {
-                            this.affect = true;
-                            clearCells(this.cells);
-                        } else if (obj.id === "place")
-                            makeRequest(this, this.selected.col, this.selected.line, obj.column + 1, obj.line + 1);
+                        this.affect = true;
+                        clearCells(this.cells);
                     }
-                } else {
-                    this.affect = true;
-                    clearCells(this.cells);
                 }
+                this.pickResults.splice(0, this.pickResults.length);
             }
-            this.pickResults.splice(0, this.pickResults.length);
         }
     }
 };
 
 XMLscene.prototype.newGame = function(){
-
+    if (this.cameraAnimations.length !== 0 && this.cameraAnimations[0].on){
+        alert("Wait until the camera rotation is complete");
+        return;
+    }
     if(this.log !== undefined){
         if(this.log.length !== 0 && !this.end){
             if(!confirm("Are you sure? This game will be erased.")){
@@ -757,8 +775,8 @@ XMLscene.prototype.switchTurn = function(){
         this.time = this.wTime;
     } else {
         this.turn = "r";
-        this.wTime = this.rTime;
-        this.time = this.wTime;
+        this.wTime = this.time;
+        this.time = this.rTime;
     }
 
     if(this.mode === this.MODES.P2){

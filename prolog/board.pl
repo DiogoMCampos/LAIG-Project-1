@@ -158,7 +158,6 @@ allPossibleMoves(Board, Side, Total, Moves, Difficulty) :-
 
 generateRandomMove(Board, Side, InC, InL, DeC, DeL, Difficulty) :-
     allPossibleMoves(Board, Side, NumMoves, AllMoves, Difficulty),
-    write(AllMoves),nl,
     random(0, NumMoves, Option),!,
     getListElement(Option, AllMoves, 0, InC-InL-DeC-DeL).
 
