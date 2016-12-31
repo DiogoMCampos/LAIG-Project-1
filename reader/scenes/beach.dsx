@@ -136,7 +136,7 @@
             <animation></animation>
 
             <materials>
-                <material id="pink"/>
+                <material id="default"/>
             </materials>
 
             <texture id="seats"/>
@@ -148,21 +148,40 @@
 
         <component id="seat-red">
             <transformation>
-                <translate x="-5" y="-0.99" z="13"/>
+                <translate x="5" y="-0.99" z="6"/>
                 <scale x="10" y="10" z="7"/>
                 <rotate axis="x" angle="-90"/>
+                <rotate axis="z" angle="180"/>
             </transformation>
 
             <animation></animation>
 
             <materials>
-                <material id="pink"/>
+                <material id="default"/>
             </materials>
 
             <texture id="seats"/>
 
             <children>
                 <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="seats">
+            <transformation>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="seats"/>
+
+            <children>
+                <componentref id="seat-white"/>
+                <componentref id="seat-red"/>
             </children>
         </component>
 
@@ -384,7 +403,7 @@
             </children>
         </component>
 
-        <component id="back-border">
+        <component id="back-box">
             <transformation>
                 <translate x="1" y="-1" z="0"/>
                 <rotate axis="y" angle="180"/>
@@ -403,7 +422,7 @@
             </children>
         </component>
 
-        <component id="front-border">
+        <component id="front-box">
             <transformation>
                 <translate x="0" y="-1" z="1"/>
             </transformation>
@@ -421,7 +440,7 @@
             </children>
         </component>
 
-        <component id="left-border">
+        <component id="left-box">
             <transformation>
                 <translate x="0" y="-1" z="0"/>
                 <rotate axis="y" angle="-90"/>
@@ -440,7 +459,7 @@
             </children>
         </component>
 
-        <component id="right-border">
+        <component id="right-box">
             <transformation>
                 <translate x="1" y="-1" z="1"/>
                 <rotate axis="y" angle="90"/>
@@ -459,7 +478,7 @@
             </children>
         </component>
 
-        <component id="top-border">
+        <component id="top-box">
             <transformation>
                 <translate x="0" y="0" z="1"/>
                 <rotate axis="x" angle="-90"/>
@@ -478,7 +497,28 @@
             </children>
         </component>
 
-        <component id="borders">
+        <component id="box">
+            <transformation>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="back-box"/>
+                <componentref id="front-box"/>
+                <componentref id="left-box"/>
+                <componentref id="right-box"/>
+                <componentref id="top-box"/>
+            </children>
+        </component>
+
+        <component id="border">
             <transformation>
                 <scale x="9.3" y="1" z="9.3"/>
                 <translate x="-0.5" y="-0.001" z="-0.5"/>
@@ -493,11 +533,7 @@
             <texture id="none"/>
 
             <children>
-                <componentref id="back-border"/>
-                <componentref id="front-border"/>
-                <componentref id="left-border"/>
-                <componentref id="right-border"/>
-                <componentref id="top-border"/>
+                <componentref id="box"/>
             </children>
         </component>
 
@@ -519,6 +555,25 @@
             </children>
         </component>
 
+        <component id="side">
+            <transformation>
+                <translate x="5.5" y="0" z="-5.25"/>
+                <scale x="1" y="1" z="10.5"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="box"/>
+            </children>
+        </component>
+
         <component id="board">
             <transformation>
             </transformation>
@@ -533,7 +588,8 @@
 
             <children>
                 <componentref id="chessboard"/>
-                <componentref id="borders"/>
+                <componentref id="border"/>
+                <componentref id="side"/>
             </children>
         </component>
 
@@ -551,8 +607,7 @@
 
             <children>
                 <componentref id="sign"/>
-                <componentref id="seat-white"/>
-                <componentref id="seat-red"/>
+                <componentref id="seats"/>
                 <componentref id="buoy"/>
                 <componentref id="board"/>
                 <componentref id="skybox"/>

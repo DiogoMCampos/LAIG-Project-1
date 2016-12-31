@@ -335,7 +335,7 @@ XMLscene.prototype.displayPlaces = function() {
 
 XMLscene.prototype.displayTaken = function(){
     this.pushMatrix();
-        this.translate(6, 0.2, -3.25);
+        this.translate(6, 0, -4.5);
         for (var i = 0; i < this.taken.length; i++) {
             this.pushMatrix();
                 this.registerForPick(10000, this.taken[i]);
