@@ -1,0 +1,617 @@
+<dsx>
+    <scene root="root" axis_length="10"/>
+
+    <views default="front">
+        <perspective id="front" near="0.1" far="500" angle="90">
+            <from x="0" y="4" z="5"/>
+            <to x="0" y="0" z="0"/>
+        </perspective>
+
+        <perspective id="insideScene" near="5" far="50" angle="50">
+            <from x="40" y="30" z="15"/>
+            <to x="5" y="0" z="15"/>
+        </perspective>
+    </views>
+
+    <illumination doublesided="1" local="1">
+        <ambient r="0.3" g="0.7" b="0.7" a="1"/>
+        <background r="0.7" g="0.7" b="0.7" a="1"/>
+    </illumination>
+
+    <lights>
+        <omni id="top" enabled="1">
+            <location x="0" y="15" z="0" w="1"/>
+            <ambient r="0.2" g="0.2" b="0.2" a="1"/>
+            <diffuse r="0.9" g="0.9" b="1" a="1"/>
+            <specular r="0" g="0" b="0" a="1"/>
+        </omni>
+    </lights>
+
+    <textures>
+        <texture id="wood" file="../resources/wood.jpg" length_s="1" length_t="1"/>
+        <texture id="beach" file="../resources/back-beach.jpg" length_s="1" length_t="1"/>
+        <texture id="sand" file="../resources/sand.jpg" length_s="1" length_t="1"/>
+        <texture id="sky" file="../resources/sky.jpg" length_s="1" length_t="1"/>
+        <texture id="sign" file="../resources/sign.jpg" length_s="1" length_t="1"/>
+        <texture id="seats" file="../resources/redsox.jpg" length_s="1" length_t="1"/>
+    </textures>
+
+    <materials>
+        <material id="default">
+            <emission r="1" g="1" b="1" a="1"/>
+            <ambient r="1" g="1" b="1" a="1"/>
+            <diffuse r="1" g="1" b="1" a="1"/>
+            <specular r="1" g="1" b="1" a="1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="pink">
+            <emission r="1" g="0.08" b="0.58" a="1"/>
+            <ambient r="1" g="0.08" b="0.58" a="0.8"/>
+            <diffuse r="1" g="0.2" b="0.58" a="1"/>
+            <specular r="1" g="0.2" b="0.58" a="1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="white">
+            <emission r="0.84" g="0.89" b="0.78" a="1"/>
+            <ambient r="0.84" g="0.89" b="0.78" a="1"/>
+            <diffuse r="0.84" g="0.89" b="0.78" a=".1"/>
+            <specular r="0.84" g="0.89" b="0.78" a=".1"/>
+            <shininess value="0"/>
+        </material>
+
+        <material id="black">
+            <emission r="0.11" g="0.12" b="0.12" a="1"/>
+            <ambient r="0" g="0" b="0" a="1"/>
+            <diffuse r="0.1" g="0.1" b="0.1" a=".1"/>
+            <specular r="0" g="0" b="0" a=".1"/>
+            <shininess value="0"/>
+        </material>
+
+        <material id="red">
+            <emission r="1" g="0" b="0" a=".1"/>
+            <ambient r="1" g="0" b="0" a=".1"/>
+            <diffuse r="1" g="0" b="0" a=".1"/>
+            <specular r="1" g="0" b="0" a=".1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="selected">
+            <emission r="1" g="1" b="0" a="1"/>
+            <ambient r="1" g="1" b="0" a="1"/>
+            <diffuse r="1" g="1" b="0" a="1"/>
+            <specular r="1" g="1" b="0" a="1"/>
+            <shininess value="1"/>
+        </material>
+
+        <material id="possible">
+            <emission r="0" g="0" b="1" a="0.25"/>
+            <ambient r="0" g="0" b="1" a="0.25"/>
+            <diffuse r="0" g="0" b="1" a="0.25"/>
+            <specular r="0" g="0" b="0.99" a="0.25"/>
+            <shininess value="0.1"/>
+        </material>
+    </materials>
+
+    <transformations>
+        <transformation id="scaleToRim">
+            <scale x="0.4" y="0.4" z="0.2"/>
+        </transformation>
+    </transformations>
+
+    <animations>
+          <animation id="enteranimation" span="2" type="linear">
+            <controlpoint xx="3" yy="0" zz="-1"/>
+            <controlpoint xx="1" yy="0" zz="4"/>
+        </animation>
+    </animations>
+
+    <primitives>
+        <primitive id="buoy">
+            <torus inner="0.4" outer="1" slices="50" loops="50"/>
+        </primitive>
+
+        <primitive id="rectangle">
+            <rectangle x1="0" y1="0" x2="1" y2="1"/>
+        </primitive>
+
+        <primitive id="chessboard">
+            <chessboard du="9" dv="9" dimX="7.5" dimY="7.5" textureref="wood" su="-1" sv="1">
+                <c1 r="0.85" g="0.5" b="0.07" a="1"/>
+                <c2 r="0.92" g="0.83" b="0.7" a="1"/>
+                <cs r="0.95" g="0" b="0" a="1"/>
+            </chessboard>
+        </primitive>
+    </primitives>
+
+    <components>
+        <component id="seat-white">
+            <transformation>
+                <translate x="-5" y="-0.99" z="-6"/>
+                <scale x="10" y="10" z="7"/>
+                <rotate axis="x" angle="-90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="seats"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="seat-red">
+            <transformation>
+                <translate x="5" y="-0.99" z="6"/>
+                <scale x="10" y="10" z="7"/>
+                <rotate axis="x" angle="-90"/>
+                <rotate axis="z" angle="180"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="seats"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="seats">
+            <transformation>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="seats"/>
+
+            <children>
+                <componentref id="seat-white"/>
+                <componentref id="seat-red"/>
+            </children>
+        </component>
+
+        <component id="buoy">
+            <transformation>
+                <translate x="-12" y="1.2" z="14"/>
+                <scale x="5" y="4" z="5"/>
+                <rotate axis="x" angle="90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="pink"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="buoy"/>
+            </children>
+        </component>
+
+        <component id="sign-front">
+            <transformation>
+                <rotate axis="z" angle="35"/>
+                <rotate axis="y" angle="90"/>
+                <scale x="10" y="2" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="sign-back">
+            <transformation>
+                <translate x="-2.25" y="0" z="-10"/>
+                <rotate axis="z" angle="-35"/>
+                <rotate axis="y" angle="-90"/>
+                <scale x="10" y="2" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="inherit"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="sign">
+            <transformation>
+                <rotate axis="y" angle="45"/>
+                <translate x="20" y="-1" z="5"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="sign"/>
+
+            <children>
+                <componentref id="sign-front"/>
+                <componentref id="sign-back"/>
+            </children>
+        </component>
+
+        <component id="back-wall">
+            <transformation>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="beach"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="front-wall">
+            <transformation>
+                <translate x="1" y="0" z="1"/>
+                <rotate axis="y" angle="180"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="beach"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="left-wall">
+            <transformation>
+                <translate x="0" y="0" z="1"/>
+                <rotate axis="y" angle="90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="beach"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="right-wall">
+            <transformation>
+                <translate x="1" y="0" z="0"/>
+                <rotate axis="y" angle="-90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="beach"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="ceiling">
+            <transformation>
+                <translate x="0" y="1" z="0"/>
+                <rotate axis="x" angle="90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="sky"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="floor">
+            <transformation>
+                <translate x="0" y="0" z="1"/>
+                <rotate axis="x" angle="-90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="sand"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="skybox">
+            <transformation>
+                <translate x="0" y="-1" z="0"/>
+                <scale x="40" y="15" z="40"/>
+                <translate x="-0.5" y="0" z="-0.5"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="back-wall"/>
+                <componentref id="front-wall"/>
+                <componentref id="left-wall"/>
+                <componentref id="right-wall"/>
+                <componentref id="ceiling"/>
+                <componentref id="floor"/>
+            </children>
+        </component>
+
+        <component id="back-box">
+            <transformation>
+                <translate x="1" y="-1" z="0"/>
+                <rotate axis="y" angle="180"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="black"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="front-box">
+            <transformation>
+                <translate x="0" y="-1" z="1"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="black"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="left-box">
+            <transformation>
+                <translate x="0" y="-1" z="0"/>
+                <rotate axis="y" angle="-90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="black"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="right-box">
+            <transformation>
+                <translate x="1" y="-1" z="1"/>
+                <rotate axis="y" angle="90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="black"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="top-box">
+            <transformation>
+                <translate x="0" y="0" z="1"/>
+                <rotate axis="x" angle="-90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="black"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="rectangle"/>
+            </children>
+        </component>
+
+        <component id="box">
+            <transformation>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="back-box"/>
+                <componentref id="front-box"/>
+                <componentref id="left-box"/>
+                <componentref id="right-box"/>
+                <componentref id="top-box"/>
+            </children>
+        </component>
+
+        <component id="border">
+            <transformation>
+                <scale x="9.3" y="1" z="9.3"/>
+                <translate x="-0.5" y="-0.001" z="-0.5"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="box"/>
+            </children>
+        </component>
+
+        <component id="chessboard">
+            <transformation>
+                <rotate axis="x" angle="-90"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <primitiveref id="chessboard"/>
+            </children>
+        </component>
+
+        <component id="side">
+            <transformation>
+                <translate x="5.5" y="0" z="-5.25"/>
+                <scale x="1" y="1" z="10.5"/>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="box"/>
+            </children>
+        </component>
+
+        <component id="board">
+            <transformation>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="chessboard"/>
+                <componentref id="border"/>
+                <componentref id="side"/>
+            </children>
+        </component>
+
+        <component id="root">
+            <transformation>
+            </transformation>
+
+            <animation></animation>
+
+            <materials>
+                <material id="default"/>
+            </materials>
+
+            <texture id="none"/>
+
+            <children>
+                <componentref id="sign"/>
+                <componentref id="seats"/>
+                <componentref id="buoy"/>
+                <componentref id="board"/>
+                <componentref id="skybox"/>
+            </children>
+        </component>
+    </components>
+</dsx>
