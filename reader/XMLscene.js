@@ -13,6 +13,7 @@ function XMLscene(inter) {
     this.appearance = null;
     this.cameraAnimations = [];
     this.affect = true;
+    this.animationSpeed = 100;
 
     this.time = 300;
     this.log = [];
@@ -63,8 +64,6 @@ function XMLscene(inter) {
         P2: 2,
         P0: 0,
     };
-
-
 
     this.fixedCamera = true;
 
@@ -157,7 +156,9 @@ XMLscene.prototype.setCameras = function() {
 
     var cameraList = [
         {distance: 5, height: 4},
-        {distance: 3, height: 7}
+        {distance: 3, height: 7},
+        {distance: 8, height: 8},
+        {distance: 12, height: 12}
     ];
 
     for (var i = 0; i < cameraList.length; i++) {
@@ -380,6 +381,7 @@ XMLscene.prototype.undoMovement = function(entry, entryNumber) {
                 }
 
                 var animation = new LinearAnimation(
+                    this,
                     currPiece.animations.length,
                     quantity / 2, [{
                         x: 0,
@@ -644,6 +646,7 @@ XMLscene.prototype.readMove = function() {
                 var verMov = Number(direction[1]);
                 var quantity = Number(mov[3]);
                 var animation = new LinearAnimation(
+                    this,
                     currPiece.animations.length,
                     quantity / 2, [{
                         x: 0,

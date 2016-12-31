@@ -446,7 +446,7 @@ MySceneGraph.prototype.createComponents = function(componentNodes) {
                         var animationObject;
 
                         if (animationInfo.type === "linear") {
-                            animationObject = new LinearAnimation(animationInfo.id, animationInfo.duration, animationInfo.controlPoints);
+                            animationObject = new LinearAnimation(scene, animationInfo.id, animationInfo.duration, animationInfo.controlPoints, false);
                         } else if (animationInfo.type === "circular") {
                             animationObject = new CircularAnimation(animationInfo);
                         } else {
